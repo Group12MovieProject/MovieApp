@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route} from 'react-router-dom'
-import { useState } from 'react'
 import './App.css'
 import NavBar from  './components/NavBar'
 import Header from './components/Header'
@@ -12,6 +11,7 @@ import Reviews from './pages/Reviews'
 import Login from './pages/Login'
 import Search from './pages/Search'
 import Showtimes from './pages/Showtimes'
+import NotFound from './pages/NotFound'
 
 function App() {
 
@@ -22,7 +22,7 @@ function App() {
     <Header /> 
     <div id="container">
       <Routes>
-        <Route path="/home" exact element={<Home />} />
+        <Route path="/" exact element={<Home />} />
         <Route path="/favorites" exact element={<Favorites />} />
         <Route path="/reviews" exact element={<Reviews />} />
         <Route path="/groups" exact element={<Groups />} />
