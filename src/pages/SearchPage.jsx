@@ -43,7 +43,7 @@ export default function Search(){
     }, [page])
 
   return (
-    <div id="container">
+    <div id="search-container">
       <h3>Search movies</h3>
       <input value={query} onChange={e => setQuery(e.target.value)} ></input><button onClick={search} type="button">Search</button>
       <ReactPaginate

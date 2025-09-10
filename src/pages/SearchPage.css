@@ -1,17 +1,13 @@
-#container {
-    margin: 2em;
-}
-
-ul {
+#search-container ul {
     display: flex;
     flex-direction: row;
     list-style-type: none;
 }
 
-ul li {
+#search-container ul li {
     width: 2em;
 }
 
-li.selected {
+#search-container li.selected {
     color: orange;
 }
