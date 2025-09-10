@@ -27,7 +27,7 @@ export default function NavBar() {
               <Link className="nav-link" to="/showtimes">Showtimes</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/search">Search</Link>
+              <Link className="nav-link" to="/searchpage">Search</Link>
               </li>
             <li className="nav-item">
               <Link className="nav-link" to="/login">Login</Link>

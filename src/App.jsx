@@ -9,7 +9,7 @@ import Favorites from './pages/Favorites'
 import Groups from './pages/Groups'
 import Reviews from './pages/Reviews'
 import Login from './pages/Login'
-import Search from './pages/Search'
+import Search from './pages/SearchPage'
 import Showtimes from './pages/Showtimes'
 import NotFound from './pages/NotFound'
 
@@ -27,14 +27,13 @@ function App() {
         <Route path="/reviews" exact element={<Reviews />} />
         <Route path="/groups" exact element={<Groups />} />
         <Route path="/showtimes" exact element={<Showtimes />} />
-        <Route path="/search" exact element={<Search />} />
+        <Route path="/searchpage" exact element={<Search />} />
          <Route path="/login" exact element={<Login />} />
         <Route path="/*" exact element={<NotFound />} />
       </Routes>
     </div>
     <Footer />
     </>
-
   )
 }
 
