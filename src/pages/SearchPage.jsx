@@ -13,9 +13,11 @@ export default function Search(){
     const Movies = () => {
         return (
             <table>
+              <tbody>
                 { movies && movies.map(movie => (
                     <tr key={movie.id}><td>{movie.title}</td></tr>
                 ))}
+                </tbody>
             </table>
         )
     }

@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { Routes, Route} from 'react-router-dom'
 import './App.css'
 import NavBar from  './components/NavBar'
@@ -20,7 +19,7 @@ function App() {
     <>
     <NavBar />
     <Header /> 
-    <div id="container">
+    <div id="elements">
       <Routes>
         <Route path="/" exact element={<Home />} />
         <Route path="/favorites" exact element={<Favorites />} />
@@ -28,7 +27,7 @@ function App() {
         <Route path="/groups" exact element={<Groups />} />
         <Route path="/showtimes" exact element={<Showtimes />} />
         <Route path="/searchpage" exact element={<Search />} />
-         <Route path="/login" exact element={<Login />} />
+        <Route path="/login" exact element={<Login />} />
         <Route path="/*" exact element={<NotFound />} />
       </Routes>
     </div>
