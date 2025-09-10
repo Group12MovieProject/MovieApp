@@ -24,7 +24,7 @@ export default function NavBar() {
               <Link className="nav-link" to="/groups">Groups</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/selectcity">Select City</Link>
+              <Link className="nav-link" to="/showtimes">Showtimes</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/search">Search</Link>
