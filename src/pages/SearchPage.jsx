@@ -125,6 +125,7 @@ export default function Search() {
         <table>
           <thead>
             <tr>
+              <th></th>
               <th>Name</th>
               <th>Known for department</th>
             </tr>
@@ -132,6 +133,13 @@ export default function Search() {
           <tbody>
             {results.map(item => (
               <tr key={item.id}>
+                <td>
+                  <img
+                    src={item.profile_path ? `https://image.tmdb.org/t/p/w185${item.profile_path}` : placeholder}
+                    alt={item.name}
+                    style={{ width: '60px', borderRadius: '6px', marginRight: '1em' }}
+                  />
+                </td>
                 <td>{item.name}</td>
                 <td>{item.known_for_department}</td>
               </tr>
@@ -148,6 +156,7 @@ export default function Search() {
               <th></th>
               <th>Title</th>
               <th>Release date</th>
+              <th>TMDB score</th>
             </tr>
           </thead>
           <tbody>
@@ -162,6 +171,7 @@ export default function Search() {
                 </td>
                 <td>{item.title}</td>
                 <td>{item.release_date}</td>
+                <td>{item.vote_average}</td>
               </tr>
             ))}
           </tbody>
@@ -176,6 +186,7 @@ export default function Search() {
               <th></th>
               <th>Title</th>
               <th>First air date</th>
+              <th>TMDB score</th>
             </tr>
           </thead>
           <tbody>
@@ -190,6 +201,7 @@ export default function Search() {
                 </td>
                 <td>{item.name}</td>
                 <td>{item.first_air_date}</td>
+                <td>{item.vote_average}</td>
               </tr>
             ))}
           </tbody>
