@@ -1,81 +1,84 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
-export default function Showtimes() {
-  const [movies, setMovies] = useState([]);
-  const [theatres, setTheatres] = useState([]);
-  const [selectedTheatre, setSelectedTheatre] = useState('');
+function Showtimes() {
+  const [movies, setMovies] = useState([])
 
-  const getFinnkinoShows = (xml) => {
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xml, 'application/xml');
-    const showElements = xmlDoc.getElementsByTagName('Show');
-    const tempMovies = [];
-    const tempTheatres = new Set();
+  const xmlToJson = useCallback((node) => {
+    const json = {}
 
-    for (let i = 0; i < showElements.length; i++) {
-      const show = showElements[i];
-      const titleElement = show.getElementsByTagName('Title')[0];
-      const startTimeElement = show.getElementsByTagName('dttmShowStart')[0];
-      const theatreElement = show.getElementsByTagName('Theatre')[0];
-      const theatre = theatreElement ? theatreElement.textContent : '';
-      tempMovies.push({
-        title: titleElement ? titleElement.textContent : 'Tuntematon',
-        startTime: startTimeElement ? startTimeElement.textContent : '',
-        theatre: theatre
-      });
-      if (theatre) tempTheatres.add(theatre);
+    let children = [...node.children]
+
+    if (!children.length) return node.innerHTML
+
+    for (let child of children) {
+      const hasSibilings = children.filter(c => c.nodeName === child.nodeName).length > 1
+
+      if (hasSibilings) {
+        if (json[child.nodeName] === undefined) {
+          json[child.nodeName] = [xmlToJson(child)]
+        } else {
+          json[child.nodeName].push(xmlToJson(child))
+        }
+      } else {
+        json[child.nodeName] = xmlToJson(child)
+      }
     }
-    setMovies(tempMovies);
-    setTheatres(Array.from(tempTheatres).sort());
-    if (!selectedTheatre && tempTheatres.size > 0) {
-      setSelectedTheatre(Array.from(tempTheatres)[0]);
-    }
-  };
+    return json
+  }, [])
+
+  const parseXML = useCallback((xml) => {
+    const parser = new DOMParser()
+    const xmlDoc = parser.parseFromString(xml, 'application/xml')
+    return xmlToJson(xmlDoc)
+  }, [xmlToJson])
+
+  // const getFinkinoTheatres = (xml) => {
+  //   const parser = new DOMParser()
+  //   const xmlDoc = parser.parseFromString(xml, 'application/xml')
+  //   const root = xmlDoc.children
+  //   const theatres = root[0].children
+  //   const tempAreas = []
+  //   for (let i = 0; i < theatres.length; i++) {
+  //     //console.log(theatres[i].children[0].innerHTML)
+  //     //console.log(theatres[i].children[1].innerHTML)
+  //     tempAreas.push(
+  //       {
+  //         "id":theatres[i].children[0].innerHTML,
+  //         "name" : theatres[i].children[1].innerHTML
+  //       }
+  //     )
+  //   }
+  //   SetAreas(tempAreas)
+  // }
 
   useEffect(() => {
-    fetch('https://www.finnkino.fi/xml/Schedule/')
+    fetch('https://www.finnkino.fi/xml/Schedule//')
       .then(response => response.text())
       .then(xml => {
-        // console.log(xml)
-        getFinnkinoShows(xml)
+        //console.log(xml)
+        //getFinkinoTheatres(xml)
+        const json = parseXML(xml);
+        let shows = json.Schedule.Shows.Show;
+        if (!Array.isArray(shows)) {
+          shows = shows ? [shows] : []
+        }
+        setMovies(shows)
       })
       .catch(error => {
         console.log(error)
       })
-
-  }, [])
-
-/* //For loop to chech if shows[i].children[0] and shows[i].children[1] exist and printing them if they do.
-  for (let i = 0; i < shows.length; i++) {
-    if (shows[i].children[0]) {
-      console.log(shows[i].children[0].innerHTML);
-    }
-    if (shows[i].children[1]) {
-      console.log(shows[i].children[1].innerHTML);
-  }
-} */
-
-  const filteredMovies = movies.filter(movie => movie.theatre === selectedTheatre);
+  }, [parseXML])
 
   return (
     <div>
       <h3>Finnkino-näytökset</h3>
-      <label htmlFor="theatre-select">Valitse teatteri: </label>
-      <select id="theatre-select" value={selectedTheatre} onChange={e => setSelectedTheatre(e.target.value)}>
-        {theatres.map(theatre => (
-          <option key={theatre} value={theatre}>{theatre}</option>
+      <select>
+        {movies.map(movie => (
+          <option key={movie.ID}>{movie.Theatre}</option>
         ))}
       </select>
-      <ul>
-        {filteredMovies.map((movie, idx) => (
-          <li key={idx}>
-            {movie.title} — {movie.startTime}
-          </li>
-        ))}
-      </ul>
     </div>
-  );
+  )
 }
-//Showtimes
-//export default Showtimes;
+
+export default Showtimes
