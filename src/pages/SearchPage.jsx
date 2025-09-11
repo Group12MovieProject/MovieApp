@@ -25,35 +25,6 @@ export default function Search() {
 
       return (
         <div>
-          {persons.length > 0 && (
-            <div style={{marginBottom: '2em'}}>
-              <h4>Persons</h4>
-              <table>
-                <thead>
-                  <tr>
-                    <th></th>
-                    <th>Name</th>
-                    <th>Known for department</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {persons.map(item => (
-                    <tr key={item.id}>
-                      <td>
-                          <img
-                            src={item.profile_path ? `https://image.tmdb.org/t/p/w185${item.profile_path}` : placeholder}
-                          alt={item.name}
-                          style={{ width: '60px', borderRadius: '6px', marginRight: '1em' }}
-                        />
-                      </td>
-                      <td>{item.name}</td>
-                      <td>{item.known_for_department}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
           {movies.length > 0 && (
             <div style={{marginBottom: '2em'}}>
               <h4>Movies</h4>
@@ -110,6 +81,35 @@ export default function Search() {
                       <td>{item.name}</td>
                       <td>{item.first_air_date}</td>
                       <td>{item.vote_average}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          {persons.length > 0 && (
+            <div style={{marginBottom: '2em'}}>
+              <h4>Persons</h4>
+              <table>
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Known for department</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {persons.map(item => (
+                    <tr key={item.id}>
+                      <td>
+                          <img
+                            src={item.profile_path ? `https://image.tmdb.org/t/p/w185${item.profile_path}` : placeholder}
+                          alt={item.name}
+                          style={{ width: '60px', borderRadius: '6px', marginRight: '1em' }}
+                        />
+                      </td>
+                      <td>{item.name}</td>
+                      <td>{item.known_for_department}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -244,7 +244,7 @@ export default function Search() {
 
   return (
     <div id="search-container">
-      <h3>Search</h3>
+      <h3>Search results</h3>
       <select value={searchType} onChange={e => { setSearchType(e.target.value); setPage(1); }}>
         <option value="multi">Multi</option>
         <option value="movie">Movies</option>
