@@ -12,6 +12,7 @@ import Search from './pages/SearchPage'
 import Showtimes from './pages/Showtimes'
 import NotFound from './pages/NotFound'
 
+
 function App() {
 
   return (
