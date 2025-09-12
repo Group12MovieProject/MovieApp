@@ -1,0 +1,106 @@
+/* NavBar custom styles */
+
+.custom-navbar {
+  width: 100%;
+  background: #f8f8f8;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.custom-navbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5em 1em;
+  gap: 1em;
+}
+
+.custom-navbar-inner-justify {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.custom-navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5em;
+}
+
+.custom-navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.custom-navbar-brand {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-right: 1.5em;
+}
+
+.custom-navbar-links {
+  display: flex;
+  gap: 1em;
+  flex: 1;
+  justify-content: center;
+}
+
+.custom-navbar-link {
+  text-decoration: none;
+  color: #222;
+  font-weight: 500;
+  padding: 0.25em 0.5em;
+  transition: color 0.2s;
+}
+.custom-navbar-link:hover {
+  color: #007bff;
+}
+
+.custom-navbar-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.custom-navbar-search input[type="search"] {
+  padding: 0.3em 0.7em;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 180px;
+}
+.custom-navbar-search button {
+  padding: 0.3em 0.9em;
+  border-radius: 4px;
+  border: 1px solid #007bff;
+  background: #fff;
+  color: #007bff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.custom-navbar-search button:hover {
+  background: #007bff;
+  color: #fff;
+}
+
+.custom-navbar-login {
+  margin-left: 1em;
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 500;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  padding: 0.3em 0.9em;
+  background: #fff;
+  transition: background 0.2s, color 0.2s;
+}
+.custom-navbar-login:hover {
+  background: #007bff;
+  color: #fff;
+}

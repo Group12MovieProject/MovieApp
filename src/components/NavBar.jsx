@@ -1,40 +1,46 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import './NavBar.css'
 
 export default function NavBar() {
+  const [navQuery, setNavQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (navQuery.trim()) {
+      navigate(`/searchpage?query=${encodeURIComponent(navQuery)}`);
+      setNavQuery('');
+    }
+  };
+
   return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary">
-      <div className="container-fluid">
-        <span className="navbar-brand">Katve</span>
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link className="nav-link" to="/">Home</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/favorites">Favorites</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/reviews">Reviews</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/groups">Groups</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/showtimes">Showtimes</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/search">Search</Link>
-              </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/login">Login</Link>
-            </li>
-          </ul>
+    <nav className="custom-navbar">
+      <div className="custom-navbar-inner custom-navbar-inner-justify">
+        <div className="custom-navbar-left">
+          <span className="custom-navbar-brand">Katve</span>
+          <div className="custom-navbar-links">
+            <Link className="custom-navbar-link" to="/">Home</Link>
+            <Link className="custom-navbar-link" to="/favorites">Favorites</Link>
+            <Link className="custom-navbar-link" to="/reviews">Reviews</Link>
+            <Link className="custom-navbar-link" to="/groups">Groups</Link>
+            <Link className="custom-navbar-link" to="/showtimes">Showtimes</Link>
+          </div>
+        </div>
+        <div className="custom-navbar-right">
+          <form className="custom-navbar-search" onSubmit={handleSearchSubmit}>
+            <input
+              type="search"
+              placeholder="Search for movies, persons..."
+              aria-label="Search"
+              value={navQuery}
+              onChange={e => setNavQuery(e.target.value)}
+            />
+            <button type="submit">Search</button>
+          </form>
+          <Link className="custom-navbar-login" to="/login">Login</Link>
         </div>
       </div>
     </nav>
-  )
+  );
 }
