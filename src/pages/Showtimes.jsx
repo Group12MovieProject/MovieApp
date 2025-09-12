@@ -1,7 +1,14 @@
 import { useState, useEffect, useCallback } from 'react'
 
 function Showtimes() {
-  const [movies, setMovies] = useState([])
+
+  const [areas, setAreas] = useState([])
+  const [showtimes, setShowtimes] = useState([])
+  const [selectedAreaId, setSelectedAreaId] = useState("");
+
+  function handleAreaChange(e) {
+    setSelectedAreaId(e.target.value)
+  }
 
   const xmlToJson = useCallback((node) => {
     const json = {}
@@ -32,51 +39,65 @@ function Showtimes() {
     return xmlToJson(xmlDoc)
   }, [xmlToJson])
 
-  // const getFinkinoTheatres = (xml) => {
-  //   const parser = new DOMParser()
-  //   const xmlDoc = parser.parseFromString(xml, 'application/xml')
-  //   const root = xmlDoc.children
-  //   const theatres = root[0].children
-  //   const tempAreas = []
-  //   for (let i = 0; i < theatres.length; i++) {
-  //     //console.log(theatres[i].children[0].innerHTML)
-  //     //console.log(theatres[i].children[1].innerHTML)
-  //     tempAreas.push(
-  //       {
-  //         "id":theatres[i].children[0].innerHTML,
-  //         "name" : theatres[i].children[1].innerHTML
-  //       }
-  //     )
-  //   }
-  //   SetAreas(tempAreas)
-  // }
-
   useEffect(() => {
-    fetch('https://www.finnkino.fi/xml/Schedule//')
+    fetch('https://www.finnkino.fi/xml/TheatreAreas/')
       .then(response => response.text())
       .then(xml => {
-        //console.log(xml)
-        //getFinkinoTheatres(xml)
-        const json = parseXML(xml);
-        let shows = json.Schedule.Shows.Show;
-        if (!Array.isArray(shows)) {
-          shows = shows ? [shows] : []
-        }
-        setMovies(shows)
+        const json = parseXML(xml)
+        setAreas(json.TheatreAreas.TheatreArea)
       })
       .catch(error => {
         console.log(error)
       })
   }, [parseXML])
 
+  useEffect(() => {
+    if (!selectedAreaId) return
+
+    fetch(`https://www.finnkino.fi/xml/Schedule/?area=${selectedAreaId}`)
+      .then(response => response.text())
+      .then(xml => {
+        const json = parseXML(xml)
+        setShowtimes(json.Schedule.Shows.Show || []);
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }, [selectedAreaId, parseXML])
+
   return (
     <div>
-      <h3>Finnkino-näytökset</h3>
-      <select>
-        {movies.map(movie => (
-          <option key={movie.ID}>{movie.Theatre}</option>
+
+      <select value={selectedAreaId} onChange={handleAreaChange}>
+        {areas.map(area => (
+          <option key={area.ID} value={area.ID}>{area.Name}</option>
         ))}
       </select>
+      {selectedAreaId && showtimes.length === 0 && (
+        <p>No movies available</p>
+      )}
+      {showtimes.length > 0 && (
+        <table>
+          <thead>
+            <tr>
+              <th>Elokuva</th>
+              <th>Aika</th>
+              <th>Teatteri</th>
+              <th>Sali</th>
+            </tr>
+          </thead>
+          <tbody>
+            {showtimes.map((show, idx) => (
+              <tr key={idx}>
+                <td>{show.Title}</td>
+                <td>{show.dttmShowStart}</td>
+                <td>{show.Theatre}</td>
+                <td>{show.TheatreAuditorium}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   )
 }
