@@ -1,3 +1,5 @@
+// this is not used at this moment
+
 import React, {useState, useEffect} from 'react'
 
 export default function Search(){
