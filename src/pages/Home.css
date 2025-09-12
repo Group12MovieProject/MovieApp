@@ -1,0 +1,58 @@
+/* Home page carousel styles */
+
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home-title {
+  text-align: center;
+}
+
+.home-carousel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5em;
+  margin-bottom: 16px;
+}
+
+.home-movie-list {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1em;
+}
+
+.home-movie-item {
+  width: 180px;
+  text-align: center;
+}
+
+.home-movie-poster {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.home-movie-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.home-movie-score {
+  font-weight: normal;
+}
+
+.home-carousel button {
+  padding: 0.5em 1em;
+  font-size: 1.2em;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  cursor: pointer;
+}
+
+.home-carousel button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
