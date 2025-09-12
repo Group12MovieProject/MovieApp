@@ -1,7 +1,105 @@
-import React from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
-export default function Showtimes() {
+function Showtimes() {
+
+  const [areas, setAreas] = useState([])
+  const [showtimes, setShowtimes] = useState([])
+  const [selectedAreaId, setSelectedAreaId] = useState("");
+
+  function handleAreaChange(e) {
+    setSelectedAreaId(e.target.value)
+  }
+
+  const xmlToJson = useCallback((node) => {
+    const json = {}
+
+    let children = [...node.children]
+
+    if (!children.length) return node.innerHTML
+
+    for (let child of children) {
+      const hasSibilings = children.filter(c => c.nodeName === child.nodeName).length > 1
+
+      if (hasSibilings) {
+        if (json[child.nodeName] === undefined) {
+          json[child.nodeName] = [xmlToJson(child)]
+        } else {
+          json[child.nodeName].push(xmlToJson(child))
+        }
+      } else {
+        json[child.nodeName] = xmlToJson(child)
+      }
+    }
+    return json
+  }, [])
+
+  const parseXML = useCallback((xml) => {
+    const parser = new DOMParser()
+    const xmlDoc = parser.parseFromString(xml, 'application/xml')
+    return xmlToJson(xmlDoc)
+  }, [xmlToJson])
+
+  useEffect(() => {
+    fetch('https://www.finnkino.fi/xml/TheatreAreas/')
+      .then(response => response.text())
+      .then(xml => {
+        const json = parseXML(xml)
+        setAreas(json.TheatreAreas.TheatreArea)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }, [parseXML])
+
+  useEffect(() => {
+    if (!selectedAreaId) return
+
+    fetch(`https://www.finnkino.fi/xml/Schedule/?area=${selectedAreaId}`)
+      .then(response => response.text())
+      .then(xml => {
+        const json = parseXML(xml)
+        setShowtimes(json.Schedule.Shows.Show || []);
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }, [selectedAreaId, parseXML])
+
   return (
-    <div>Showtimes</div>
+    <div>
+
+      <select value={selectedAreaId} onChange={handleAreaChange}>
+        {areas.map(area => (
+          <option key={area.ID} value={area.ID}>{area.Name}</option>
+        ))}
+      </select>
+      {selectedAreaId && showtimes.length === 0 && (
+        <p>No movies available</p>
+      )}
+      {showtimes.length > 0 && (
+        <table>
+          <thead>
+            <tr>
+              <th>Elokuva</th>
+              <th>Aika</th>
+              <th>Teatteri</th>
+              <th>Sali</th>
+            </tr>
+          </thead>
+          <tbody>
+            {showtimes.map((show, idx) => (
+              <tr key={idx}>
+                <td>{show.Title}</td>
+                <td>{show.dttmShowStart}</td>
+                <td>{show.Theatre}</td>
+                <td>{show.TheatreAuditorium}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
   )
 }
+
+export default Showtimes

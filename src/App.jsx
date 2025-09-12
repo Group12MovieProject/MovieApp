@@ -10,11 +10,11 @@ import Groups from './pages/Groups'
 import Reviews from './pages/Reviews'
 import Login from './pages/Login'
 import Search from './pages/Search'
-import Showtimes from './pages/Showtimes'
+import Showtimes from './pages/Showtimes.jsx'
 import NotFound from './pages/NotFound'
 
-function App() {
 
+function App() {
 
   return (
     <>
