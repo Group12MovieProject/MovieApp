@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import './Showtimes.css'
 
 function Showtimes() {
 
@@ -90,7 +91,7 @@ function Showtimes() {
             {showtimes.map((show, idx) => (
               <tr key={idx}>
                 <td>{show.Title}</td>
-                <td>{show.dttmShowStart}</td>
+                <td>{new Date(show.dttmShowStart).toLocaleString('fi-FI')}</td>
                 <td>{show.Theatre}</td>
                 <td>{show.TheatreAuditorium}</td>
               </tr>
