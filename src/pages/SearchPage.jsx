@@ -27,14 +27,14 @@ export default function Search() {
         <div>
           {movies.length > 0 && (
             <div style={{marginBottom: '2em'}}>
-              <h4>Movies</h4>
+              <h4>Elokuvat</h4>
               <table>
                 <thead>
                   <tr>
                     <th></th>
-                    <th>Title</th>
-                    <th>Release date</th>
-                    <th>TMDB Score</th>
+                    <th>Nimi</th>
+                    <th>Julkaisupäivä </th>
+                    <th>TMDB pisteet</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -58,14 +58,14 @@ export default function Search() {
           )}
           {tvs.length > 0 && (
             <div style={{marginBottom: '2em'}}>
-              <h4>TV Shows</h4>
+              <h4>TV Ohjelmat</h4>
               <table>
                 <thead>
                   <tr>
                     <th></th>
-                    <th>Title</th>
-                    <th>First air date</th>
-                    <th>TMDB score</th>
+                    <th>Nimi</th>
+                    <th>Ensiesitys</th>
+                    <th>TMDB pisteet</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -89,13 +89,13 @@ export default function Search() {
           )}
           {persons.length > 0 && (
             <div style={{marginBottom: '2em'}}>
-              <h4>Persons</h4>
+              <h4>Henkilöt</h4>
               <table>
                 <thead>
                   <tr>
                     <th></th>
-                    <th>Name</th>
-                    <th>Known for department</th>
+                    <th>Nimi</th>
+                    <th>Tehtävä</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -126,8 +126,8 @@ export default function Search() {
           <thead>
             <tr>
               <th></th>
-              <th>Name</th>
-              <th>Known for department</th>
+              <th>Nimi</th>
+              <th>Tehtävä</th>
             </tr>
           </thead>
           <tbody>
@@ -154,9 +154,9 @@ export default function Search() {
           <thead>
             <tr>
               <th></th>
-              <th>Title</th>
-              <th>Release date</th>
-              <th>TMDB score</th>
+              <th>Nimi</th>
+              <th>Julkaisupäivä</th>
+              <th>TMDB pisteet</th>
             </tr>
           </thead>
           <tbody>
@@ -184,9 +184,9 @@ export default function Search() {
           <thead>
             <tr>
               <th></th>
-              <th>Title</th>
-              <th>First air date</th>
-              <th>TMDB score</th>
+              <th>Nimi</th>
+              <th>Ensiesitys</th>
+              <th>TMDB pisteet</th>
             </tr>
           </thead>
           <tbody>
@@ -244,15 +244,15 @@ export default function Search() {
 
   return (
     <div id="search-container">
-      <h3>Search results</h3>
+      <h3>Hakutulokset</h3>
       <select value={searchType} onChange={e => { setSearchType(e.target.value); setPage(1); }}>
         <option value="multi">Multi</option>
-        <option value="movie">Movies</option>
-        <option value="person">Persons</option>
-        <option value="tv">TV Shows</option>
+        <option value="movie">Elokuvat</option>
+        <option value="person">Henkilöt</option>
+        <option value="tv">TV ohjelmat</option>
       </select>
       <input value={query} onChange={e => setQuery(e.target.value)} />
-      <button onClick={() => { setPage(1); search(); }} type="button">Search</button>
+      <button onClick={() => { setPage(1); search(); }} type="button">Hae</button>
       <ReactPaginate
         breakLabel="..."
         nextLabel=">"
