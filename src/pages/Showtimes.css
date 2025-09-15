@@ -1,0 +1,18 @@
+table, th, td {
+  border: 1px solid;
+}
+
+select{
+    padding: 5px;
+    text-align: left;
+    margin-bottom: 20px; 
+}
+
+th, td {
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: left;
+}
+
+tr:hover {background-color: lightgray;}
