@@ -50,7 +50,7 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      <h2 className="home-title">Popular Movies</h2>
+      <h2 className="home-title">Suositut elokuvat</h2>
       <div className="home-carousel">
         <button onClick={handlePopPrev} disabled={popIdx === 0}>&lt;</button>
         <div className="home-movie-list">
@@ -62,14 +62,14 @@ export default function Home() {
                 className="home-movie-poster"
               />
               <div className="home-movie-title">
-                {popIdx + idx + 1}. {movie.title} <span className="home-movie-score">({movie.vote_average})</span>
+                {popIdx + idx + 1}. {movie.title} <span className="home-movie-score">(TMDB: {movie.vote_average})</span>
               </div>
             </div>
           ))}
         </div>
         <button onClick={handlePopNext} disabled={popIdx + pageSize >= popularMovies.length}>&gt;</button>
       </div>
-      <h2 className="home-title" style={{ marginTop: '2em' }}>Top Rated Movies</h2>
+      <h2 className="home-title" style={{ marginTop: '2em' }}>Parhaiten arvioidut elokuvat</h2>
       <div className="home-carousel">
         <button onClick={handleTopPrev} disabled={topIdx === 0}>&lt;</button>
         <div className="home-movie-list">
@@ -81,7 +81,7 @@ export default function Home() {
                 className="home-movie-poster"
               />
               <div className="home-movie-title">
-                {topIdx + idx + 1}. {movie.title} <span className="home-movie-score">({movie.vote_average})</span>
+                {topIdx + idx + 1}. {movie.title} <span className="home-movie-score">(TMDB: {movie.vote_average})</span>
               </div>
             </div>
           ))}

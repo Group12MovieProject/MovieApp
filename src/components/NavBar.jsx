@@ -20,25 +20,25 @@ export default function NavBar() {
         <div className="custom-navbar-left">
           <span className="custom-navbar-brand">Katve</span>
           <div className="custom-navbar-links">
-            <Link className="custom-navbar-link" to="/">Home</Link>
-            <Link className="custom-navbar-link" to="/favorites">Favorites</Link>
-            <Link className="custom-navbar-link" to="/reviews">Reviews</Link>
-            <Link className="custom-navbar-link" to="/groups">Groups</Link>
-            <Link className="custom-navbar-link" to="/showtimes">Showtimes</Link>
+            <Link className="custom-navbar-link" to="/">Koti</Link>
+            <Link className="custom-navbar-link" to="/favorites">Suosikkilista</Link>
+            <Link className="custom-navbar-link" to="/reviews">Arvostelut</Link>
+            <Link className="custom-navbar-link" to="/groups">Ryhmät</Link>
+            <Link className="custom-navbar-link" to="/showtimes">Näytösajat</Link>
           </div>
         </div>
         <div className="custom-navbar-right">
           <form className="custom-navbar-search" onSubmit={handleSearchSubmit}>
             <input
               type="search"
-              placeholder="Search for movies, persons..."
+              placeholder="Etsi elokuvia, henkilöitä..."
               aria-label="Search"
               value={navQuery}
               onChange={e => setNavQuery(e.target.value)}
             />
-            <button type="submit">Search</button>
+            <button type="submit">Haku</button>
           </form>
-          <Link className="custom-navbar-login" to="/login">Login</Link>
+          <Link className="custom-navbar-login" to="/login">Kirjaudu</Link>
         </div>
       </div>
     </nav>
