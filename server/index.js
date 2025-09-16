@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import userRouter from './routers/userRouter.js'
 
-const port = process.env.PORT
+const port = process.env.PORT || 3001
 
 const app = express()
 app.use(cors())

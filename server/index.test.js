@@ -3,20 +3,21 @@ import { initializeTestDb } from "./helper/test.js"
 import { insertTestUser } from "./helper/test.js"
 import { getToken } from "./helper/test.js"
 
-describe("Testing basic database functionality", () => {
-    let token = null
-    const testUser = {email:"foo@foo.com", password: "password123"}
-    before(() => {
-        initializeTestDb()
-        token = getToken(testUser)
-    })
-})
+
+import dotenv from "dotenv"
+dotenv.config()
+
+import bcrypt from "bcrypt"
+const { hash } = bcrypt
 
 describe("Testing user managment", () => {
-const user = {email: "foo2@test.com", password: "password123"}
+    const user = { email: "foo2@test.com", password: "password123" };
+    let token;
     before(() => {
-        insertTestUser(user.email, user.password)
-    })
+        insertTestUser(user.email, user.password);
+        initializeTestDb();
+        token = getToken(user.email);
+    });
     it("should sign up", async () => {
         const newUser = {email: "foo@test.com", password: "password123"}
 

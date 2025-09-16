@@ -21,7 +21,7 @@ const signUp = async (req, res, next) => {
         const result = await insertUser(user.email, hashedPassword)
 
         return res.status(201).json({
-            id: result.rows[0].id,
+            id_account: result.rows[0].id_account,
             email: user.email
         })
     } catch (error) {
@@ -56,7 +56,7 @@ const signIn = async (req, res, next) => {
         const token = sign({user: dbUser.email}, process.env.JWT_SECRET)
 
         return res.status(200).json({
-            id: dbUser.id,
+            id_account: dbUser.id_account,
             email: dbUser.email,
             token
         })

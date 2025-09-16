@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import placeholder from '../assets/placeholder.png';
-import './Home.css';
+import placeholder from '../assets/placeholder.png'
+import './Home.css'
 
-const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY
 
 export default function Home() {
-  const [topMovies, setTopMovies] = useState([]);
-  const [topIdx, setTopIdx] = useState(0);
-  const [popularMovies, setPopularMovies] = useState([]);
-  const [popIdx, setPopIdx] = useState(0);
-  const pageSize = 6;
+  const [topMovies, setTopMovies] = useState([])
+  const [topIdx, setTopIdx] = useState(0)
+  const [popularMovies, setPopularMovies] = useState([])
+  const [popIdx, setPopIdx] = useState(0)
+  const pageSize = 6
 
   useEffect(() => {
     fetch('https://api.themoviedb.org/3/movie/top_rated?page=1', {
@@ -20,6 +20,7 @@ export default function Home() {
     })
       .then(res => res.json())
       .then(data => setTopMovies(data.results || []));
+
     fetch('https://api.themoviedb.org/3/movie/popular?page=1', {
       headers: {
         'Authorization': 'Bearer ' + TMDB_API_KEY,
@@ -27,26 +28,26 @@ export default function Home() {
       },
     })
       .then(res => res.json())
-      .then(data => setPopularMovies(data.results || []));
-  }, []);
+      .then(data => setPopularMovies(data.results || []))
+  }, [])
 
   // Top rated
   const handleTopPrev = () => {
-    setTopIdx(idx => Math.max(0, idx - pageSize));
-  };
+    setTopIdx(idx => Math.max(0, idx - pageSize))
+  }
   const handleTopNext = () => {
-    setTopIdx(idx => Math.min(topMovies.length - pageSize, idx + pageSize));
-  };
-  const visibleTopMovies = topMovies.slice(topIdx, topIdx + pageSize);
+    setTopIdx(idx => Math.min(topMovies.length - pageSize, idx + pageSize))
+  }
+  const visibleTopMovies = topMovies.slice(topIdx, topIdx + pageSize)
 
   // Popular
   const handlePopPrev = () => {
-    setPopIdx(idx => Math.max(0, idx - pageSize));
-  };
+    setPopIdx(idx => Math.max(0, idx - pageSize))
+  }
   const handlePopNext = () => {
-    setPopIdx(idx => Math.min(popularMovies.length - pageSize, idx + pageSize));
-  };
-  const visiblePopularMovies = popularMovies.slice(popIdx, popIdx + pageSize);
+    setPopIdx(idx => Math.min(popularMovies.length - pageSize, idx + pageSize))
+  }
+  const visiblePopularMovies = popularMovies.slice(popIdx, popIdx + pageSize)
 
   return (
     <div className="home-container">
@@ -89,5 +90,5 @@ export default function Home() {
         <button onClick={handleTopNext} disabled={topIdx + pageSize >= topMovies.length}>&gt;</button>
       </div>
     </div>
-  );
+  )
 }

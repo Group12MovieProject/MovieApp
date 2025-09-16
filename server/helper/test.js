@@ -1,3 +1,24 @@
+/* import fs from 'fs'
+import path from 'path'
+import {pool} from './db.js'
+
+const __dirname = import.meta.dirname
+
+const initializeTestDb = () => {
+    console.log('Alustetaan testitietokanta...')
+    const sql = fs.readFileSync(path.resolve(__dirname,'../testidb.sql'), 'utf8')
+
+    pool.query(sql,(err) => {
+        if(err) {
+            console.error('Error initializing test database:', err)
+        } else {
+            console.log('Test database initialized succesfully')
+        }
+    })
+}
+
+export {initializeTestDb} */
+
 import fs from 'fs'
 import path from 'path'
 import { pool } from './db.js'
@@ -30,7 +51,7 @@ const insertTestUser = (email, password) => {
                 if(err) {
                     console.error('Error inserting test user', err)
                 } else {
-                    console.log('Test user inserted uccessfully', result)
+                    console.log('Test user inserted uccessfully')
                 }
             })
     })
