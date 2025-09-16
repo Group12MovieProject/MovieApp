@@ -27,7 +27,7 @@ const user = {email: "foo2@test.com", password: "password123"}
         })
         const data = await response.json()
         expect(response.status).to.equal(201)
-        expect(data).to.include.all.keys(["id","email"])
+        expect(data).to.include.all.keys(["id_account","email"])
         expect(data.email).to.equal(newUser.email)
     })
     it('should log in', async () => {
@@ -38,7 +38,7 @@ const user = {email: "foo2@test.com", password: "password123"}
         })
         const data = await response.json()
         expect(response.status).to.equal(200)
-        expect(data).to.include.all.keys(["id","email", "token"])
+        expect(data).to.include.all.keys(["id_account","email", "token"])
         expect(data.email).to.equal(user.email)
     })
 })
