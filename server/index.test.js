@@ -11,13 +11,13 @@ import bcrypt from "bcrypt"
 const { hash } = bcrypt
 
 describe("Testing user managment", () => {
-    const user = { email: "foo2@test.com", password: "password123" };
-    let token;
+    const user = { email: "foo2@test.com", password: "password123" }
+    let token
     before(() => {
-        insertTestUser(user.email, user.password);
-        initializeTestDb();
-        token = getToken(user.email);
-    });
+        insertTestUser(user.email, user.password)
+        initializeTestDb()
+        token = getToken(user.email)
+    })
     it("should sign up", async () => {
         const newUser = {email: "foo@test.com", password: "password123"}
 
