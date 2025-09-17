@@ -16,7 +16,7 @@ export default function Search() {
   const location = useLocation();
 
   const ResultsTable = () => {
-    if (!results || results.length === 0) return <div>No results</div>;
+    if (!results || results.length === 0) return <div className="no-results">Ei hakutuloksia</div>;
     // for multi search results are separated in 3 tables
     if (searchType === 'multi') {
       const persons = results.filter(item => item.media_type === 'person');
@@ -245,14 +245,20 @@ export default function Search() {
   return (
     <div id="search-container">
       <h3>Hakutulokset</h3>
-      <select value={searchType} onChange={e => { setSearchType(e.target.value); setPage(1); }}>
-        <option value="multi">Multi</option>
-        <option value="movie">Elokuvat</option>
-        <option value="person">Henkilöt</option>
-        <option value="tv">TV ohjelmat</option>
-      </select>
-      <input value={query} onChange={e => setQuery(e.target.value)} />
-      <button onClick={() => { setPage(1); search(); }} type="button">Hae</button>
+      <div className="search-form">
+        <select value={searchType} onChange={e => { setSearchType(e.target.value); setPage(1); }}>
+          <option value="multi">Multi</option>
+          <option value="movie">Elokuvat</option>
+          <option value="person">Henkilöt</option>
+          <option value="tv">TV ohjelmat</option>
+        </select>
+        <input 
+          value={query} 
+          onChange={e => setQuery(e.target.value)} 
+          placeholder="Syötä hakusana..."
+        />
+        <button onClick={() => { setPage(1); search(); }} type="button">Hae</button>
+      </div>
       <ReactPaginate
         breakLabel="..."
         nextLabel=">"
