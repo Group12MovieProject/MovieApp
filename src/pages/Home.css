@@ -26,10 +26,17 @@
   display: flex;
   flex-wrap: nowrap;
   gap: 1em;
-  overflow: hidden;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
   padding: 0.5em 0;
   width: 100%;
   position: relative;
+}
+
+.home-movie-list::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 
 .home-movie-item {
