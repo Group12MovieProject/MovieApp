@@ -1,0 +1,10 @@
+/* App layout to ensure footer stays at bottom */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#elements {
+  flex: 1;
+}
