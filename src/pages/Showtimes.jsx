@@ -67,7 +67,7 @@ function Showtimes() {
   }, [selectedAreaId, parseXML])
 
   return (
-    <div>
+    <div id="showtimes-container">
 
       <select value={selectedAreaId} onChange={handleAreaChange}>
         {areas.map(area => (
