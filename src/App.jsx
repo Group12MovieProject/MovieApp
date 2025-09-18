@@ -11,7 +11,8 @@ import Login from './pages/Login'
 import Search from './pages/SearchPage'
 import Showtimes from './pages/Showtimes'
 import NotFound from './pages/NotFound'
-
+import Register from './pages/Register'
+import axios from 'axios'
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
         <Route path="/showtimes" exact element={<Showtimes />} />
         <Route path="/searchpage" exact element={<Search />} />
         <Route path="/login" exact element={<Login />} />
+        <Route path="/register" exact element={<Register />} />
         <Route path="/*" exact element={<NotFound />} />
       </Routes>
     </div>
