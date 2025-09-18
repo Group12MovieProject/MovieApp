@@ -47,7 +47,7 @@ export default function NavBar() {
               value={navQuery}
               onChange={e => setNavQuery(e.target.value)}
             />
-            <button type="submit">Hae</button>
+            <span className="search-icon">🔍</span>
           </form>
           <Link className="custom-navbar-login" to="/login" onClick={()=>setMenuOpen(false)}>Kirjaudu</Link>
         </div>
