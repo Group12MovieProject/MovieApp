@@ -20,7 +20,7 @@ export default function Login() {
   const login = async (e) => {
     e.preventDefault()
     try {
-      await signIn()
+      await signIn(user.email, user.password)
       navigate("/")
     } catch (error) {
       const message = error.response && error.response.data ? error.response.data.error : error

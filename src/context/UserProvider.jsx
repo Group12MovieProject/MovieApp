@@ -14,17 +14,16 @@ export default function UserProvider({children}) {
     const headers = { headers: { 'Content-Type': 'application/json' } }
     try {
       await axios.post(base_url + '/user/signup', json, headers)
-      // Rekisteröitymisen jälkeen kirjaudu sisään automaattisesti
-      const tempUser = { email, password }
-      setUser(tempUser)
-      return await signIn()
+      return await signIn(email, password)
     } catch (error) {
       throw error
     }
   }
 
-  const signIn = async () => {
-    const json = JSON.stringify({ user: user })  // Kääri user objektiin
+  const signIn = async (email, password) => {
+    const userEmail = email || user.email
+    const userPassword = password || user.password
+    const json = JSON.stringify({ user: { email: userEmail, password: userPassword } })
     const headers = {headers: {'Content-Type':'application/json'}}
     try {
       const response = await axios.post(base_url + '/user/signin',json,headers)

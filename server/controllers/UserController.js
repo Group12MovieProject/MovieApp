@@ -35,23 +35,19 @@ const signUp = async (req, res, next) => {
 const signIn = async (req, res, next) => {
     try {
         const { user } = req.body
-        console.log('Login attempt:', user.email) // Debug
 
         if (!user || !user.email || !user.password) {
             return next(new ApiError('Email and password are required', 400))
         }
 
         const result = await selectUserByEmail(user.email)
-        console.log('User found in DB:', result.rows.length > 0) // Debug
 
         if (!result.rows || result.rows.length === 0) {
             return next(new ApiError('User not found', 404))
         }
 
         const dbUser = result.rows[0]
-        console.log('DB password hash:', dbUser.password) // Debug
         const isMatch = await compare(user.password, dbUser.password)
-        console.log('Password match:', isMatch) // Debug
 
         if (!isMatch) {
             return next(new ApiError('Invalid password', 401))
