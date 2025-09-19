@@ -13,11 +13,12 @@ import Showtimes from './pages/Showtimes'
 import NotFound from './pages/NotFound'
 import Register from './pages/Register'
 import axios from 'axios'
+import UserProvider from './context/UserProvider';
 
 function App() {
 
   return (
-    <>
+    <UserProvider>
     <NavBar />
     <Header /> 
     <div id="elements">
@@ -34,7 +35,7 @@ function App() {
       </Routes>
     </div>
     <Footer />
-    </>
+    </UserProvider>
   )
 }
 

@@ -1,15 +1,33 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useUser } from '../hooks/useUser'
+import { useNavigate } from 'react-router-dom'
+import './Login.css'
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { user, setUser, signIn } = useUser()
+  const navigate = useNavigate()
+  
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Kirjautuminen:", { email, password });
-    alert(`Kirjautuminen: ${email}`);
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log("Kirjautuminen:", { email, password });
+  //   alert(`Kirjautuminen: ${email}`);
+  // };
+
+  const login = async (e) => {
+    e.preventDefault()
+    try {
+      await signIn()
+      navigate("/")
+    } catch (error) {
+      const message = error.response && error.response.data ? error.response.data.error : error
+      alert(message)
+    } 
+  }
+
 
   return (
     <div style={{ maxWidth: "400px", margin: "2em auto" }}>
