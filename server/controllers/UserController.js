@@ -1,15 +1,15 @@
-import {insertUser, selectUserByEmail} from '../models/User.js'
-import {ApiError} from '../helper/ApiError.js'
-import {hash, compare} from 'bcrypt'
+import { insertUser, selectUserByEmail } from '../models/User.js'
+import { ApiError } from '../helper/ApiError.js'
+import { hash, compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
-const {sign} = jwt
+const { sign } = jwt
 
 const signUp = async (req, res, next) => {
     try {
-        const {user} = req.body
-        
-        if(!user || !user.email || !user.password) {
+        const { user } = req.body
+
+        if (!user || !user.email || !user.password) {
             return next(new ApiError('Email and password are required', 400))
         }
 
@@ -33,10 +33,8 @@ const signUp = async (req, res, next) => {
 }
 
 const signIn = async (req, res, next) => {
-
-    const json = JSON.stringify(user)
     try {
-        const {user} = req.body
+        const { user } = req.body
 
         if (!user || !user.email || !user.password) {
             return next(new ApiError('Email and password are required', 400))
@@ -52,25 +50,27 @@ const signIn = async (req, res, next) => {
         const isMatch = await compare(user.password, dbUser.password)
 
         if (!isMatch) {
-
             return next(new ApiError('Invalid password', 401))
         }
 
-        const access_token = sign({user: dbUser.email}, process.env.JWT_SECRET,{expiresIn: '1m'})
+        const access_token = sign(
+            { email: dbUser.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '1m' }
+        )
 
         return res
-        .header('Access-Control-Expose-Headers','Authorization')
-        .header('Authorization','Bearer ' + access_token)
-        .status(200)
-        .json({
-            id_account: dbUser.id_account,
-            email: dbUser.email,
-            access_token
-        })
-
+            .header('Access-Control-Expose-Headers', 'Authorization')
+            .header('Authorization', 'Bearer ' + access_token)
+            .status(200)
+            .json({
+                id_account: dbUser.id_account,
+                email: dbUser.email,
+                access_token
+            })
     } catch (error) {
         return next(new ApiError('Internal server error while signing in', 500))
     }
 }
 
-export {signUp, signIn}
+export { signUp, signIn }

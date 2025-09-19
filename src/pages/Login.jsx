@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useUser } from '../hooks/useUser'
 import { useNavigate } from 'react-router-dom'
-import './Login.css'
+//import './Login.css'
 
 export default function Login() {
   const { user, setUser, signIn } = useUser()
@@ -32,13 +32,13 @@ export default function Login() {
   return (
     <div style={{ maxWidth: "400px", margin: "2em auto" }}>
        <h2>Kirjaudu</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={login}>
         <div style={{ marginBottom: "1em" }}>
           <label>Sähköposti:</label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={ user.email }
+            onChange={e => setUser({...user,email: e.target.value})}
             required
             style={{ width: "100%", padding: "0.5em" }}
           />
@@ -47,8 +47,8 @@ export default function Login() {
           <label>Salasana:</label>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={user.password}
+            onChange={e => setUser({...user,password: e.target.value})}
             required
             style={{ width: "100%", padding: "0.5em" }}
           />

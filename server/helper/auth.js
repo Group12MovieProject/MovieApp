@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-const {verify} = jwt
+const {verify,sign} = jwt
 
 const auth = (req,res,next) => {
     const access_token = req.headers['authorization']

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react';
-import { UserContext } from './UserContext.js';
+import { UserContext } from './UserContext.jsx';
 import axios from 'axios'
 
 const base_url = import.meta.env.VITE_API_URL
@@ -13,7 +13,7 @@ export default function UserProvider({children}) {
     const json = JSON.stringify(user)
     const headers = {headers: {'Content-Type':'application/json'}}
     try {
-      const response = await axios.post(base_url + '/signin',json,headers)
+      const response = await axios.post(base_url + '/signIn',json,headers)
       const token = readAuthorizationHeader(response)
       const user = {email: response.data.email,access_token: token}
       setUser(user)

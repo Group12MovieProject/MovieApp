@@ -6,6 +6,6 @@ const {sign} = jwt
 const router = Router()
 
 router.post('/signup', signUp)
-router.post('/signin', signIn)
+router.post('/signIn', signIn)
 
 export default router
