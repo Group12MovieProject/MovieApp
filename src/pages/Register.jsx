@@ -1,14 +1,24 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useUser } from '../hooks/useUser'
+import { useNavigate } from 'react-router-dom'
 
 export default function Register() {
+  const { signUp } = useUser()
+  const navigate = useNavigate()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Rekisteröinti:", { email, password });
-    alert(`Rekisteröinti: ${email}`);
+    try {
+      await signUp(email, password)
+      alert("Rekisteröinti onnistui! Sinut kirjattiin sisään automaattisesti.")
+      navigate("/")
+    } catch (error) {
+      const message = error.response && error.response.data ? error.response.data.error : error
+      alert(`Rekisteröinti epäonnistui: ${message}`)
+    }
   };
 
   return (

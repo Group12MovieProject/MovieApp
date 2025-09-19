@@ -9,11 +9,25 @@ export default function UserProvider({children}) {
   const userFromSessionStorage = sessionStorage.getItem('user')
   const [user, setUser] = useState(userFromSessionStorage ? JSON.parse(userFromSessionStorage): {email: '',password: ''})
 
+  const signUp = async (email, password) => {
+    const json = JSON.stringify({ user: { email, password } })
+    const headers = { headers: { 'Content-Type': 'application/json' } }
+    try {
+      await axios.post(base_url + '/user/signup', json, headers)
+      // Rekisteröitymisen jälkeen kirjaudu sisään automaattisesti
+      const tempUser = { email, password }
+      setUser(tempUser)
+      return await signIn()
+    } catch (error) {
+      throw error
+    }
+  }
+
   const signIn = async () => {
-    const json = JSON.stringify(user)
+    const json = JSON.stringify({ user: user })  // Kääri user objektiin
     const headers = {headers: {'Content-Type':'application/json'}}
     try {
-      const response = await axios.post(base_url + '/signIn',json,headers)
+      const response = await axios.post(base_url + '/user/signin',json,headers)
       const token = readAuthorizationHeader(response)
       const user = {email: response.data.email,access_token: token}
       setUser(user)
@@ -39,7 +53,7 @@ export default function UserProvider({children}) {
   }
 
   return (
-    <UserContext.Provider value={{user, setUser,signIn,updateToken}}>
+    <UserContext.Provider value={{user, setUser, signUp, signIn, updateToken}}>
       { children }
     </UserContext.Provider>
   )
