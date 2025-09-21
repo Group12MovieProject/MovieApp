@@ -1,4 +1,4 @@
-import { insertUser, selectUserByEmail } from '../models/User.js'
+import { insertUser, selectUserByEmail, deleteUserByEmail } from '../models/User.js'
 import { ApiError } from '../helper/ApiError.js'
 import { hash, compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -73,4 +73,20 @@ const signIn = async (req, res, next) => {
     }
 }
 
-export { signUp, signIn }
+
+const deleteMe = async (req, res, next) => {
+    try {
+        const email = req.user.email 
+        const result = await deleteUserByEmail(email)
+
+        if (result.rowCount === 0) {
+            return next(new ApiError('User not found', 404))
+        }
+
+        return res.status(200).json({ message: 'Account deleted successfully' })
+    } catch (error) {
+        return next(new ApiError('Internal server error while deleting user', 500))
+    }
+}
+
+export { signUp, signIn, deleteMe }
