@@ -106,7 +106,7 @@ const deleteMe = async (req, res, next) => {
     }
 }
 
-const autoLogin = async (req, res, next) => {
+const autologin = async (req, res, next) => {
     try {
         const refresh_token = req.cookies['refreshToken']
         
@@ -146,4 +146,4 @@ const logout = async (req, res, next) => {
     }
 }
 
-export { signUp, signIn, deleteMe, autoLogin, logout }
+export { signUp, signIn, deleteMe, autologin, logout }
