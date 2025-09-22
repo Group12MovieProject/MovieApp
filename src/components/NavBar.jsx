@@ -1,19 +1,23 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import {useUser} from '../hooks/useUser'
 import './NavBar.css'
 
 export default function NavBar() {
-  const [navQuery, setNavQuery] = useState('');
-  const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
+  const [navQuery, setNavQuery] = useState('')
+  const [menuOpen, setMenuOpen] = useState(false)
+  const navigate = useNavigate()
+  const {user} = useUser()
+
+  const isLoggedIn = user && user.access_token
 
   const handleSearchSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (navQuery.trim()) {
-      navigate(`/searchpage?query=${encodeURIComponent(navQuery)}`);
-      setNavQuery('');
+      navigate(`/searchpage?query=${encodeURIComponent(navQuery)}`)
+      setNavQuery('')
     }
-  };
+  }
 
   return (
     <nav className="custom-navbar">
@@ -49,9 +53,17 @@ export default function NavBar() {
             />
             <span className="search-icon">🔍</span>
           </form>
-          <Link className="custom-navbar-login" to="/login" onClick={()=>setMenuOpen(false)}>Kirjaudu</Link>
+          {isLoggedIn ? (
+            <Link className="custom-navbar-profile" to="/profilepage" onClick={()=>setMenuOpen(false)}>
+              Profiili
+            </Link>
+          ) : (
+            <Link className="custom-navbar-login" to="/login" onClick={()=>setMenuOpen(false)}>
+              Kirjaudu
+            </Link>
+          )}
         </div>
       </div>
     </nav>
-  );
+  )
 }

@@ -49,6 +49,20 @@ export default function UserProvider({ children }) {
     }
   }
 
+  const logout = async () => {
+    try {
+      await axios.post(base_url + '/user/logout')
+    } catch (error) {
+      console.warn('Server logout failed:', error)
+    }
+    clearUserData()
+  }
+
+  const clearUserData = () => {
+    setUser({ email: '', password: '' })
+    sessionStorage.removeItem('user')
+  }
+
   const saveUser = (response) => {
     const token = readAuthorizationHeader(response)
     const user = { email: response.data.email, access_token: token }
@@ -71,7 +85,7 @@ export default function UserProvider({ children }) {
   }
 
   return (
-    <UserContext.Provider value={{ user, setUser, signUp, signIn, updateToken, autoLogin }}>
+    <UserContext.Provider value={{ user, setUser, signUp, signIn, updateToken, autoLogin, logout, clearUserData }}>
       {children}
     </UserContext.Provider>
   )
