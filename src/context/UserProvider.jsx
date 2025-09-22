@@ -58,6 +58,52 @@ export default function UserProvider({ children }) {
     clearUserData()
   }
 
+
+  const deleteMe = async () => {
+    try {
+      if (!user.access_token) {
+        throw new Error('Not authenticated')
+      }
+
+      const headers = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.access_token}`
+        }
+      }
+
+      await axios.delete(base_url + '/user/delete', headers)
+
+      clearUserData()
+      return true
+    } catch (error) {
+      console.error('Account deletion failed:', error)
+      throw error
+    }
+  }
+
+const verifyPassword = async (password) => {
+  try {
+    if (!user.access_token) {
+      throw new Error('Not authenticated')
+    }
+
+    const headers = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${user.access_token}`
+      }
+    }
+
+    const json = JSON.stringify({ password })
+    await axios.post(base_url + '/user/verify-password', json, headers)
+    
+    return true
+  } catch (error) {
+    throw error
+  }
+}
+
   const clearUserData = () => {
     setUser({ email: '', password: '' })
     sessionStorage.removeItem('user')
@@ -85,7 +131,7 @@ export default function UserProvider({ children }) {
   }
 
   return (
-    <UserContext.Provider value={{ user, setUser, signUp, signIn, updateToken, autoLogin, logout, clearUserData }}>
+    <UserContext.Provider value={{ user, setUser, signUp, signIn, updateToken, autoLogin, logout, clearUserData, deleteMe, verifyPassword }}>
       {children}
     </UserContext.Provider>
   )

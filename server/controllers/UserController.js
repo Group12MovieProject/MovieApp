@@ -106,6 +106,37 @@ const deleteMe = async (req, res, next) => {
     }
 }
 
+const verifyPassword = async (req, res, next) => {
+    try {
+        const { password } = req.body
+        const email = req.user.email
+
+        if (!password) {
+            return next(new ApiError('Password is required', 400))
+        }
+
+        const result = await selectUserByEmail(email)
+        
+        if (!result.rows || result.rows.length === 0) {
+            return next(new ApiError('User not found', 404))
+        }
+
+        const dbUser = result.rows[0]
+        const isMatch = await compare(password, dbUser.password)
+
+        if (!isMatch) {
+            return next(new ApiError('Invalid password', 401))
+        }
+
+        return res.status(200).json({ 
+            message: 'Password verified successfully',
+            verified: true 
+        })
+    } catch (error) {
+        return next(new ApiError('Internal server error while verifying password', 500))
+    }
+}
+
 const autoLogin = async (req, res, next) => {
     try {
         const refresh_token = req.cookies['refreshToken']
@@ -116,7 +147,6 @@ const autoLogin = async (req, res, next) => {
 
         const decodedUser = verify(refresh_token, process.env.JWT_SECRET)
         
-        // Generate new access token
         const access_token = sign(
             { email: decodedUser.email },
             process.env.JWT_SECRET,
@@ -146,4 +176,4 @@ const logout = async (req, res, next) => {
     }
 }
 
-export { signUp, signIn, deleteMe, autoLogin, logout }
+export { signUp, signIn, deleteMe, autoLogin, logout, verifyPassword }
