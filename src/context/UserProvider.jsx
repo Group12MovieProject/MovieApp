@@ -26,6 +26,7 @@ export default function UserProvider({children}) {
     const json = JSON.stringify({ user: { email: userEmail, password: userPassword } })
     const headers = {headers: {'Content-Type':'application/json'}}
     try {
+      axios.defaults.withCredentials = true
       const response = await axios.post(base_url + '/user/signin',json,headers)
       const token = readAuthorizationHeader(response)
       const user = {email: response.data.email,access_token: token}

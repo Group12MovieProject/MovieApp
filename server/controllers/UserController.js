@@ -3,7 +3,7 @@ import { ApiError } from '../helper/ApiError.js'
 import { hash, compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
-const { sign } = jwt
+const { sign, verify } = jwt
 
 const signUp = async (req, res, next) => {
     try {
@@ -56,8 +56,24 @@ const signIn = async (req, res, next) => {
         const access_token = sign(
             { email: dbUser.email },
             process.env.JWT_SECRET,
-            { expiresIn: '1m' }
+            { expiresIn: '15m' }
         )
+
+                const refresh_token = sign(
+            { email: dbUser.email }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '7d' }
+        )
+
+        // Set refresh token as httpOnly cookie
+        res.cookie('refreshToken', refresh_token, {
+            // httpOnly: false,
+            // path:"/",
+            // domain: "localhost",
+            // secure: false,
+            // sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        })
 
         return res
             .header('Access-Control-Expose-Headers', 'Authorization')
@@ -73,15 +89,16 @@ const signIn = async (req, res, next) => {
     }
 }
 
-
 const deleteMe = async (req, res, next) => {
     try {
-        const email = req.user.email 
+        const email = req.user.email
         const result = await deleteUserByEmail(email)
 
         if (result.rowCount === 0) {
             return next(new ApiError('User not found', 404))
         }
+
+        res.clearCookie('refreshToken')
 
         return res.status(200).json({ message: 'Account deleted successfully' })
     } catch (error) {
@@ -89,4 +106,44 @@ const deleteMe = async (req, res, next) => {
     }
 }
 
-export { signUp, signIn, deleteMe }
+const autoLogin = async (req, res, next) => {
+    try {
+        const refresh_token = req.cookies['refreshToken']
+        
+        if (!refresh_token) {
+            return res.status(401).json({ error: 'No refresh token provided' })
+        }
+
+        const decodedUser = verify(refresh_token, process.env.JWT_SECRET)
+        
+        // Generate new access token
+        const access_token = sign(
+            { email: decodedUser.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '15m' }
+        )
+
+        return res
+            .header('Access-Control-Expose-Headers', 'Authorization')
+            .header('Authorization', 'Bearer ' + access_token)
+            .status(200)
+            .json({ 
+                message: 'Valid refresh token',
+                access_token,
+                email: decodedUser.email
+            })
+    } catch (error) {
+        return res.status(401).json({ error: 'Invalid refresh token' })
+    }
+}
+
+const logout = async (req, res, next) => {
+    try {
+        res.clearCookie('refreshToken')
+        return res.status(200).json({ message: 'Logged out successfully' })
+    } catch (error) {
+        return next(new ApiError('Internal server error while logging out', 500))
+    }
+}
+
+export { signUp, signIn, deleteMe, autoLogin, logout }
