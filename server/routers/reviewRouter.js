@@ -5,8 +5,8 @@ import { auth } from '../helper/auth.js'
 const router = Router()
 
 
-router.post('/addreview', auth, addReview)
-router.delete('/deletereview', auth, deleteReview)
-router.get('/showallreviews', showAllReviews)
+router.post('/add', auth, addReview)
+router.delete('/delete', auth, deleteReview)
+router.get('/', showAllReviews)
 
 export default router
