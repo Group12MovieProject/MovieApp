@@ -4,6 +4,16 @@ create table account (
     password varchar(255) not null
 )
 
+create table reviews (
+    id_review serial primary key,
+    id_account INTEGER NOT NULL,
+    stars INTEGER CHECK (stars BETWEEN 1 AND 5),
+    review_text TEXT,
+    tmdb_id INT,
+    review_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_account) REFERENCES account(id_account) ON DELETE CASCADE
+)
+
 -- Uudet testikäyttäjät bcrypt hashatuilla salasanoilla:
 -- test@test.com / test123
 INSERT INTO account (email, password) VALUES 
