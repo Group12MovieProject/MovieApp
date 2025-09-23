@@ -5,30 +5,18 @@ import { useNavigate } from 'react-router-dom'
 //import './Login.css'
 
 export default function Login() {
-  const { user, setUser, signIn, autoLogin } = useUser()
-  const [autoLogging, setAutoLogging] = useState(true)
+  const { user, setUser, signIn, isInitialized } = useUser()
   const navigate = useNavigate()
 
-    useEffect(() => {
-    (async() => {
-      try {
-        await autoLogin()
-        navigate("/")
-      } catch {
-        // If there is any error change to login screen.
-        setAutoLogging(false)
-      }
-    })()
-  }, [])
+  useEffect(() => {
+    if (isInitialized && user.access_token) {
+      navigate("/")
+    }
+  }, [isInitialized, user.access_token, navigate])
 
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("Kirjautuminen:", { email, password });
-  //   alert(`Kirjautuminen: ${email}`);
-  // };
+  if (!isInitialized) {
+    return <div>Tarkistetaan kirjautumistilaa...</div>
+  }
 
   const login = async (e) => {
     e.preventDefault()
@@ -43,12 +31,9 @@ export default function Login() {
 
 
   return (
-    autoLogging ? (
-      <p>Logging in ...</p>
-    ) : (
-      <div style={{ maxWidth: "400px", margin: "2em auto" }}>
-        <h2>Kirjaudu</h2>
-        <form onSubmit={login}>
+    <div style={{ maxWidth: "400px", margin: "2em auto" }}>
+      <h2>Kirjaudu</h2>
+      <form onSubmit={login}>
           <div style={{ marginBottom: "1em" }}>
             <label>Sähköposti:</label>
             <input
@@ -77,6 +62,5 @@ export default function Login() {
           Ei vielä tiliä? <Link to="/register">Rekisteröidy tästä</Link>
         </p>
       </div>
-    )
   )
 }
