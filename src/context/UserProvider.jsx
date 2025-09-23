@@ -9,6 +9,7 @@ axios.defaults.withCredentials = true
 export default function UserProvider({ children }) {
   const userFromSessionStorage = sessionStorage.getItem('user')
   const [user, setUser] = useState(userFromSessionStorage ? JSON.parse(userFromSessionStorage) : { email: '', password: '' })
+  const [isInitialized, setIsInitialized] = useState(false)
 
   const signUp = async (email, password) => {
     const json = JSON.stringify({ user: { email, password } })
@@ -48,6 +49,22 @@ export default function UserProvider({ children }) {
       throw error
     }
   }
+// This runs autologin when opening website (needs some testing to see if it's working as it should)
+  useEffect(() => {
+    const attemptAutoLogin = async () => {
+      try {
+        if (!user.access_token) {
+          await autoLogin()
+        }
+      } catch (error) {
+        console.log('AutoLogin failed on startup - user needs to login manually')
+      } finally {
+        setIsInitialized(true)
+      }
+    }
+
+    attemptAutoLogin()
+  }, [])
 
   const logout = async () => {
     try {
@@ -131,7 +148,7 @@ const verifyPassword = async (password) => {
   }
 
   return (
-    <UserContext.Provider value={{ user, setUser, signUp, signIn, updateToken, autoLogin, logout, clearUserData, deleteMe, verifyPassword }}>
+    <UserContext.Provider value={{ user, setUser, signUp, signIn, updateToken, autoLogin, logout, clearUserData, deleteMe, verifyPassword, isInitialized }}>
       {children}
     </UserContext.Provider>
   )
