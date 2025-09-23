@@ -26,7 +26,6 @@ function App() {
     <div id="elements">
       <Routes>
         <Route path="/" exact element={<Home />} />
-        <Route path="/favorites" exact element={<Favorites />} />
         <Route path="/reviews" exact element={<Reviews />} />
         <Route path="/groups" exact element={<Groups />} />
         <Route path="/showtimes" exact element={<Showtimes />} />

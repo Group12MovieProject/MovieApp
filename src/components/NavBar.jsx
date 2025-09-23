@@ -37,7 +37,6 @@ export default function NavBar() {
         </div>
         <div className={`custom-navbar-links${menuOpen ? ' open' : ''}`}>
           <Link className="custom-navbar-link" to="/" onClick={()=>setMenuOpen(false)}>Koti</Link>
-          <Link className="custom-navbar-link" to="/favorites" onClick={()=>setMenuOpen(false)}>Suosikkilista</Link>
           <Link className="custom-navbar-link" to="/reviews" onClick={()=>setMenuOpen(false)}>Arvostelut</Link>
           <Link className="custom-navbar-link" to="/groups" onClick={()=>setMenuOpen(false)}>Ryhmät</Link>
           <Link className="custom-navbar-link" to="/showtimes" onClick={()=>setMenuOpen(false)}>Näytösajat</Link>
