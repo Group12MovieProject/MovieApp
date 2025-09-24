@@ -51,7 +51,7 @@ const insertTestUser = (email, password) => {
                 if(err) {
                     console.error('Error inserting test user', err)
                 } else {
-                    console.log('Test user inserted uccessfully')
+                    console.log('Test user inserted successfully')
                 }
             })
     })
@@ -61,4 +61,4 @@ const getToken = (email) => {
     return jwt.sign({ email }, process.env.JWT_SECRET)
 }
 
-export { initializeTestDb, insertTestUser, getToken }
+export { initializeTestDb, insertTestUser, getToken}

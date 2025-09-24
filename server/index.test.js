@@ -1,7 +1,5 @@
 import {expect} from "chai"
-import { initializeTestDb } from "./helper/test.js"
-import { insertTestUser } from "./helper/test.js"
-import { getToken } from "./helper/test.js"
+import { initializeTestDb, insertTestUser, getToken} from "./helper/test.js"
 
 
 import dotenv from "dotenv"
@@ -43,6 +41,55 @@ describe("Testing user managment", () => {
         expect(data.email).to.equal(user.email)
         token = data.access_token
     })
+    it('should post a review', async () => {
+        const newReview = {
+            id_account: 1,
+            tmdb_id: 550,
+            review_text: "Great movie!",
+            stars: 5
+        }
+        const response = await fetch('http://localhost:3001/review/add', {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(newReview)
+        })
+        const data = await response.json()
+        expect(response.status).to.equal(200)
+        expect(data[0]).to.include.all.keys(["id_review", "id_account", "tmdb_id", "review_text", "stars", "review_time"])
+        expect(data[0].review_text).to.equal(newReview.review_text)
+        expect(data[0].stars).to.equal(newReview.stars)
+        
+        // Tallennetaan review_id delete-testiä varten
+        global.reviewId = data[0].id_review
+    })
+    it ('should get all reviews', async () => {
+        const response = await fetch('http://localhost:3001/review/', {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const data = await response.json()
+        expect(response.status).to.equal(200)
+        expect(data[0]).to.include.all.keys(["id_review", "id_account", "tmdb_id", "review_text", "stars", "review_time", "email"])
+    })
+
+    it('should delete a review', async () => {
+        const response = await fetch(`http://localhost:3001/review/delete/${global.reviewId}`, {
+            method: "delete",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+        const data = await response.json()
+        expect(response.status).to.equal(200)
+        expect(data[0]).to.include.all.keys(["id_review", "id_account", "tmdb_id", "review_text", "stars", "review_time"])
+        expect(data[0].id_review).to.equal(global.reviewId)
+    })
+
     it('should delete a user account', async () => {
         const response = await fetch("http://localhost:3001/user/delete", {
             method: "delete",
@@ -54,8 +101,4 @@ describe("Testing user managment", () => {
         expect(response.status).to.equal(200)
         expect(data.message).to.equal("Account deleted successfully")
     })
-})
-
-describe("Testing review management", () => {
-
 })

@@ -8,7 +8,7 @@ const insertReview = async (id_account, tmdb_id, review_text, stars) => {
 }
 
 const deleteReview = async (id_review) => {
-    return await pool.query ('DELETE from reviews WHERE id = $1', [id_review])
+    return await pool.query ('DELETE FROM reviews WHERE id_review = $1 RETURNING *', [id_review])
 }
 
 const selectAllReviews = async () => {
