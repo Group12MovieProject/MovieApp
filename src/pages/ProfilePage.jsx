@@ -3,6 +3,7 @@ import { useUser } from '../hooks/useUser'
 import { useNavigate } from 'react-router-dom'
 import './ProfilePage.css'
 
+
 export default function Profile() {
     const { user, logout, deleteMe, verifyPassword } = useUser()
     const [deleteLoading, setDeleteLoading] = useState(false)
@@ -96,5 +97,6 @@ export default function Profile() {
                 </button>
             </div>
         </div>
+        
     )
 }

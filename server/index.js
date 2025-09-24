@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import userRouter from './routers/userRouter.js'
+import favoritesRouter from './routers/favoritesRouter.js'
 import cookieParser from 'cookie-parser'
 import { auth } from './helper/auth.js'
 import dotenv from 'dotenv'

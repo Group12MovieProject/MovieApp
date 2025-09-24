@@ -39,7 +39,7 @@ const getFavorite = async (req, res, next) => {
     }
 }
 
-const removeFavorite = async (req, res, next) => {
+const deleteFavorite = async (req, res, next) => {
     try {
         const id_account = req.user.id_account
         const { tmdb_id } = req.body
@@ -60,4 +60,4 @@ const removeFavorite = async (req, res, next) => {
     }
 }
 
-export { addFavorite, removeFavorite, getFavorite }
+export { addFavorite, deleteFavorite, getFavorite }

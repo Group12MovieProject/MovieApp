@@ -13,13 +13,14 @@ import NotFound from './pages/NotFound'
 import Register from './pages/Register'
 import ProfilePage from './pages/ProfilePage'
 import PrivateRoute from './components/PrivateRoute'
-import axios from 'axios'
-import UserProvider from './context/UserProvider';
+import UserProvider from './context/UserProvider'
+import FavoritesProvider from './context/favoritesProvider'
 
 function App() {
 
   return (
     <UserProvider>
+    <FavoritesProvider>
     <NavBar />
     <Header /> 
     <div id="elements">
@@ -38,6 +39,7 @@ function App() {
       </Routes>
     </div>
     <Footer />
+    </FavoritesProvider>
     </UserProvider>
   )
 }

@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import {addFavorite, removeFavorite, getFavorite } from '../controllers/FavoritesController.js'
+import {addFavorite, deleteFavorite, getFavorite } from '../controllers/FavoritesController.js'
 
 const router = Router()
 
 router.post('/add', addFavorite)
 router.get('/get', getFavorite)
-router.delete('/delete', removeFavorite)
+router.delete('/delete', deleteFavorite)
 
 export default router
