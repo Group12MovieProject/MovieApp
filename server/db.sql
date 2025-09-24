@@ -2,15 +2,15 @@ create table account (
     id_account serial primary key,
     email varchar(45) not null unique,
     password varchar(255) not null
-)
+);
 
 CREATE TABLE favorites (
     id_favorite SERIAL PRIMARY KEY,
     id_account INT REFERENCES account(id_account),
     movie_title VARCHAR(45),
-    tmdb_id INT
+    tmdb_id INT,
     UNIQUE(id_account, tmdb_id)
-)
+);
 
 -- Uudet testikäyttäjät bcrypt hashatuilla salasanoilla:
 -- test@test.com / test123

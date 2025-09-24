@@ -1,10 +1,13 @@
 import { Router } from 'express'
 import {addFavorite, deleteFavorite, getFavorite } from '../controllers/FavoritesController.js'
+import { auth } from '../helper/auth.js'
 
 const router = Router()
 
-router.post('/add', addFavorite)
-router.get('/get', getFavorite)
-router.delete('/delete', deleteFavorite)
+router.use(auth)
+
+router.post('/', addFavorite)
+router.get('/', getFavorite)
+router.delete('/', deleteFavorite)
 
 export default router

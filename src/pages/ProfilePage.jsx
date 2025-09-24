@@ -1,13 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useUser } from '../hooks/useUser'
 import { useNavigate } from 'react-router-dom'
+import { useFavorites } from '../hooks/useFavorites'
 import './ProfilePage.css'
 
 
 export default function Profile() {
     const { user, logout, deleteMe, verifyPassword } = useUser()
+    const { favorites, loading, fetchFavorites, deleteFavorite, addFavorite, error } = useFavorites()
     const [deleteLoading, setDeleteLoading] = useState(false)
+    const [newFavorite, setNewFavorite] = useState('')
+    const hasFetchedFavorites = useRef(false)
     const navigate = useNavigate()
+
+    useEffect(() => {
+        if (user?.access_token && !hasFetchedFavorites.current) {
+            fetchFavorites(user.access_token)
+            hasFetchedFavorites.current = true
+        }
+    }, [user?.access_token])
 
     const handleLogout = async () => {
         try {
@@ -57,6 +68,24 @@ export default function Profile() {
         }
     }
 
+    const handleAddFavorite = async () => {
+        if (!newFavorite.trim()) return
+        try {
+            await addFavorite({ title: newFavorite, id: Date.now() }, user.access_token)
+            setNewFavorite('')
+        } catch (err) {
+            console.error('Failed to add favorite:', err)
+        }
+    }
+
+    const handleRemoveFavorite = async (movieId) => {
+    try {
+        await deleteFavorite(movieId, user.access_token)
+    } catch (err) {
+        console.error('Failed to remove favorite:', err)
+    }
+}
+
     if (!user.access_token) {
         return (
             <div className="profile-container">
@@ -69,8 +98,6 @@ export default function Profile() {
         )
     }
 
-
-
     return (
         <div className="profile-container">
             <h1>Käyttäjäprofiili</h1>
@@ -78,6 +105,36 @@ export default function Profile() {
             <div className="profile-info">
                 <h2>Tiedot</h2>
                 <p><strong>Sähköposti:</strong> {user.email}</p>
+            </div>
+
+            <div className="profile-favorites">
+                <h2>Omat suosikit</h2>
+
+                {favorites.length === 0 ? (
+                    <p>Ei suosikkeja vielä</p>
+                ) : (
+                    <ul>
+                        {favorites.map((movie) => (
+                            <li key={movie.tmdb_id || movie.id}>
+                                {movie.movie_title || movie.title}
+                                <button onClick={() => handleRemoveFavorite(movie.tmdb_id || movie.id)}>
+                                    Poista
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+
+                <div className="add-favorite">
+                    <input
+                        type="text"
+                        value={newFavorite}
+                        onChange={(e) => setNewFavorite(e.target.value)}
+                        placeholder="Lisää elokuva suosikkeihin..."
+                    />
+
+                    <button onClick={handleAddFavorite}>Lisää</button>
+                </div>
             </div>
 
             <div className="profile-actions">
@@ -97,6 +154,6 @@ export default function Profile() {
                 </button>
             </div>
         </div>
-        
+
     )
 }

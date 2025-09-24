@@ -1,18 +1,23 @@
 import { useState } from 'react'
 import { FavoritesContext } from './FavoritesContext.jsx'
 
+const base_url = import.meta.env.VITE_API_URL
+
 export default function FavoritesProvider({ children }) {
     const [favorites, setFavorites] = useState([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
 
-    const fetchFavorites = async () => {
+    const fetchFavorites = async (token) => {
+        if (!token) {
+            setError('No authentication token')
+            return
+        }
         setLoading(true)
         setError(null)
 
         try {
-            const token = localStorage.getItem('access_token')
-            const response = await fetch('/api/favorites', {
+            const response = await fetch(base_url + '/favorites', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -22,7 +27,7 @@ export default function FavoritesProvider({ children }) {
             })
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+                throw new Error('Request failed')
             }
 
             const data = await response.json()
@@ -37,10 +42,15 @@ export default function FavoritesProvider({ children }) {
         }
     }
 
-    const addFavorite = async (movie) => {
+    const addFavorite = async (movie, token) => {
+
+        if (!token) {
+            setError('No authentication token')
+            throw new Error('No authentication token')
+        }
+
         try {
-            const token = localStorage.getItem('access_token')
-            const response = await fetch('/api/favorites', {
+            const response = await fetch(base_url + '/favorites', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -54,11 +64,10 @@ export default function FavoritesProvider({ children }) {
             })
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+                throw new Error('Request failed')
             }
 
             const data = await response.json()
-
             setFavorites(prev => [...prev, data.favorite])
             return data.favorite
         } catch (error) {
@@ -67,10 +76,15 @@ export default function FavoritesProvider({ children }) {
         }
     }
 
-    const deleteFavorite = async (tmdb_id) => {
+    const deleteFavorite = async (tmdb_id, token) => {
+
+        if (!token) {
+            setError('No authentication token')
+            throw new Error('No authentication token')
+        }
+
         try {
-            const token = localStorage.getItem('access_token')
-            const response = await fetch('/api/favorites', {
+            const response = await fetch(base_url + '/favorites', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,7 +95,7 @@ export default function FavoritesProvider({ children }) {
             })
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+                throw new Error('Request failed')
             }
 
             setFavorites(prev => prev.filter(fav => fav.tmdb_id !== tmdb_id))
