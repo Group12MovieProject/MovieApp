@@ -1,4 +1,4 @@
-import { insertReview, deleteReview, selectAllReviews } from '../models/Review.js'
+import { insertReview, deleteReview, selectAllReviews, selectReviewById } from '../models/Review.js'
 import { ApiError } from '../helper/ApiError.js'
 
 const postReview = async (req, res, next) => {
@@ -8,8 +8,13 @@ const postReview = async (req, res, next) => {
         if (!id_account || !tmdb_id || !review_text || !stars) {
             return next(new ApiError('Missing required information', 400))  // tarkistetaan vielä käytännössä virheviestin oikeellisuus
         }
-        const result = await insertReview(id_account, tmdb_id, review_text, stars)
-        return res.status(200).json(result.rows)
+        
+        const insertResult = await insertReview(id_account, tmdb_id, review_text, stars)
+        const newReviewId = insertResult.rows[0].id_review
+        
+        const fullReview = await selectReviewById(newReviewId)
+        
+        return res.status(200).json(fullReview.rows)
     } catch (error) {
         return next(new ApiError('Internal server error while posting review', 500)) // tämäkin syytä testata
     }

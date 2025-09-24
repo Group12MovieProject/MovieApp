@@ -31,7 +31,11 @@ export default function UserProvider({ children }) {
       axios.defaults.withCredentials = true
       const response = await axios.post(base_url + '/user/signin', json, headers)
       const token = readAuthorizationHeader(response)
-      const user = { email: response.data.email, access_token: token }
+      const user = { 
+        email: response.data.email, 
+        id_account: response.data.id_account,
+        access_token: token 
+      }
       setUser(user)
       sessionStorage.setItem("user", JSON.stringify(user))
     } catch (error) {
