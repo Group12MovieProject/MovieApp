@@ -39,8 +39,9 @@ describe("Testing user managment", () => {
         })
         const data = await response.json()
         expect(response.status).to.equal(200)
-        expect(data).to.include.all.keys(["id_account","email", "token"])
+        expect(data).to.include.all.keys(["id_account","email", "access_token"])
         expect(data.email).to.equal(user.email)
+        token = data.access_token
     })
     it('should delete a user account', async () => {
         const response = await fetch("http://localhost:3001/user/delete", {
@@ -53,4 +54,8 @@ describe("Testing user managment", () => {
         expect(response.status).to.equal(200)
         expect(data.message).to.equal("Account deleted successfully")
     })
+})
+
+describe("Testing review management", () => {
+
 })
