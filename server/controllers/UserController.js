@@ -59,7 +59,7 @@ const signIn = async (req, res, next) => {
             { expiresIn: '15m' }
         )
 
-                const refresh_token = sign(
+        const refresh_token = sign(
             { email: dbUser.email }, 
             process.env.JWT_SECRET, 
             { expiresIn: '7d' }
