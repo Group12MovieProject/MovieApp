@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UserContext } from './UserContext.jsx';
 import axios from 'axios'
 
@@ -9,6 +9,7 @@ axios.defaults.withCredentials = true
 export default function UserProvider({ children }) {
   const userFromSessionStorage = sessionStorage.getItem('user')
   const [user, setUser] = useState(userFromSessionStorage ? JSON.parse(userFromSessionStorage) : { email: '', password: '' })
+  const [isInitialized, setIsInitialized] = useState(false)
 
   const signUp = async (email, password) => {
     const json = JSON.stringify({ user: { email, password } })
@@ -30,7 +31,11 @@ export default function UserProvider({ children }) {
       axios.defaults.withCredentials = true
       const response = await axios.post(base_url + '/user/signin', json, headers)
       const token = readAuthorizationHeader(response)
-      const user = { email: response.data.email, access_token: token }
+      const user = { 
+        email: response.data.email, 
+        id_account: response.data.id_account,
+        access_token: token 
+      }
       setUser(user)
       sessionStorage.setItem("user", JSON.stringify(user))
     } catch (error) {
@@ -43,11 +48,30 @@ export default function UserProvider({ children }) {
     try {
       axios.defaults.withCredentials = true
       const response = await axios.post(base_url + '/user/autologin')
-      saveUser(response)
+      const refreshedUser = saveUser(response)
+      return refreshedUser
     } catch (error) {
+      clearUserData()
       throw error
     }
   }
+// This runs autologin when opening website (needs some testing to see if it's working as it should)
+  useEffect(() => {
+    const attemptAutoLogin = async () => {
+      try {
+        if (!user.access_token) {
+          await autoLogin()
+        }
+      } catch (error) {
+        console.log('AutoLogin failed on startup - user needs to login manually')
+        clearUserData()
+      } finally {
+        setIsInitialized(true)
+      }
+    }
+
+    attemptAutoLogin()
+  }, [])
 
   const logout = async () => {
     try {
@@ -111,9 +135,14 @@ const verifyPassword = async (password) => {
 
   const saveUser = (response) => {
     const token = readAuthorizationHeader(response)
-    const user = { email: response.data.email, access_token: token }
-    setUser(user)
-    sessionStorage.setItem("user", JSON.stringify(user))
+    const userData = {
+      email: response.data.email,
+      id_account: response.data.id_account ?? user.id_account,
+      access_token: token
+    }
+    setUser(userData)
+    sessionStorage.setItem("user", JSON.stringify(userData))
+    return userData
   }
 
   const updateToken = (response) => {
@@ -131,7 +160,7 @@ const verifyPassword = async (password) => {
   }
 
   return (
-    <UserContext.Provider value={{ user, setUser, signUp, signIn, updateToken, autoLogin, logout, clearUserData, deleteMe, verifyPassword }}>
+    <UserContext.Provider value={{ user, setUser, signUp, signIn, updateToken, autoLogin, logout, clearUserData, deleteMe, verifyPassword, isInitialized }}>
       {children}
     </UserContext.Provider>
   )
