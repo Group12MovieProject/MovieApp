@@ -6,20 +6,19 @@ import { useNavigate } from 'react-router-dom'
 export default function Register() {
   const { signUp } = useUser()
   const navigate = useNavigate()
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await signUp(email, password)
-      alert("Rekisteröinti onnistui! Sinut kirjattiin sisään automaattisesti.")
       navigate("/")
     } catch (error) {
       const message = error.response && error.response.data ? error.response.data.error : error
       alert(`Rekisteröinti epäonnistui: ${message}`)
     }
-  };
+  }
 
   return (
     <div style={{ maxWidth: "400px", margin: "2em auto" }}>
@@ -53,5 +52,5 @@ export default function Register() {
         Onko sinulla jo tili? <Link to="/login">Kirjaudu tästä</Link>
       </p>
     </div>
-  );
+  )
 }

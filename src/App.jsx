@@ -12,6 +12,8 @@ import Search from './pages/SearchPage'
 import Showtimes from './pages/Showtimes'
 import NotFound from './pages/NotFound'
 import Register from './pages/Register'
+import ProfilePage from './pages/ProfilePage'
+import PrivateRoute from './components/PrivateRoute'
 import axios from 'axios'
 import UserProvider from './context/UserProvider';
 
@@ -32,6 +34,9 @@ function App() {
         <Route path="/login" exact element={<Login />} />
         <Route path="/register" exact element={<Register />} />
         <Route path="/*" exact element={<NotFound />} />
+        <Route element={<PrivateRoute />} >
+        <Route path="/profilepage" exact element={<ProfilePage />} />
+        </Route>
       </Routes>
     </div>
     <Footer />

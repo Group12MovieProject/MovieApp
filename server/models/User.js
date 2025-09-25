@@ -14,4 +14,11 @@ const selectUserByEmail = async (email) => {
     )
 }
 
-export {insertUser, selectUserByEmail}
+const deleteUserByEmail = async (email) => {
+    return await pool.query(
+        'DELETE FROM account WHERE email = $1',
+        [email]
+    )
+}
+
+export {insertUser, selectUserByEmail, deleteUserByEmail}

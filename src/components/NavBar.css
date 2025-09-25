@@ -120,6 +120,21 @@
   background-color: #1e7e34;
 }
 
+.custom-navbar-profile {
+  padding: 0.5em 1em;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  flex-shrink: 0;
+}
+
+.custom-navbar-profile:hover {
+  background-color: #0056b3;
+}
+
 /* Under 1200px - medium screens */
 @media (max-width: 1200px) {
   .custom-navbar-inner {
@@ -138,6 +153,11 @@
   }
   
   .custom-navbar-login {
+    font-size: 0.95em;
+    padding: 0.45em 0.8em;
+  }
+
+  .custom-navbar-profile {
     font-size: 0.95em;
     padding: 0.45em 0.8em;
   }
@@ -196,6 +216,12 @@
   }
   
   .custom-navbar-login {
+    padding: 0.4em 0.6em;
+    font-size: 0.9em;
+    flex-shrink: 0;
+  }
+
+  .custom-navbar-profile {
     padding: 0.4em 0.6em;
     font-size: 0.9em;
     flex-shrink: 0;
