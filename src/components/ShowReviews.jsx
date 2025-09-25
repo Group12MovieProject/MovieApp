@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import MovieDetailsModal from './MovieDetailsModal'
 
 const base_url = import.meta.env.VITE_API_URL
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY
@@ -9,6 +10,11 @@ const ShowReviews = ({ refreshTrigger = 0 }) => {
   const [error, setError] = useState(null)
   const [movieTitles, setMovieTitles] = useState({})
   const movieTitleCacheRef = useRef({})
+  const [selectedMovieId, setSelectedMovieId] = useState(null)
+  const [movieDetails, setMovieDetails] = useState(null)
+  const [detailsLoading, setDetailsLoading] = useState(false)
+  const [detailsError, setDetailsError] = useState(null)
+  const movieDetailsCacheRef = useRef({})
 
   const upsertMovieTitles = (entries) => {
     movieTitleCacheRef.current = { ...movieTitleCacheRef.current, ...entries }
@@ -93,6 +99,83 @@ const ShowReviews = ({ refreshTrigger = 0 }) => {
     }
   }, [refreshTrigger])
 
+  useEffect(() => {
+    if (!selectedMovieId) {
+      return
+    }
+
+    let isCancelled = false
+
+    const loadDetails = async () => {
+      if (movieDetailsCacheRef.current[selectedMovieId]) {
+        setMovieDetails(movieDetailsCacheRef.current[selectedMovieId])
+        setDetailsError(null)
+        setDetailsLoading(false)
+        return
+      }
+
+      setDetailsLoading(true)
+      setDetailsError(null)
+      setMovieDetails(null)
+
+      try {
+        const response = await fetch(`https://api.themoviedb.org/3/movie/${selectedMovieId}?language=fi-FI`, {
+          headers: {
+            'Authorization': `Bearer ${TMDB_API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (!response.ok) {
+          throw new Error('Elokuvan tietojen hakeminen epäonnistui')
+        }
+
+        const data = await response.json()
+
+        if (!isCancelled) {
+          movieDetailsCacheRef.current[selectedMovieId] = data
+          setMovieDetails(data)
+          setDetailsLoading(false)
+        }
+      } catch (err) {
+        if (!isCancelled) {
+          console.error('Virhe elokuvan tietojen haussa:', err)
+          setDetailsError(err.message || 'Elokuvan tietojen hakeminen epäonnistui')
+          setDetailsLoading(false)
+        }
+      }
+    }
+
+    loadDetails()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [selectedMovieId])
+
+  const openMovieDetails = (tmdbId) => {
+    if (!tmdbId) {
+      return
+    }
+
+    setSelectedMovieId(tmdbId)
+    setDetailsError(null)
+
+    if (movieDetailsCacheRef.current[tmdbId]) {
+      setMovieDetails(movieDetailsCacheRef.current[tmdbId])
+      setDetailsLoading(false)
+    } else {
+      setDetailsLoading(true)
+      setMovieDetails(null)
+    }
+  }
+
+  const closeMovieDetails = () => {
+    setSelectedMovieId(null)
+    setDetailsError(null)
+    setDetailsLoading(false)
+  }
+
   if (loading) {
     return <p>Ladataan arvosteluja...</p>
   }
@@ -102,39 +185,53 @@ const ShowReviews = ({ refreshTrigger = 0 }) => {
   }
 
   return (
-    <div className="reviews-table-container">
-      <table className="reviews-table">
-        <thead>
-          <tr>
-            <th>Elokuva</th>
-            <th>Arvostelu</th>
-            <th>Tähdet</th>
-            <th>Kirjoittaja</th>
-            <th>Päivämäärä</th>
-          </tr>
-        </thead>
-        <tbody>
-          {reviews.length === 0 ? (
-            <tr>
-              <td colSpan="5">Ei arvosteluja vielä</td>
-            </tr>
-          ) : (
-            reviews.map((review) => (
-              <tr key={review.id_review}>
-                <td>{movieTitles[review.tmdb_id] || 'Ladataan...'}</td>
-                <td>{review.review_text}</td>
-                <td>
+    <div className="reviews-card-container">
+      {reviews.length === 0 ? (
+        <div className="reviews-empty">Ei arvosteluja vielä</div>
+      ) : (
+        <div className="reviews-cards">
+          {reviews.map((review) => {
+            const title = movieTitles[review.tmdb_id] || 'Ladataan...'
+            const formattedDate = new Date(review.review_time).toLocaleDateString('fi-FI')
+
+            return (
+              <article className="review-card" key={review.id_review}>
+                <header className="review-card-header">
+                  <button
+                    type="button"
+                    className="movie-title-button"
+                    onClick={() => openMovieDetails(review.tmdb_id)}
+                  >
+                    {title}
+                  </button>
+                  <span className="review-card-date">{formattedDate}</span>
+                </header>
+
+                <div className="review-card-stars" aria-label={`Arvosana ${review.stars} / 5`}>
                   <span className="stars">
                     {'★'.repeat(review.stars)}{'☆'.repeat(5 - review.stars)}
                   </span>
-                </td>
-                <td>{review.email}</td>
-                <td>{new Date(review.review_time).toLocaleDateString('fi-FI')}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+                </div>
+
+                <p className="review-card-text">{review.review_text}</p>
+
+                <footer className="review-card-footer">
+                  <span className="review-card-author-label">Kirjoittaja</span>
+                  <span className="review-card-author">{review.email}</span>
+                </footer>
+              </article>
+            )
+          })}
+        </div>
+      )}
+
+      <MovieDetailsModal
+        isOpen={Boolean(selectedMovieId)}
+        movie={movieDetails}
+        loading={detailsLoading}
+        error={detailsError}
+        onClose={closeMovieDetails}
+      />
     </div>
   )
 }
