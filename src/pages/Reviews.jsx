@@ -19,6 +19,8 @@ export default function Reviews() {
   const [reviewText, setReviewText] = useState('')
   const [stars, setStars] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState(null)
+  const [submitSuccess, setSubmitSuccess] = useState(null)
 
   // hakee elokuvien nimet tmdb:stä
   const fetchMovieTitle = async (tmdbId) => {
@@ -99,6 +101,8 @@ export default function Reviews() {
     }
 
     setIsSubmitting(true)
+    setSubmitError(null)
+    setSubmitSuccess(null)
     
     const reviewData = {
       id_account: user.id_account,
@@ -131,16 +135,30 @@ export default function Reviews() {
         setSearchQuery('')
         setReviewText('')
         setStars(0)
-        
-        alert('Arvostelu lisätty onnistuneesti!')
+        setSubmitSuccess('Arvostelu lisätty onnistuneesti!')
+        return
       } else {
-        const errorData = await response.text()
-        console.error('Backend error:', response.status, errorData)
-        throw new Error(`Arvostelun lisääminen epäonnistui: ${response.status} - ${errorData}`)
+        let errorPayload = null
+        try {
+          errorPayload = await response.json()
+        } catch (parseError) {
+          const text = await response.text()
+          errorPayload = { error: { message: text } }
+        }
+
+        if (response.status === 409) {
+          setSubmitError('Olet jo arvostellut tämän elokuvan. Pystyt muokkaamaan arvosteluasi myöhemmin.')
+          return
+        }
+
+        const message = errorPayload?.error?.message || 'Arvostelun lisääminen epäonnistui.'
+        console.error('Backend error:', response.status, message)
+        setSubmitError(message)
+        return
       }
     } catch (error) {
       console.error('Virhe arvostelun lähetyksessä:', error)
-      alert('Arvostelun lisääminen epäonnistui')
+      setSubmitError('Arvostelun lisääminen epäonnistui. Yritä myöhemmin uudelleen.')
     } finally {
       setIsSubmitting(false)
     }
@@ -222,6 +240,13 @@ export default function Reviews() {
           {selectedMovie && (
             <div className="review-form">
               <h3>Arvostele: {selectedMovie.title}</h3>
+
+              {submitSuccess && (
+                <div className="form-message success-message">{submitSuccess}</div>
+              )}
+              {submitError && (
+                <div className="form-message error-message">{submitError}</div>
+              )}
               
               {/* Tähtien valinta */}
               <div className="star-rating">
@@ -273,6 +298,8 @@ export default function Reviews() {
                     setSearchQuery('')
                     setReviewText('')
                     setStars(0)
+                    setSubmitError(null)
+                    setSubmitSuccess(null)
                   }}
                 >
                   Peruuta

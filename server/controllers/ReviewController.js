@@ -1,4 +1,4 @@
-import { insertReview, deleteReview, selectAllReviews, selectReviewById } from '../models/Review.js'
+import { insertReview, deleteReview, selectAllReviews, selectReviewById, selectReviewByAccountAndMovie } from '../models/Review.js'
 import { ApiError } from '../helper/ApiError.js'
 
 const postReview = async (req, res, next) => {
@@ -9,6 +9,12 @@ const postReview = async (req, res, next) => {
             return next(new ApiError('Missing required information', 400))  // tarkistetaan vielä käytännössä virheviestin oikeellisuus
         }
         
+        const existingReview = await selectReviewByAccountAndMovie(id_account, tmdb_id)
+
+        if (existingReview.rowCount > 0) {
+            return next(new ApiError('Review already exists for this movie', 409))
+        }
+
         const insertResult = await insertReview(id_account, tmdb_id, review_text, stars)
         const newReviewId = insertResult.rows[0].id_review
         
@@ -16,6 +22,9 @@ const postReview = async (req, res, next) => {
         
         return res.status(200).json(fullReview.rows)
     } catch (error) {
+        if (error.code === '23505') {
+            return next(new ApiError('Review already exists for this movie', 409))
+        }
         return next(new ApiError('Internal server error while posting review', 500)) // tämäkin syytä testata
     }
 }

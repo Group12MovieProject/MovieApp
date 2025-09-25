@@ -23,4 +23,11 @@ const selectReviewById = async (id_review) => {
     )
 }
 
-export {insertReview, deleteReview, selectAllReviews, selectReviewById}
+const selectReviewByAccountAndMovie = async (id_account, tmdb_id) => {
+    return await pool.query(
+        'SELECT id_review FROM reviews WHERE id_account = $1 AND tmdb_id = $2',
+        [id_account, tmdb_id]
+    )
+}
+
+export {insertReview, deleteReview, selectAllReviews, selectReviewById, selectReviewByAccountAndMovie}

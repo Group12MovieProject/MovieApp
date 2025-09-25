@@ -64,6 +64,29 @@ describe("Testing user managment", () => {
         // Tallennetaan review_id delete-testiä varten
         global.reviewId = data[0].id_review
     })
+
+    it('should reject duplicate review for same movie', async () => {
+        const duplicateReview = {
+            id_account: 1,
+            tmdb_id: 550,
+            review_text: "Trying to review again",
+            stars: 4
+        }
+
+        const response = await fetch('http://localhost:3001/review/add', {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(duplicateReview)
+        })
+
+        const data = await response.json()
+        expect(response.status).to.equal(409)
+        expect(data.error).to.include.all.keys(["message", "status"])
+        expect(data.error.message).to.equal('Review already exists for this movie')
+    })
     it ('should get all reviews', async () => {
         const response = await fetch('http://localhost:3001/review/', {
             method: "get",
