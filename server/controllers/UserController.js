@@ -56,7 +56,7 @@ const signIn = async (req, res, next) => {
         const access_token = sign(
             { email: dbUser.email },
             process.env.JWT_SECRET,
-            { expiresIn: '1m' }
+            { expiresIn: '15m' }
         )
 
         const refresh_token = sign(
