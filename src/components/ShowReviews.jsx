@@ -1,30 +1,32 @@
 import React, { useEffect, useRef, useState } from 'react'
 import MovieDetailsModal from './MovieDetailsModal'
+import placeholderPoster from '../assets/placeholder.png'
 
 const base_url = import.meta.env.VITE_API_URL
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY
+const TMDB_POSTER_BASE_URL = 'https://image.tmdb.org/t/p/w185'
 
 const ShowReviews = ({ refreshTrigger = 0 }) => {
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [movieTitles, setMovieTitles] = useState({})
-  const movieTitleCacheRef = useRef({})
+  const [movieSummaries, setMovieSummaries] = useState({})
+  const movieSummaryCacheRef = useRef({})
   const [selectedMovieId, setSelectedMovieId] = useState(null)
   const [movieDetails, setMovieDetails] = useState(null)
   const [detailsLoading, setDetailsLoading] = useState(false)
   const [detailsError, setDetailsError] = useState(null)
   const movieDetailsCacheRef = useRef({})
 
-  const upsertMovieTitles = (entries) => {
-    movieTitleCacheRef.current = { ...movieTitleCacheRef.current, ...entries }
-    setMovieTitles(movieTitleCacheRef.current)
+  const upsertMovieSummaries = (entries) => {
+    movieSummaryCacheRef.current = { ...movieSummaryCacheRef.current, ...entries }
+    setMovieSummaries(movieSummaryCacheRef.current)
   }
 
   useEffect(() => {
     let isCancelled = false
 
-    const fetchMovieTitle = async (tmdbId) => {
+    const fetchMovieSummary = async (tmdbId) => {
       try {
         const response = await fetch(`https://api.themoviedb.org/3/movie/${tmdbId}?language=fi-FI`, {
           headers: {
@@ -34,14 +36,23 @@ const ShowReviews = ({ refreshTrigger = 0 }) => {
         })
 
         if (!response.ok) {
-          return 'Elokuva ei löytynyt'
+          return {
+            title: 'Elokuva ei löytynyt',
+            posterPath: null
+          }
         }
 
         const movieData = await response.json()
-        return movieData.title || 'Tuntematon elokuva'
+        return {
+          title: movieData.title || 'Tuntematon elokuva',
+          posterPath: movieData.poster_path || null
+        }
       } catch (error) {
         console.error('Virhe elokuvan tietojen haussa:', error)
-        return 'Virhe elokuvan haussa'
+        return {
+          title: 'Virhe elokuvan haussa',
+          posterPath: null
+        }
       }
     }
 
@@ -64,20 +75,20 @@ const ShowReviews = ({ refreshTrigger = 0 }) => {
         setReviews(data)
 
         const uniqueIds = [...new Set(data.map(review => review.tmdb_id).filter(Boolean))]
-        const missingIds = uniqueIds.filter(id => !movieTitleCacheRef.current[id])
+        const missingIds = uniqueIds.filter(id => !movieSummaryCacheRef.current[id])
 
         if (missingIds.length) {
-          const titleEntries = await Promise.all(missingIds.map(async (id) => [id, await fetchMovieTitle(id)]))
+          const summaryEntries = await Promise.all(missingIds.map(async (id) => [id, await fetchMovieSummary(id)]))
           if (!isCancelled) {
             const updates = {}
-            titleEntries.forEach(([id, title]) => {
-              if (title) {
-                updates[id] = title
+            summaryEntries.forEach(([id, summary]) => {
+              if (summary) {
+                updates[id] = summary
               }
             })
 
             if (Object.keys(updates).length) {
-              upsertMovieTitles(updates)
+              upsertMovieSummaries(updates)
             }
           }
         }
@@ -176,6 +187,13 @@ const ShowReviews = ({ refreshTrigger = 0 }) => {
     setDetailsLoading(false)
   }
 
+  const handleCardKeyDown = (event, tmdbId) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      openMovieDetails(tmdbId)
+    }
+  }
+
   if (loading) {
     return <p>Ladataan arvosteluja...</p>
   }
@@ -191,21 +209,34 @@ const ShowReviews = ({ refreshTrigger = 0 }) => {
       ) : (
         <div className="reviews-cards">
           {reviews.map((review) => {
-            const title = movieTitles[review.tmdb_id] || 'Ladataan...'
+            const summary = movieSummaries[review.tmdb_id]
+            const title = summary?.title || 'Ladataan...'
+            const posterPath = summary?.posterPath
+            const posterSrc = posterPath ? `${TMDB_POSTER_BASE_URL}${posterPath}` : placeholderPoster
             const formattedDate = new Date(review.review_time).toLocaleDateString('fi-FI')
 
             return (
-              <article className="review-card" key={review.id_review}>
-                <header className="review-card-header">
-                  <button
-                    type="button"
-                    className="movie-title-button"
-                    onClick={() => openMovieDetails(review.tmdb_id)}
-                  >
-                    {title}
-                  </button>
+              <article
+                className="review-card"
+                key={review.id_review}
+                role="button"
+                tabIndex={0}
+                onClick={() => openMovieDetails(review.tmdb_id)}
+                onKeyDown={(event) => handleCardKeyDown(event, review.tmdb_id)}
+                aria-label={`Näytä lisätiedot elokuvasta ${title}`}
+              >
+                <div className="review-card-poster">
+                  <img
+                    src={posterSrc}
+                    alt={`Juliste: ${title}`}
+                    loading="lazy"
+                  />
+                </div>
+
+                <div className="review-card-title">
+                  <p className="review-card-title-name">{title}</p>
                   <span className="review-card-date">{formattedDate}</span>
-                </header>
+                </div>
 
                 <div className="review-card-stars" aria-label={`Arvosana ${review.stars} / 5`}>
                   <span className="stars">
