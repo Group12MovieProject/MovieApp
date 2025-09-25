@@ -3,9 +3,10 @@ import { useUser } from '../hooks/useUser'
 import './Reviews.css'
 
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY
+const base_url = import.meta.env.VITE_API_URL
 
 export default function Reviews() {
-  const { user } = useUser()
+  const { user, autoLogin, logout } = useUser()
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -87,15 +88,17 @@ export default function Reviews() {
     setSelectedMovie(movie)
     setSearchQuery(movie.title)
     setShowDropdown(false)
+    setSubmitError(null)
+    setSubmitSuccess(null)
   }
 
-  const submitReview = async () => {
+  const submitReview = async ({ isRetry = false, currentUser = user } = {}) => {
     if (!selectedMovie || !stars || reviewText.length < 10) {
       alert('Täytä kaikki kentät oikein')
       return
     }
 
-    if (!user.id_account || !user.access_token) {
+    if (!currentUser?.id_account || !currentUser?.access_token) {
       alert('Kirjaudu uudelleen sisään')
       return
     }
@@ -105,26 +108,45 @@ export default function Reviews() {
     setSubmitSuccess(null)
     
     const reviewData = {
-      id_account: user.id_account,
+      id_account: currentUser.id_account,
       tmdb_id: selectedMovie.id,
       review_text: reviewText,
       stars: stars
     }
     
     console.log('Lähetetään arvostelu:', reviewData)
-    console.log('User token:', user.access_token ? 'Token löytyy' : 'Token puuttuu')
-    console.log('User object:', user)
+  console.log('User token:', currentUser.access_token ? 'Token löytyy' : 'Token puuttuu')
+  console.log('User object:', currentUser)
     
     try {
-      const response = await fetch('http://localhost:3001/review/add', {
+      const response = await fetch(base_url + '/review/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.access_token}`
+          'Authorization': `Bearer ${currentUser.access_token}`
         },
         body: JSON.stringify(reviewData)
       })
+      if (response.status === 401) {
+        if (isRetry) {
+          await logout()
+          setSubmitError('Istunto vanhentunut, kirjaudu sisään uudelleen')
+          return
+        }
 
+        console.log('Token vanhentunut, autologin yrittää uusia')
+        try {
+          const refreshedUser = await autoLogin()
+          if (!refreshedUser?.access_token) {
+            throw new Error('Token refresh failed')
+          }
+          return await submitReview({ isRetry: true, currentUser: refreshedUser })
+        } catch (error) {
+          await logout()
+          setSubmitError('Istunto vanhentunut, kirjaudu sisään uudelleen')
+          return
+        }
+      }
       if (response.ok) {
         const newReview = await response.json()
         setReviews(prevReviews => [newReview[0], ...prevReviews])
@@ -167,7 +189,7 @@ export default function Reviews() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch('http://localhost:3001/review/')
+        const response = await fetch(base_url + '/review/')
         if (!response.ok) {
           throw new Error('Arvostelujen hakeminen epäonnistui')
         }
@@ -277,7 +299,7 @@ export default function Reviews() {
                   rows={4}
                   className="review-textarea"
                 />
-                <small>{reviewText.length}/500 merkkiä</small>
+                <small>{reviewText.length}/500 merkkiä (vähintään 10 merkkiä)</small>
               </div>
 
               {/* Lähetä-nappi */}
@@ -286,7 +308,7 @@ export default function Reviews() {
                   type="button"
                   className="submit-btn"
                   disabled={!stars || reviewText.length < 10 || isSubmitting}
-                  onClick={submitReview}
+                  onClick={() => submitReview()}
                 >
                   {isSubmitting ? 'Lähetetään...' : 'Lähetä arvostelu'}
                 </button>

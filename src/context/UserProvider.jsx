@@ -48,8 +48,10 @@ export default function UserProvider({ children }) {
     try {
       axios.defaults.withCredentials = true
       const response = await axios.post(base_url + '/user/autologin')
-      saveUser(response)
+      const refreshedUser = saveUser(response)
+      return refreshedUser
     } catch (error) {
+      clearUserData()
       throw error
     }
   }
@@ -62,6 +64,7 @@ export default function UserProvider({ children }) {
         }
       } catch (error) {
         console.log('AutoLogin failed on startup - user needs to login manually')
+        clearUserData()
       } finally {
         setIsInitialized(true)
       }
@@ -132,9 +135,14 @@ const verifyPassword = async (password) => {
 
   const saveUser = (response) => {
     const token = readAuthorizationHeader(response)
-    const user = { email: response.data.email, access_token: token }
-    setUser(user)
-    sessionStorage.setItem("user", JSON.stringify(user))
+    const userData = {
+      email: response.data.email,
+      id_account: response.data.id_account ?? user.id_account,
+      access_token: token
+    }
+    setUser(userData)
+    sessionStorage.setItem("user", JSON.stringify(userData))
+    return userData
   }
 
   const updateToken = (response) => {
