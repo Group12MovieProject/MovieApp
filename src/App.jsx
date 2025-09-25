@@ -14,7 +14,7 @@ import Register from './pages/Register'
 import ProfilePage from './pages/ProfilePage'
 import PrivateRoute from './components/PrivateRoute'
 import UserProvider from './context/UserProvider'
-import FavoritesProvider from './context/favoritesProvider'
+import FavoritesProvider from './context/FavoritesProvider'
 
 function App() {
 
