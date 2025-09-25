@@ -1,9 +1,10 @@
 
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import placeholder from '../assets/placeholder.png';
 import { useLocation } from 'react-router-dom';
 import ReactPaginate from 'react-paginate'
 import './SearchPage.css'
+import MovieDetailsModal from '../components/MovieDetailsModal.jsx'
 
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY
 
@@ -14,6 +15,87 @@ export default function Search() {
   const [query, setQuery] = useState('')
   const [searchType, setSearchType] = useState('multi')
   const location = useLocation();
+  const [selectedMovieId, setSelectedMovieId] = useState(null)
+  const [movieDetails, setMovieDetails] = useState(null)
+  const [detailsLoading, setDetailsLoading] = useState(false)
+  const [detailsError, setDetailsError] = useState(null)
+  const movieDetailsCacheRef = useRef({})
+
+  const openMovieDetails = (tmdbId) => {
+    if (!tmdbId) return
+
+    setSelectedMovieId(tmdbId)
+    setDetailsError(null)
+
+    if (!movieDetailsCacheRef.current[tmdbId]) {
+      setDetailsLoading(true)
+      setMovieDetails(null)
+    } else {
+      setMovieDetails(movieDetailsCacheRef.current[tmdbId])
+      setDetailsLoading(false)
+    }
+  }
+
+  const closeMovieDetails = () => {
+    setSelectedMovieId(null)
+    setMovieDetails(null)
+    setDetailsError(null)
+    setDetailsLoading(false)
+  }
+
+  useEffect(() => {
+    if (!selectedMovieId) {
+      return
+    }
+
+    if (movieDetailsCacheRef.current[selectedMovieId]) {
+      setMovieDetails(movieDetailsCacheRef.current[selectedMovieId])
+      setDetailsLoading(false)
+      return
+    }
+
+    let isCancelled = false
+
+    const fetchMovieDetails = async () => {
+      setDetailsLoading(true)
+
+      try {
+  const response = await fetch(`https://api.themoviedb.org/3/movie/${selectedMovieId}?language=fi-FI`, {
+          headers: {
+            Authorization: 'Bearer ' + TMDB_API_KEY,
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (!response.ok) {
+          throw new Error(`TMDB request failed with status ${response.status}`)
+        }
+
+        const data = await response.json()
+
+        if (!isCancelled) {
+          movieDetailsCacheRef.current[selectedMovieId] = data
+          setMovieDetails(data)
+          setDetailsError(null)
+        }
+      } catch (error) {
+        console.error(error)
+        if (!isCancelled) {
+          setDetailsError(error.message || 'Elokuvan tietojen haku epäonnistui.')
+        }
+      } finally {
+        if (!isCancelled) {
+          setDetailsLoading(false)
+        }
+      }
+    }
+
+    fetchMovieDetails()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [selectedMovieId])
 
   const ResultsTable = () => {
     if (!results || results.length === 0) return <div className="no-results">Ei hakutuloksia</div>;
@@ -39,7 +121,20 @@ export default function Search() {
                 </thead>
                 <tbody>
                   {movies.map(item => (
-                    <tr key={item.id}>
+                    <tr
+                      key={item.id}
+                      className="search-result-row"
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Avaa lisätiedot elokuvasta ${item.title}`}
+                      onClick={() => openMovieDetails(item.id)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault()
+                          openMovieDetails(item.id)
+                        }
+                      }}
+                    >
                       <td>
                         <img
                           src={item.poster_path ? `https://image.tmdb.org/t/p/w185${item.poster_path}` : placeholder}
@@ -161,7 +256,20 @@ export default function Search() {
           </thead>
           <tbody>
             {results.map(item => (
-              <tr key={item.id}>
+              <tr
+                key={item.id}
+                className="search-result-row"
+                tabIndex={0}
+                role="button"
+                aria-label={`Avaa lisätiedot elokuvasta ${item.title}`}
+                onClick={() => openMovieDetails(item.id)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    openMovieDetails(item.id)
+                  }
+                }}
+              >
                 <td>
                   <img
                     src={item.poster_path ? `https://image.tmdb.org/t/p/w185${item.poster_path}` : placeholder}
@@ -212,7 +320,7 @@ export default function Search() {
   }
 
   const search = (customQuery = query, customPage = page) => {
-    fetch(`https://api.themoviedb.org/3/search/${searchType}?query=${customQuery}&include_adult=false&language=en-US&page=${customPage}`, {
+    fetch(`https://api.themoviedb.org/3/search/${searchType}?query=${customQuery}&include_adult=false&language=fi-FI&page=${customPage}`, {
       headers: {
         'Authorization': 'Bearer ' + TMDB_API_KEY,
         'Content-Type': 'application/json',
@@ -271,6 +379,13 @@ export default function Search() {
         renderOnZeroPageCount={null}
       />
       <ResultsTable />
+      <MovieDetailsModal
+        isOpen={Boolean(selectedMovieId)}
+        onClose={closeMovieDetails}
+        movie={movieDetails}
+        loading={detailsLoading}
+        error={detailsError}
+      />
     </div>
   );
 }
