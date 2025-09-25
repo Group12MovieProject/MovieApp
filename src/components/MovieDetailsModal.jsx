@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import './MovieDetailsModal.css'
 
 const imageBaseUrl = 'https://image.tmdb.org/t/p/w342'
@@ -41,7 +42,7 @@ const MovieDetailsModal = ({
     event.stopPropagation()
   }
 
-  return (
+  const modalMarkup = (
     <div className="movie-modal-backdrop" onClick={onClose} role="presentation">
       <div
         className="movie-modal"
@@ -146,6 +147,10 @@ const MovieDetailsModal = ({
       </div>
     </div>
   )
+
+  const portalTarget = typeof document !== 'undefined' ? document.body : null
+
+  return portalTarget ? createPortal(modalMarkup, portalTarget) : modalMarkup
 }
 
 export default MovieDetailsModal

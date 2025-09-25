@@ -39,6 +39,22 @@
   background-color: #f8f9fa;
 }
 
+.search-result-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.search-result-row:hover {
+  background-color: #f1f5ff;
+  transform: translateY(-1px);
+}
+
+.search-result-row:focus-visible {
+  outline: 3px solid #4facfe;
+  outline-offset: -2px;
+  background-color: #eaf3ff;
+}
+
 #search-container table tr:last-child td {
   border-bottom: none;
 }
