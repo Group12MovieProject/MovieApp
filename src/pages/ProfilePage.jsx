@@ -39,23 +39,13 @@ export default function ProfilePage() {
     }
   }
 
-  // ⭐ Lisää suosikki
  const handleAddFavorite = async (movie) => {
   try {
     const added = await addFavorite(
       { title: movie.title, id: movie.id },
-      user.access_token
+      user.access_token,
+      user.id_account
     )
-
-    if (added) {
-      setFavorites(prev => [
-        ...prev,
-        {
-          tmdb_id: added.tmdb_id || movie.id,
-          movie_title: added.movie_title || movie.title
-        }
-      ])
-    }
 
     setSearchTerm('')
     setSearchResults([])
@@ -63,7 +53,6 @@ export default function ProfilePage() {
     console.error('Add favorite error:', err)
   }
 }
-  // Poista suosikki
   const handleRemoveFavorite = async (tmdb_id) => {
     try {
       await deleteFavorite(tmdb_id, user.access_token)
@@ -104,7 +93,7 @@ export default function ProfilePage() {
               <td>
                 <button
                   className="remove-btn"
-                  onClick={() => handleRemoveFavorite(fav.tmdb_id)}
+                  onClick={() => handleRemoveFavorite(fav.id_favorite)}
                 >
                   Poista
                 </button>

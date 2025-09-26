@@ -17,7 +17,7 @@ export default function FavoritesProvider({ children }) {
         setError(null)
 
         try {
-            const response = await fetch(base_url + '/favorites', {
+            const response = await fetch(base_url + '/favorites/', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export default function FavoritesProvider({ children }) {
         }
     }
 
-    const addFavorite = async (movie, token) => {
+    const addFavorite = async (movie, token, id_account) => {
 
         if (!token) {
             setError('No authentication token')
@@ -50,7 +50,7 @@ export default function FavoritesProvider({ children }) {
         }
 
         try {
-            const response = await fetch(base_url + '/favorites', {
+            const response = await fetch(base_url + '/favorites/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -58,6 +58,7 @@ export default function FavoritesProvider({ children }) {
                 },
                 credentials: 'include',
                 body: JSON.stringify({
+                    id_account: id_account,
                     movie_title: movie.title,
                     tmdb_id: movie.id
                 })
@@ -76,7 +77,7 @@ export default function FavoritesProvider({ children }) {
         }
     }
 
-    const deleteFavorite = async (tmdb_id, token) => {
+    const deleteFavorite = async (id_favorite, token) => {
 
         if (!token) {
             setError('No authentication token')
@@ -84,21 +85,20 @@ export default function FavoritesProvider({ children }) {
         }
 
         try {
-            const response = await fetch(base_url + '/favorites', {
+            const response = await fetch(base_url + `/favorites/delete/${id_favorite}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
                 credentials: 'include',
-                body: JSON.stringify({ tmdb_id })
             })
 
             if (!response.ok) {
                 throw new Error('Request failed')
             }
 
-            setFavorites(prev => prev.filter(fav => fav.tmdb_id !== tmdb_id))
+            setFavorites(prev => prev.filter(fav => fav.id_favorite !== id_favorite))
         } catch (error) {
             setError('Failed to remove favorite.')
             throw error
