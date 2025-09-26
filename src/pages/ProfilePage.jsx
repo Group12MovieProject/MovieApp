@@ -39,20 +39,20 @@ export default function ProfilePage() {
     }
   }
 
- const handleAddFavorite = async (movie) => {
-  try {
-    const added = await addFavorite(
-      { title: movie.title, id: movie.id },
-      user.access_token,
-      user.id_account
-    )
+  const handleAddFavorite = async (movie) => {
+    try {
+      const added = await addFavorite(
+        { title: movie.title, id: movie.id },
+        user.access_token,
+        user.id_account
+      )
 
-    setSearchTerm('')
-    setSearchResults([])
-  } catch (err) {
-    console.error('Add favorite error:', err)
+      setSearchTerm('')
+      setSearchResults([])
+    } catch (err) {
+      console.error('Add favorite error:', err)
+    }
   }
-}
   const handleRemoveFavorite = async (tmdb_id) => {
     try {
       await deleteFavorite(tmdb_id, user.access_token)
@@ -75,7 +75,6 @@ export default function ProfilePage() {
       <h1>Käyttäjäprofiili</h1>
       <p><strong>Sähköposti:</strong> {user.email}</p>
 
-      {/* Suosikit */}
       <h2>Omat suosikit</h2>
       {loading && <p>Ladataan...</p>}
       {favorites.length === 0 && <p>Ei suosikkeja vielä</p>}
@@ -103,7 +102,6 @@ export default function ProfilePage() {
         </tbody>
       </table>
 
-      {/* Hakukenttä */}
       <div className="search-section">
         <h3>Etsi elokuvia ja lisää suosikkeihin</h3>
         <input
@@ -115,7 +113,6 @@ export default function ProfilePage() {
         <button onClick={handleSearch}>Hae</button>
       </div>
 
-      {/* Hakutulokset */}
       {searchResults.length > 0 && (
         <ul className="search-results">
           {searchResults.slice(0, 5).map(movie => (
@@ -127,7 +124,6 @@ export default function ProfilePage() {
         </ul>
       )}
 
-      {/* Toiminnot */}
       <div className="profile-actions">
         <button onClick={logout} className="logout-btn">Kirjaudu ulos</button>
         <button
