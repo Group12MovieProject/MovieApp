@@ -1,6 +1,8 @@
 drop table if exists reviews;
 drop table if exists account;
 
+drop table if exists favorites;
+
 create table account (
     id_account serial primary key,
     email varchar(45) not null unique,
