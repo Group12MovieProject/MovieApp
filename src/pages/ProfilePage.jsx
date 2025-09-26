@@ -14,78 +14,63 @@ export default function ProfilePage() {
 
   const tmdb_api = import.meta.env.VITE_TMDB_API_KEY
 
-    useEffect(() => {
-        if (user?.access_token && !hasFetchedFavorites.current) {
-            fetchFavorites(user.access_token)
-            hasFetchedFavorites.current = true
-        }
-    }, [user?.access_token])
-
-    const handleLogout = async () => {
-        try {
-            await logout()
-            navigate('/login')
-        } catch (error) {
-            console.error('Logout error:', error)
-            navigate('/login')
-        }
+  useEffect(() => {
+    if (user?.access_token && !hasFetched.current) {
+      fetchFavorites(user.access_token)
+      hasFetched.current = true
     }
+  }, [user?.access_token])
 
-    const handleDeleteAccount = async () => {
-        const confirmDelete = window.confirm(
-            'Haluatko varmasti poistaa tilisi? Tätä toimintoa ei voi peruuttaa.'
-        )
-
-        if (!confirmDelete) return
-
-        const password = window.prompt(
-            'Vahvista tilin poisto syöttämällä salasanasi:'
-        )
-
-        if (!password) {
-            alert('Tilin poisto peruutettu.')
-            return
-        }
-
-        setDeleteLoading(true)
-
-        try {
-            await verifyPassword(password)
-
-            await deleteMe()
-
-            alert('Tili poistettu onnistuneesti!')
-            navigate('/register')
-        } catch (error) {
-            console.error('Delete account error:', error)
-
-            if (error.response?.status === 401) {
-                alert('Väärä salasana. Tilin poisto peruutettu.')
-            } else {
-                alert('Tilin poistaminen epäonnistui: ' + (error.response?.data?.error || error.message))
-            }
-        } finally {
-            setDeleteLoading(false)
-        }
-    }
-
-    const handleAddFavorite = async () => {
-        if (!newFavorite.trim()) return
-        try {
-            await addFavorite({ title: newFavorite, id: Date.now() }, user.access_token)
-            setNewFavorite('')
-        } catch (err) {
-            console.error('Failed to add favorite:', err)
-        }
-    }
-
-    const handleRemoveFavorite = async (movieId) => {
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) return
     try {
-        await deleteFavorite(movieId, user.access_token)
+      const res = await fetch(
+        `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(searchTerm)}&language=fi-FI&page=1`,
+        {
+          headers: {
+            Authorization: `Bearer ${tmdb_api}`
+          }
+        }
+      )
+      const data = await res.json()
+      setSearchResults(data.results || [])
     } catch (err) {
-        console.error('Failed to remove favorite:', err)
+      console.error('TMDB search error:', err)
     }
+  }
+
+  // ⭐ Lisää suosikki
+ const handleAddFavorite = async (movie) => {
+  try {
+    const added = await addFavorite(
+      { title: movie.title, id: movie.id },
+      user.access_token
+    )
+
+    if (added) {
+      setFavorites(prev => [
+        ...prev,
+        {
+          tmdb_id: added.tmdb_id || movie.id,
+          movie_title: added.movie_title || movie.title
+        }
+      ])
+    }
+
+    setSearchTerm('')
+    setSearchResults([])
+  } catch (err) {
+    console.error('Add favorite error:', err)
+  }
 }
+  // Poista suosikki
+  const handleRemoveFavorite = async (tmdb_id) => {
+    try {
+      await deleteFavorite(tmdb_id, user.access_token)
+    } catch (err) {
+      console.error('Remove favorite error:', err)
+    }
+  }
 
   if (!user.access_token) {
     return (
@@ -101,53 +86,68 @@ export default function ProfilePage() {
       <h1>Käyttäjäprofiili</h1>
       <p><strong>Sähköposti:</strong> {user.email}</p>
 
-            <div className="profile-favorites">
-                <h2>Omat suosikit</h2>
-
-                {favorites.length === 0 ? (
-                    <p>Ei suosikkeja vielä</p>
-                ) : (
-                    <ul>
-                        {favorites.map((movie) => (
-                            <li key={movie.tmdb_id || movie.id}>
-                                {movie.movie_title || movie.title}
-                                <button onClick={() => handleRemoveFavorite(movie.tmdb_id || movie.id)}>
-                                    Poista
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-
-                <div className="add-favorite">
-                    <input
-                        type="text"
-                        value={newFavorite}
-                        onChange={(e) => setNewFavorite(e.target.value)}
-                        placeholder="Lisää elokuva suosikkeihin..."
-                    />
-
-                    <button onClick={handleAddFavorite}>Lisää</button>
-                </div>
-            </div>
-
-            <div className="profile-actions">
+      {/* Suosikit */}
+      <h2>Omat suosikit</h2>
+      {loading && <p>Ladataan...</p>}
+      {favorites.length === 0 && <p>Ei suosikkeja vielä</p>}
+      <table className="favorites-table">
+        <thead>
+          <tr>
+            <th>Elokuva</th>
+            <th>Toiminnot</th>
+          </tr>
+        </thead>
+        <tbody>
+          {favorites.map(fav => (
+            <tr key={fav.tmdb_id}>
+              <td>{fav.movie_title}</td>
+              <td>
                 <button
-                    className="logout-button"
-                    onClick={handleLogout}
+                  className="remove-btn"
+                  onClick={() => handleRemoveFavorite(fav.tmdb_id)}
                 >
-                    Kirjaudu ulos
+                  Poista
                 </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-                <button
-                    className="delete-account-button"
-                    onClick={handleDeleteAccount}
-                    disabled={deleteLoading}
-                >
-                    {deleteLoading ? 'Poistetaan tilii...' : 'Poista tili'}
-                </button>
-            </div>
-        </div>
+      {/* Hakukenttä */}
+      <div className="search-section">
+        <h3>Etsi elokuvia ja lisää suosikkeihin</h3>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Etsi elokuvia..."
+        />
+        <button onClick={handleSearch}>Hae</button>
+      </div>
 
-    )
+      {/* Hakutulokset */}
+      {searchResults.length > 0 && (
+        <ul className="search-results">
+          {searchResults.slice(0, 5).map(movie => (
+            <li key={movie.id}>
+              {movie.title} ({movie.release_date?.slice(0, 4)})
+              <button onClick={() => handleAddFavorite(movie)}>Lisää</button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Toiminnot */}
+      <div className="profile-actions">
+        <button onClick={logout} className="logout-btn">Kirjaudu ulos</button>
+        <button
+          onClick={deleteMe}
+          className="delete-btn"
+        >
+          Poista tili
+        </button>
+      </div>
+    </div>
+  )
 }

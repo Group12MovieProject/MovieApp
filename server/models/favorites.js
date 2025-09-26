@@ -7,17 +7,16 @@ const createFavorite = async (id_account, movie_title, tmdb_id) => {
     )
 }
 
-const retrieveFavorites = async (id_account) => {
+const retrieveFavorites = async () => {
     return await pool.query(
-        'SELECT * FROM favorites WHERE id_account = $1',
-        [id_account]
+        'SELECT id_favorite, favorites.id_account, favorites.movie_title, favorites.tmdb_id FROM favorites INNER JOIN account ON favorites.id_account = account.id_account',
     )
 }
 
-const removeFavorite = async (id_account, tmdb_id) => {
+const removeFavorite = async (id_favorite) => {
     return await pool.query(
-        'DELETE FROM favorites WHERE id_account = $1 AND tmdb_id = $2',
-        [id_account, tmdb_id]
+        'DELETE FROM favorites WHERE id_favorite = $1 RETURNING *',
+        [id_favorite]
     )
 }
 

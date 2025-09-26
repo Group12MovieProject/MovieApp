@@ -4,10 +4,8 @@ import { auth } from '../helper/auth.js'
 
 const router = Router()
 
-router.use(auth)
-
-router.post('/', addFavorite)
+router.post('/add', auth, addFavorite)
 router.get('/', getFavorite)
-router.delete('/', deleteFavorite)
+router.delete('/delete/:id_favorite', auth,  deleteFavorite)
 
 export default router
