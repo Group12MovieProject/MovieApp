@@ -25,7 +25,8 @@ const addFavorite = async (req, res, next) => {
 
 const getFavorite = async (req, res, next) => {
     try {
-        const result = await retrieveFavorites()
+        const id_account = req.user.id_account 
+        const result = await retrieveFavorites(id_account)
 
         return res.status(201).json({
             message: 'Favorites retrieved successfully',

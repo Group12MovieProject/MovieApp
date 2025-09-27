@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import './ProfilePage.css'
 
 export default function ProfilePage() {
-  const { user, logout, deleteMe, verifyPassword } = useUser()
-  const { favorites, fetchFavorites, addFavorite, deleteFavorite, loading } = useFavorites()
+  const { user, logout, deleteMe } = useUser()
+  const { favorites, fetchFavorites, addFavorite, deleteFavorite, loading, error } = useFavorites()
   const [searchTerm, setSearchTerm] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const navigate = useNavigate()
@@ -14,10 +14,10 @@ export default function ProfilePage() {
 
   const tmdb_api = import.meta.env.VITE_TMDB_API_KEY
 
+  // Haetaan suosikit kun käyttäjä kirjautunut ja vain kerran
   useEffect(() => {
-    if (user?.access_token && !hasFetched.current) {
+    if (user?.access_token) {
       fetchFavorites(user.access_token)
-      hasFetched.current = true
     }
   }, [user?.access_token])
 
@@ -40,22 +40,27 @@ export default function ProfilePage() {
   }
 
   const handleAddFavorite = async (movie) => {
+    // estetään duplikaatti jo frontendissä
+    if (favorites.some(fav => fav.tmdb_id === movie.id)) {
+      alert("Tämä elokuva on jo suosikeissa!")
+      return
+    }
     try {
-      const added = await addFavorite(
+      await addFavorite(
         { title: movie.title, id: movie.id },
         user.access_token,
         user.id_account
       )
-
       setSearchTerm('')
       setSearchResults([])
     } catch (err) {
       console.error('Add favorite error:', err)
     }
   }
-  const handleRemoveFavorite = async (tmdb_id) => {
+
+  const handleRemoveFavorite = async (id_favorite) => {
     try {
-      await deleteFavorite(tmdb_id, user.access_token)
+      await deleteFavorite(id_favorite, user.access_token)
     } catch (err) {
       console.error('Remove favorite error:', err)
     }
@@ -74,6 +79,8 @@ export default function ProfilePage() {
     <div className="profile-container">
       <h1>Käyttäjäprofiili</h1>
       <p><strong>Sähköposti:</strong> {user.email}</p>
+
+      {error && <p className="error-message">{error}</p>}
 
       <h2>Omat suosikit</h2>
       {loading && <p>Ladataan...</p>}

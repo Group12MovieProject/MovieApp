@@ -42,8 +42,12 @@ export default function FavoritesProvider({ children }) {
         }
     }
 
-    const addFavorite = async (movie, token, id_account) => {
+    const clearFavorites = () => {
+        setFavorites([])
+        setError(null)
+    }
 
+    const addFavorite = async (movie, token, id_account) => {
         if (!token) {
             setError('No authentication token')
             throw new Error('No authentication token')
@@ -64,21 +68,29 @@ export default function FavoritesProvider({ children }) {
                 })
             })
 
+            if (response.status === 409) {
+                const data = await response.json()
+                setError(data.message || 'Movie already in favorites')
+                throw new Error(data.message || 'Movie already in favorites')
+            }
+
             if (!response.ok) {
                 throw new Error('Request failed')
             }
 
             const data = await response.json()
             setFavorites(prev => [...prev, data.favorite])
+            setError(null)
             return data.favorite
         } catch (error) {
-            setError('Failed to add favorite.')
+            if (!error.message.includes('already')) {
+                setError('Failed to add favorite.')
+            }
             throw error
         }
     }
 
     const deleteFavorite = async (id_favorite, token) => {
-
         if (!token) {
             setError('No authentication token')
             throw new Error('No authentication token')
@@ -99,6 +111,7 @@ export default function FavoritesProvider({ children }) {
             }
 
             setFavorites(prev => prev.filter(fav => fav.id_favorite !== id_favorite))
+            setError(null)
         } catch (error) {
             setError('Failed to remove favorite.')
             throw error
@@ -106,7 +119,15 @@ export default function FavoritesProvider({ children }) {
     }
 
     return (
-        <FavoritesContext.Provider value={{ favorites, loading, error, addFavorite, deleteFavorite, fetchFavorites }} >
+        <FavoritesContext.Provider value={{ 
+            favorites, 
+            loading, 
+            error, 
+            addFavorite, 
+            deleteFavorite, 
+            fetchFavorites,
+            clearFavorites 
+        }}>
             {children}
         </FavoritesContext.Provider>
     )
