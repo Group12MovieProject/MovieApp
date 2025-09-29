@@ -146,9 +146,17 @@ const autoLogin = async (req, res, next) => {
         }
 
         const decodedUser = verify(refresh_token, process.env.JWT_SECRET)
-        
+
+        const result = await selectUserByEmail(decodedUser.email)
+
+        if (!result.rows || result.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' })
+        }
+
+        const dbUser = result.rows[0]
+
         const access_token = sign(
-            { email: decodedUser.email },
+            { email: dbUser.email },
             process.env.JWT_SECRET,
             { expiresIn: '15m' }
         )
@@ -160,7 +168,8 @@ const autoLogin = async (req, res, next) => {
             .json({ 
                 message: 'Valid refresh token',
                 access_token,
-                email: decodedUser.email
+                email: dbUser.email,
+                id_account: dbUser.id_account
             })
     } catch (error) {
         return res.status(401).json({ error: 'Invalid refresh token' })

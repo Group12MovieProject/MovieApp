@@ -71,8 +71,26 @@ const WriteReview = ({ user, autoLogin, logout, onReviewAdded }) => {
     }
 
     if (!currentUser?.id_account || !currentUser?.access_token) {
-      alert('Kirjaudu uudelleen sisään')
-      return
+      if (isRetry) {
+        await logout()
+        alert('Kirjaudu uudelleen sisään')
+        return
+      }
+
+      try {
+        const refreshedUser = await autoLogin()
+
+        if (!refreshedUser?.id_account || !refreshedUser?.access_token) {
+          throw new Error('Token refresh returned incomplete user data')
+        }
+
+        return await submitReview({ isRetry: true, currentUser: refreshedUser })
+      } catch (error) {
+        console.warn('Autologin failed before review submission:', error)
+        await logout()
+        alert('Kirjaudu uudelleen sisään')
+        return
+      }
     }
 
     setIsSubmitting(true)

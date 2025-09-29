@@ -13,7 +13,7 @@ const deleteReview = async (id_review) => {
 
 const selectAllReviews = async () => {
     return await pool.query(
-        'SELECT id_review, reviews.id_account, reviews.tmdb_id, reviews.review_text, reviews.stars, reviews.review_time, account.email FROM reviews INNER JOIN account ON reviews.id_account = account.id_account')
+    'SELECT id_review, reviews.id_account, reviews.tmdb_id, reviews.review_text, reviews.stars, reviews.review_time, account.email FROM reviews INNER JOIN account ON reviews.id_account = account.id_account ORDER BY reviews.review_time DESC, reviews.id_review DESC')
 }
 
 const selectReviewById = async (id_review) => {
