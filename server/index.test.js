@@ -11,8 +11,8 @@ describe("Testing user managment", () => {
     const user = { email: "foo2@test.com", password: "password123" }
     let token
     before(() => {
-        insertTestUser(user.email, user.password)
         initializeTestDb()
+        insertTestUser(user.email, user.password)
         token = getToken(user.email)
     })
     it("should sign up", async () => {
@@ -110,6 +110,53 @@ describe("Testing user managment", () => {
         expect(response.status).to.equal(200)
         expect(data[0]).to.include.all.keys(["id_review", "id_account", "tmdb_id", "review_text", "stars", "review_time"])
         expect(data[0].id_review).to.equal(global.reviewId)
+    })
+
+        it('should add favorite', async () => {
+        const newFavorite = {
+            tmdb_id: 550,
+            movie_title: "Mies ja alaston ase"
+        }
+        const response = await fetch('http://localhost:3001/favorites/add', {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(newFavorite)
+        })
+        const data = await response.json()
+        expect(response.status).to.equal(201)
+        expect(data.favorite).to.include.all.keys(["id_favorite", "id_account", "movie_title", "tmdb_id"])
+        
+        // Tallennetaan review_id delete-testiä varten
+        global.favoriteId = data.favorite.id_favorite
+    })
+
+        it ('should get all favorites', async () => {
+        const response = await fetch('http://localhost:3001/favorites/', {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        })
+        const data = await response.json()
+        expect(response.status).to.equal(201)
+        expect(data.favorites[0]).to.include.all.keys(["id_favorite", "id_account", "movie_title", "tmdb_id"])
+    })
+
+        it('should delete a favorite', async () => {
+        const response = await fetch(`http://localhost:3001/favorites/delete/${global.favoriteId}`, {
+            method: "delete",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+        const data = await response.json()
+        expect(response.status).to.equal(201)
+        expect(data.favorite).to.include.all.keys(["id_favorite", "id_account", "movie_title", "tmdb_id"])
+        expect(data.favorite.id_favorite).to.equal(global.favoriteId)
     })
 
     it('should delete a user account', async () => {

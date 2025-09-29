@@ -4,7 +4,6 @@ import NavBar from  './components/NavBar'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
-import Favorites from './pages/Favorites'
 import Groups from './pages/Groups'
 import Reviews from './pages/Reviews'
 import Login from './pages/Login'
@@ -14,19 +13,19 @@ import NotFound from './pages/NotFound'
 import Register from './pages/Register'
 import ProfilePage from './pages/ProfilePage'
 import PrivateRoute from './components/PrivateRoute'
-import axios from 'axios'
-import UserProvider from './context/UserProvider';
+import UserProvider from './context/UserProvider'
+import FavoritesProvider from './context/FavoritesProvider'
 
 function App() {
 
   return (
     <UserProvider>
+    <FavoritesProvider>
     <NavBar />
     <Header /> 
     <div id="elements">
       <Routes>
         <Route path="/" exact element={<Home />} />
-        <Route path="/favorites" exact element={<Favorites />} />
         <Route path="/reviews" exact element={<Reviews />} />
         <Route path="/groups" exact element={<Groups />} />
         <Route path="/showtimes" exact element={<Showtimes />} />
@@ -40,6 +39,7 @@ function App() {
       </Routes>
     </div>
     <Footer />
+    </FavoritesProvider>
     </UserProvider>
   )
 }

@@ -1,10 +1,20 @@
 drop table if exists reviews;
+drop table if exists favorites;
 drop table if exists account;
 
 create table account (
     id_account serial primary key,
     email varchar(45) not null unique,
     password varchar(255) not null
+);
+
+CREATE TABLE favorites (
+    id_favorite SERIAL PRIMARY KEY,
+    id_account INTEGER NOT NULL,
+    movie_title VARCHAR(45),
+    tmdb_id INT,
+    CONSTRAINT user_favorites_unique UNIQUE(id_account, tmdb_id),
+    FOREIGN KEY (id_account) REFERENCES account(id_account) ON DELETE CASCADE
 );
 
 create table reviews (
