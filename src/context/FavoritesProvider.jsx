@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect, useContext} from 'react'
 import { FavoritesContext } from './FavoritesContext.jsx'
+import { UserContext } from './UserContext.jsx'
 
 const base_url = import.meta.env.VITE_API_URL
 
@@ -7,6 +8,16 @@ export default function FavoritesProvider({ children }) {
     const [favorites, setFavorites] = useState([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
+    const {user} = useContext(UserContext)
+
+    useEffect(() => {
+        if (user?.access_token && user?.id_account) {
+            fetchFavorites(user.access_token)
+        } else {
+            setFavorites([])
+            setError(null)
+        }
+    }, [user?.access_token, user?.id_account])
 
     const fetchFavorites = async (token) => {
         if (!token) {

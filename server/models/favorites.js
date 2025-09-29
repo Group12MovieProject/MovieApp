@@ -7,10 +7,9 @@ const createFavorite = async (id_account, movie_title, tmdb_id) => {
     )
 }
 
-const retrieveFavorites = async (id_account) => {
+const retrieveFavorites = async () => {
     return await pool.query(
-        'SELECT id_favorite, favorites.id_account, favorites.movie_title, favorites.tmdb_id FROM favorites WHERE favorites.id_account = $1',
-        [id_account]
+        'SELECT id_favorite, favorites.id_account, favorites.movie_title, favorites.tmdb_id FROM favorites INNER JOIN account ON favorites.id_account = account.id_account',
     )
 }
 

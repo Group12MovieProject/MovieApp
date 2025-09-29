@@ -11,8 +11,8 @@ describe("Testing user managment", () => {
     const user = { email: "foo2@test.com", password: "password123" }
     let token
     before(() => {
-        insertTestUser(user.email, user.password)
         initializeTestDb()
+        insertTestUser(user.email, user.password)
         token = getToken(user.email)
     })
     it("should sign up", async () => {

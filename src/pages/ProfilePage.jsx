@@ -5,21 +5,82 @@ import { useNavigate } from 'react-router-dom'
 import './ProfilePage.css'
 
 export default function ProfilePage() {
-  const { user, logout, deleteMe } = useUser()
-  const { favorites, fetchFavorites, addFavorite, deleteFavorite, loading, error } = useFavorites()
+  const { user, logout, deleteMe, verifyPassword } = useUser()
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const { favorites, addFavorite, deleteFavorite, loading, error } = useFavorites()
   const [searchTerm, setSearchTerm] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const navigate = useNavigate()
-  const hasFetched = useRef(false)
+  // const hasFetched = useRef(false)
 
   const tmdb_api = import.meta.env.VITE_TMDB_API_KEY
 
-  // Haetaan suosikit kun käyttäjä kirjautunut ja vain kerran
-  useEffect(() => {
-    if (user?.access_token) {
-      fetchFavorites(user.access_token)
+  const handleLogout = async () => {
+    try {
+      await logout()
+      navigate('/login')
+    } catch (error) {
+      console.error('Logout error:', error)
+      navigate('/login')
     }
-  }, [user?.access_token])
+  }
+
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm(
+      'Haluatko varmasti poistaa tilisi? Tätä toimintoa ei voi peruuttaa.'
+    )
+
+    if (!confirmDelete) return
+
+    const password = window.prompt(
+      'Vahvista tilin poisto syöttämällä salasanasi:'
+    )
+
+    if (!password) {
+      alert('Tilin poisto peruutettu.')
+      return
+    }
+
+    setDeleteLoading(true)
+
+    try {
+      await verifyPassword(password)
+
+      await deleteMe()
+
+      alert('Tili poistettu onnistuneesti!')
+      navigate('/register')
+    } catch (error) {
+      console.error('Delete account error:', error)
+
+      if (error.response?.status === 401) {
+        alert('Väärä salasana. Tilin poisto peruutettu.')
+      } else {
+        alert('Tilin poistaminen epäonnistui: ' + (error.response?.data?.error || error.message))
+      }
+    } finally {
+      setDeleteLoading(false)
+    }
+  }
+
+  if (!user.access_token) {
+    return (
+      <div className="profile-container">
+        <h1>Et ole kirjautunut sisään</h1>
+        <p>Kirjaudu sisään nähdäksesi profiilisi.</p>
+        <button onClick={() => navigate('/login')}>
+          Siirry kirjautumiseen
+        </button>
+      </div>
+    )
+  }
+
+  // // Haetaan suosikit kun käyttäjä kirjautunut ja vain kerran
+  // useEffect(() => {
+  //   if (user?.access_token) {
+  //     fetchFavorites(user.access_token)
+  //   }
+  // }, [user?.access_token])
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return
@@ -66,19 +127,13 @@ export default function ProfilePage() {
     }
   }
 
-  if (!user.access_token) {
-    return (
-      <div className="profile-container">
-        <h1>Et ole kirjautunut sisään</h1>
-        <button onClick={() => navigate('/login')}>Kirjaudu sisään</button>
-      </div>
-    )
-  }
-
   return (
     <div className="profile-container">
       <h1>Käyttäjäprofiili</h1>
-      <p><strong>Sähköposti:</strong> {user.email}</p>
+      <div className="profile-info">
+        <h2>Tiedot</h2>
+        <p><strong>Sähköposti:</strong> {user.email}</p>
+      </div>
 
       {error && <p className="error-message">{error}</p>}
 
@@ -132,12 +187,18 @@ export default function ProfilePage() {
       )}
 
       <div className="profile-actions">
-        <button onClick={logout} className="logout-btn">Kirjaudu ulos</button>
         <button
-          onClick={deleteMe}
-          className="delete-btn"
+          className="logout-button"
+          onClick={handleLogout}
         >
-          Poista tili
+          Kirjaudu ulos
+        </button>
+        <button
+          className="delete-account-button"
+          onClick={handleDeleteAccount}
+          disabled={deleteLoading}
+        >
+          {deleteLoading ? 'Poistetaan tilii...' : 'Poista tili'}
         </button>
       </div>
     </div>
