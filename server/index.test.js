@@ -113,8 +113,7 @@ describe("Testing user managment", () => {
     })
 
         it('should add favorite', async () => {
-        const newReview = {
-            id_account: 1,
+        const newFavorite = {
             tmdb_id: 550,
             movie_title: "Mies ja alaston ase"
         }
@@ -124,7 +123,7 @@ describe("Testing user managment", () => {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify(newReview)
+            body: JSON.stringify(newFavorite)
         })
         const data = await response.json()
         expect(response.status).to.equal(201)
@@ -138,7 +137,8 @@ describe("Testing user managment", () => {
         const response = await fetch('http://localhost:3001/favorites/', {
             method: "get",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             }
         })
         const data = await response.json()

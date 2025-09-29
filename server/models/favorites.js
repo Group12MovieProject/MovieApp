@@ -1,4 +1,4 @@
-import {pool} from '../helper/db.js'
+import { pool } from '../helper/db.js'
 
 const createFavorite = async (id_account, movie_title, tmdb_id) => {
     return await pool.query(
@@ -7,9 +7,10 @@ const createFavorite = async (id_account, movie_title, tmdb_id) => {
     )
 }
 
-const retrieveFavorites = async () => {
+const retrieveFavorites = async (id_account) => {
     return await pool.query(
-        'SELECT id_favorite, favorites.id_account, favorites.movie_title, favorites.tmdb_id FROM favorites INNER JOIN account ON favorites.id_account = account.id_account',
+        'SELECT id_favorite, favorites.id_account, favorites.movie_title, favorites.tmdb_id FROM favorites INNER JOIN account ON favorites.id_account = account.id_account WHERE favorites.id_account = $1',
+        [id_account]
     )
 }
 

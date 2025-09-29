@@ -1,9 +1,17 @@
 import { createFavorite, retrieveFavorites, removeFavorite } from '../models/favorites.js'
+import { selectUserByEmail } from '../models/User.js'
 import { ApiError } from '../helper/ApiError.js'
 
 const addFavorite = async (req, res, next) => {
     try {
-        const {id_account, movie_title, tmdb_id } = req.body
+        const { movie_title, tmdb_id } = req.body
+        const email = req.user.email
+
+        const userResult = await selectUserByEmail(email)
+        if (!userResult.rows || userResult.rows.length === 0) {
+            return next(new ApiError('User not found', 404))
+        }
+        const id_account = userResult.rows[0].id_account
 
         if (!movie_title || !tmdb_id) {
             return next(new ApiError('Movie title and TMDB ID are required', 400))
@@ -25,8 +33,15 @@ const addFavorite = async (req, res, next) => {
 
 const getFavorite = async (req, res, next) => {
     try {
-        // const id_account = req.user.id_account 
-        const result = await retrieveFavorites()
+        const email = req.user.email
+
+        const userResult = await selectUserByEmail(email)
+        if (!userResult.rows || userResult.rows.length === 0) {
+            return next(new ApiError('User not found', 404))
+        }
+        const id_account = userResult.rows[0].id_account
+
+        const result = await retrieveFavorites(id_account)
 
         return res.status(201).json({
             message: 'Favorites retrieved successfully',
@@ -41,11 +56,11 @@ const getFavorite = async (req, res, next) => {
 const deleteFavorite = async (req, res, next) => {
     try {
         const result = await removeFavorite(req.params.id_favorite)
-        
+
         if (result.rowCount === 0) {
             return next(new ApiError('Favorite not found', 404))
         }
-        
+
         return res.status(201).json({
             message: 'Favorite removed successfully',
             favorite: result.rows[0]
