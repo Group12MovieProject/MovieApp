@@ -40,6 +40,7 @@ CREATE TABLE groups (
     description TEXT,
     owner_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_group_name UNIQUE (group_name),
     CONSTRAINT fk_groups_owner FOREIGN KEY (owner_id) REFERENCES account(id_account) ON DELETE CASCADE
 );
 
