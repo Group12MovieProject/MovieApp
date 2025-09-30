@@ -138,6 +138,15 @@ export default function ProfilePage() {
       {error && <p className="error-message">{error}</p>}
 
       <h2>Omat suosikit</h2>
+      <button
+        onClick={() => {
+          const shareLink = `${window.location.origin}/share/${user.id_account}`
+          navigator.clipboard.writeText(shareLink)
+          alert("Jako-linkki kopioitu leikepöydälle: " + shareLink)
+        }}
+      >
+        Jaa suosikit
+      </button>
       {loading && <p>Ladataan...</p>}
       {favorites.length === 0 && <p>Ei suosikkeja vielä</p>}
       <table className="favorites-table">
