@@ -7,7 +7,7 @@ dotenv.config()
 import bcrypt from "bcrypt"
 const { hash } = bcrypt
 
-describe("Testing user managment", () => {
+describe("Testing user management, reviews and favorites", () => {
     const user = { email: "foo2@test.com", password: "password123" }
     let token
     before(() => {

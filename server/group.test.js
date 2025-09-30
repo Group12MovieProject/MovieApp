@@ -3,13 +3,15 @@ import { initializeTestDb, insertTestUser, getToken } from './helper/test.js'
 import dotenv from 'dotenv'
 dotenv.config()
 
-describe('Groups API', () => {
+describe('Testing Groups', () => {
   const user = { email: 'group@test.com', password: 'password123' }
   let token
   before(() => {
-    initializeTestDb()
-    insertTestUser(user.email, user.password)
-    token = getToken(user.email)
+    return (async () => {
+      await initializeTestDb()
+      await insertTestUser(user.email, user.password)
+      token = getToken(user.email)
+    })()
   })
 
   let createdGroupId
