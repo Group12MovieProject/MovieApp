@@ -4,7 +4,7 @@ import { ApiError } from '../helper/ApiError.js'
 
 const addFavorite = async (req, res, next) => {
     try {
-        const { movie_title, tmdb_id } = req.body
+        const { movie_title, tmdb_id, poster_path } = req.body
         const email = req.user.email
 
         const userResult = await selectUserByEmail(email)
@@ -17,7 +17,7 @@ const addFavorite = async (req, res, next) => {
             return next(new ApiError('Movie title and TMDB ID are required', 400))
         }
 
-        const result = await createFavorite(id_account, movie_title, tmdb_id)
+        const result = await createFavorite(id_account, movie_title, tmdb_id, poster_path)
 
         return res.status(201).json({
             message: 'Favorite added successfully',
