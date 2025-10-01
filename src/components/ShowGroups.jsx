@@ -52,7 +52,9 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
         groups.map((g) => (
           <div key={g.id_group ?? g.id} className="group-item">
             <h3>{g.group_name || g.name}</h3>
-            {g.group_desc && <p>{g.group_desc}</p>}
+            {(g.description || g.group_desc || g.desc) && (
+              <p>{g.description || g.group_desc || g.desc}</p>
+            )}
           </div>
         ))
       ) : (
