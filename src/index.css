@@ -1,9 +1,14 @@
 /* Global styles and variables */
 :root {
-  /* Main UI font: use system font stack for minimal external requests */
-  --ui-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --ui-font-weight-regular: 400;
-  --ui-font-weight-medium: 500;
+	/* Main UI font: use system font stack for minimal external requests */
+	--ui-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--ui-font-weight-regular: 400;
+	--ui-font-weight-medium: 500;
+}
+
+/* Ensure padding/border stay within declared widths across the app */
+*, *::before, *::after {
+	box-sizing: border-box;
 }
 
 /* Apply the font globally */
@@ -20,6 +25,7 @@ html {
 
 body {
 	margin: 0;
+	overflow-y: scroll; /* keep scrollbar track visible to avoid layout shift without blank gutter */
 	font-weight: var(--ui-font-weight-regular);
 	color: #111827; /* subtle default text color */
 	background: #fff;
