@@ -10,3 +10,12 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## Project styling notes
+
+The global UI font is loaded from Google Fonts in `index.html` and applied in `src/index.css` using the `--ui-font` CSS variable. To change the font:
+
+- Update or replace the Google Fonts `<link>` in `index.html`.
+- Update `--ui-font` in `src/index.css` to include the new font family and fallbacks.
+
+Example: replace Inter with another modern sans-serif and keep sensible fallbacks.
