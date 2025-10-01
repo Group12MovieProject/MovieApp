@@ -13,9 +13,4 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ## Project styling notes
 
-The global UI font is loaded from Google Fonts in `index.html` and applied in `src/index.css` using the `--ui-font` CSS variable. To change the font:
-
-- Update or replace the Google Fonts `<link>` in `index.html`.
-- Update `--ui-font` in `src/index.css` to include the new font family and fallbacks.
-
-Example: replace Inter with another modern sans-serif and keep sensible fallbacks.
+This project uses the system font stack for UI text for fast load times and consistent native rendering. The active font stack is defined in `src/index.css` using the `--ui-font` CSS variable. To change the font, edit that variable. If you want to use a web font, add the provider link (or @font-face) and update `--ui-font` accordingly.
