@@ -1,0 +1,62 @@
+/* ryhmäsivu*/
+.group-page-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.group-page-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Layout: main content + aside on the right */
+.group-main {
+  flex: 1 1 60%;
+}
+
+.group-aside {
+  width: 300px;
+  margin-left: 2rem;
+  background: #fafafa;
+  border: 1px solid #eee;
+  padding: 1rem;
+  border-radius: 6px;
+  height: fit-content;
+}
+
+.group-page-container {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+  .group-page-container {
+    flex-direction: column;
+  }
+  .group-aside {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+.group-description {
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.delete-group-button {
+  background: #d9534f;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-group-button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

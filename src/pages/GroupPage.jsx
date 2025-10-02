@@ -79,13 +79,96 @@ export default function GroupPage() {
         // eslint-disable-next-line
     }, [groupId, user])
 
+    const handleDeleteGroup = async () => {
+        if (!isOwner) {
+            alert('Vain ryhmän omistaja voi poistaa ryhmää')
+            return
+        }
+
+        const confirmDelete = window.confirm(
+            'Haluatko varmasti poistaa ryhmän? Tätä toimintoa ei voi peruuttaa'
+        )
+
+        if (!confirmDelete) return
+
+        setLoading(true)
+
+        try {
+            const response = await fetch(`${base_url}/group/delete/${group.id_group}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.access_token}`
+                },
+                credentials: 'include'
+            })
+
+            if (response.status === 401) {
+                try {
+                    const refreshedUser = await autoLogin()
+                    if (refreshedUser?.access_token) {
+                        return handleDeleteGroup()
+                    }
+                } catch {
+                    await logout()
+                    setError('Istunto vanhentunut, kirjaudu sisään uudelleen')
+                    return
+                }
+            }
+
+            if (response.status === 403) {
+                setError('Sinulla ei ole oikeutta poistaa tätä ryhmää')
+                return
+            }
+
+            if (response.status === 404) {
+                setError('Ryhmää ei löytynyt')
+                return
+            }
+
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({ error: 'Poisto epäonnistui' }))
+                throw new Error(err.error?.message || err.error || 'Poisto epäonnistui')
+            }
+
+            alert('Ryhmä poistettu onnistuneesti!')
+            navigate('/groups')
+        } catch (error) {
+            console.error('Error deleting group:', error)
+            alert('Ryhmän poistaminen epäonnistui: ' + (error.message || error))
+        } finally {
+            setLoading(false)
+        }
+    }
+
     if (loading) return <div className="group-loading">Ladataan ryhmäsivua...</div>
     if (error) return <div className="group-error">Virhe: {error}</div>
 
     return (
         <div className="group-page-container">
-            <h1>{group.group_name || group.name}</h1>
-            {/* Add more group details here */}
+            <div className="group-main">
+                <h1>{group.group_name || group.name}</h1>
+
+                {/* Lisätään tähän ryhmään jaettu sisältö */}
+            </div>
+
+            <aside className="group-aside">
+                <h2>Tietoja</h2>
+                {/* Näytetään ryhmän kuvaus, myöhemmin jäsenlista ja ylläpitäjän tiedot yms */}
+                {(group.description || group.group_desc || group.desc) && (
+                    <p className="group-description">{group.description || group.group_desc || group.desc}</p>
+                )}
+                <p><strong>Ryhmän ylläpitäjän sähköposti:</strong> {user.email}</p>
+                {isOwner && (
+                    <button
+                        className="delete-group-button"
+                        onClick={handleDeleteGroup}
+                        disabled={loading}
+                    >
+                        {loading ? 'Poistetaan ryhmää...' : 'Poista ryhmä'}
+                    </button>
+                )}
+            </aside>
         </div>
     )
 }
