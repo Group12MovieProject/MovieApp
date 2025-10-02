@@ -18,33 +18,48 @@ export default function GroupPage() {
     useEffect(() => {
         const fetchGroupPage = async () => {
             if (!user?.access_token) {
+                setGroup({})
+                setIsOwner(false)
                 setError('Kirjaudu sisään päästäksesi ryhmäsivulle')
                 setLoading(false)
                 return
             }
-            try {
+
+            setLoading(true)
+            setError(null)
+
+            const attemptFetch = async (token, hasRetried = false) => {
                 const response = await fetch(`${base_url}/group/${groupId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${user.access_token}`
+                        'Authorization': `Bearer ${token}`
                     },
                     credentials: 'include'
                 })
 
-                if (response.status === 401) {
+                if (response.status === 401 && !hasRetried) {
                     try {
                         const refreshedUser = await autoLogin()
                         if (refreshedUser?.access_token) {
-                            return fetchGroupPage()
+                            return attemptFetch(refreshedUser.access_token, true)
                         }
                     } catch {
                         await logout()
-                        setError('Istunto vanhentunut, kirjaudu sisään uudelleen')
-                        setLoading(false)
-                        return
+                        throw new Error('Istunto vanhentunut, kirjaudu sisään uudelleen')
                     }
-                    // tähän lisätä error käsittely jos ei ole oikeutta nähdä ryhmää (backendi eka)
+                }
+
+                return response
+            }
+
+            try {
+                const response = await attemptFetch(user.access_token)
+
+                if (response.status === 401) {
+                    setError('Kirjautuminen epäonnistui, kirjaudu sisään uudelleen')
+                    await logout()
+                    return
                 }
 
                 if (response.status === 403) {
@@ -65,6 +80,7 @@ export default function GroupPage() {
                 if (!response.ok) {
                     throw new Error('Request failed')
                 }
+
                 const data = await response.json()
                 setGroup(data)
                 setIsOwner(data.owner_id === user.id_account)
@@ -75,9 +91,9 @@ export default function GroupPage() {
                 setLoading(false)
             }
         }
+
         fetchGroupPage()
-        // eslint-disable-next-line
-    }, [groupId, user])
+    }, [groupId, user?.access_token, autoLogin, logout])
 
     const handleDeleteGroup = async () => {
         if (!isOwner) {
@@ -141,8 +157,26 @@ export default function GroupPage() {
         }
     }
 
-    if (loading) return <div className="group-loading">Ladataan ryhmäsivua...</div>
-    if (error) return <div className="group-error">Virhe: {error}</div>
+    if (loading) {
+        return <div className="group-loading">Ladataan ryhmäsivua...</div>
+    }
+
+    if (error) {
+        return (
+            <div className="group-error" role="alert">
+                <div className="group-error__icon" aria-hidden="true"></div>
+                <div className="group-error__content">
+                    <h2>Ryhmän lataus epäonnistui</h2>
+                    <p>{error}</p>
+                    <div className="group-error__actions">
+                        <button type="button" onClick={() => navigate('/groups')}>
+                            Palaa ryhmälistaan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="group-page-container">
