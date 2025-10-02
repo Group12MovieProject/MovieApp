@@ -1,6 +1,6 @@
 /* Global styles and variables */
 :root {
-	/* Main UI font: use system font stack for minimal external requests */
+	/* Main UI font: system font */
 	--ui-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 	--ui-font-weight-regular: 400;
 	--ui-font-weight-medium: 500;
@@ -25,9 +25,9 @@ html {
 
 body {
 	margin: 0;
-	overflow-y: scroll; /* keep scrollbar track visible to avoid layout shift without blank gutter */
+	overflow-y: scroll; /* keep scrollbar visible so elements do not clip while changing pages */
 	font-weight: var(--ui-font-weight-regular);
-	color: #111827; /* subtle default text color */
+	color: #111827; 
 	background: #fff;
 }
 
@@ -40,16 +40,6 @@ body {
 h1, h2, h3, h4, h5, h6 {
 	font-weight: var(--ui-font-weight-medium);
 	margin: 0;
-}
-
-/* Small accessibility helper: prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-	* {
-		animation-duration: 0.001ms !important;
-		animation-iteration-count: 1 !important;
-		transition-duration: 0.001ms !important;
-		scroll-behavior: auto !important;
-	}
 }
 
 /* End of global styles */

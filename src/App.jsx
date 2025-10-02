@@ -5,6 +5,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import Groups from './pages/Groups'
+import GroupPage from './pages/GroupPage'
 import Reviews from './pages/Reviews'
 import Login from './pages/Login'
 import Search from './pages/SearchPage'
@@ -28,6 +29,7 @@ function App() {
         <Route path="/" exact element={<Home />} />
         <Route path="/reviews" exact element={<Reviews />} />
         <Route path="/groups" exact element={<Groups />} />
+        <Route path="/groups/:groupId" element={<GroupPage />} />
         <Route path="/showtimes" exact element={<Showtimes />} />
         <Route path="/searchpage" exact element={<Search />} />
         <Route path="/login" exact element={<Login />} />
