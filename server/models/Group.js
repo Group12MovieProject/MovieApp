@@ -10,8 +10,17 @@ const selectAllGroups = async () => {
 }
 
 const selectGroupById = async (id_group) => {
-    return await pool.query('SELECT * FROM groups WHERE id_group = $1',
-        [id_group])
+    return await pool.query(
+        'SELECT * FROM groups WHERE id_group = $1',
+        [id_group]
+    )
+}
+
+const selectGroupMembership = async (id_group, id_account) => {
+    return await pool.query(
+        'SELECT is_approved FROM group_account WHERE id_group = $1 AND id_account = $2',
+        [id_group, id_account]
+    )
 }
 
 const insertGroup = async (group_name, description, owner_id) => {
@@ -39,4 +48,10 @@ const insertGroup = async (group_name, description, owner_id) => {
     }
 }
 
-export { removeGroup, selectAllGroups, selectGroupById, insertGroup }
+export {
+    removeGroup,
+    selectAllGroups,
+    selectGroupById,
+    selectGroupMembership,
+    insertGroup
+}

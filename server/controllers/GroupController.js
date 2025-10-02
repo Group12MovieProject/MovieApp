@@ -1,4 +1,11 @@
-import {removeGroup, selectAllGroups, selectGroupById, insertGroup} from '../models/Group.js'
+import {
+    removeGroup,
+    selectAllGroups,
+    selectGroupById,
+    selectGroupMembership,
+    insertGroup
+} from '../models/Group.js'
+import { selectUserByEmail } from '../models/User.js'
 import {ApiError} from '../helper/ApiError.js'
 
 const postGroup = async (req,res,next) => {
@@ -35,9 +42,36 @@ const deleteGroup =  async (req, res, next) => {
 
 const getGroupById = async (req, res, next) => {
     try {
-        const result = await selectGroupById(req.params.id_group)
-        if (result.rows.length === 0) return next(new ApiError('Group not found', 404))
-        return res.status(200).json(result.rows[0])
+        const { id_group } = req.params
+
+        const groupResult = await selectGroupById(id_group)
+        if (groupResult.rows.length === 0) {
+            return next(new ApiError('Group not found', 404))
+        }
+
+        if (!req.user?.email) {
+            return next(new ApiError('Unauthorized', 401))
+        }
+
+        const userResult = await selectUserByEmail(req.user.email)
+        if (userResult.rows.length === 0) {
+            return next(new ApiError('User not found', 404))
+        }
+
+        const group = groupResult.rows[0]
+        const user = userResult.rows[0]
+
+        if (group.owner_id === user.id_account) {
+            return res.status(200).json(group)
+        }
+
+        const membershipResult = await selectGroupMembership(id_group, user.id_account)
+
+        if (membershipResult.rows.length === 0 || membershipResult.rows[0].is_approved !== true) {
+            return next(new ApiError('Access denied', 403))
+        }
+
+        return res.status(200).json(group)
     } catch (error) {
         return next(new ApiError('Internal server error while fetching group', 500))
     }

@@ -47,6 +47,21 @@ export default function GroupPage() {
                     // tähän lisätä error käsittely jos ei ole oikeutta nähdä ryhmää (backendi eka)
                 }
 
+                if (response.status === 403) {
+                    const errorData = await response.json().catch(() => null)
+                    setError(
+                        errorData?.error?.message ??
+                        'Sinulla ei ole oikeutta nähdä tätä ryhmää'
+                    )
+                    return
+                }
+
+                if (response.status === 404) {
+                    const errorData = await response.json().catch(() => null)
+                    setError(errorData?.error?.message ?? 'Ryhmää ei löytynyt')
+                    return
+                }
+
                 if (!response.ok) {
                     throw new Error('Request failed')
                 }
