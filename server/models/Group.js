@@ -16,13 +16,6 @@ const selectGroupById = async (id_group) => {
     )
 }
 
-const selectGroupMembership = async (id_group, id_account) => {
-    return await pool.query(
-        'SELECT is_approved FROM group_account WHERE id_group = $1 AND id_account = $2',
-        [id_group, id_account]
-    )
-}
-
 const insertGroup = async (group_name, description, owner_id) => {
     const client = await pool.connect()
     try {
@@ -52,6 +45,5 @@ export {
     removeGroup,
     selectAllGroups,
     selectGroupById,
-    selectGroupMembership,
     insertGroup
 }

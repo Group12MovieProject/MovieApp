@@ -1,10 +1,5 @@
-import {
-    removeGroup,
-    selectAllGroups,
-    selectGroupById,
-    selectGroupMembership,
-    insertGroup
-} from '../models/Group.js'
+import { removeGroup, selectAllGroups, selectGroupById, insertGroup } from '../models/Group.js'
+import { selectMembership } from '../models/GroupMembership.js'
 import { selectUserByEmail } from '../models/User.js'
 import {ApiError} from '../helper/ApiError.js'
 
@@ -65,7 +60,7 @@ const getGroupById = async (req, res, next) => {
             return res.status(200).json(group)
         }
 
-        const membershipResult = await selectGroupMembership(id_group, user.id_account)
+        const membershipResult = await selectMembership(id_group, user.id_account)
 
         if (membershipResult.rows.length === 0 || membershipResult.rows[0].is_approved !== true) {
             return next(new ApiError('Access denied', 403))
