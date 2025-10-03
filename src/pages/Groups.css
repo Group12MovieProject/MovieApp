@@ -99,6 +99,35 @@
   cursor: not-allowed;
 }
 
+/* Join group button */
+.join-group-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+  width: 100%;
+}
+
+.join-group-button:hover {
+  background: #1557b0;
+}
+
+.join-group-button:disabled {
+  background: #9e9e9e;
+  cursor: not-allowed;
+}
+
+.group-item {
+  position: relative;
+  padding: 1.25rem;
+}
+
 .group-form .cancel-btn {
   background: #6c757d;
 }

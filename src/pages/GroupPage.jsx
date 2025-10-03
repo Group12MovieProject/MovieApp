@@ -14,6 +14,10 @@ export default function GroupPage() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [isOwner, setIsOwner] = useState(false)
+    const [pendingMembers, setPendingMembers] = useState([])
+    const [pendingLoading, setPendingLoading] = useState(false)
+    const [approvingId, setApprovingId] = useState(null)
+    const [rejectingId, setRejectingId] = useState(null)
 
     useEffect(() => {
         const fetchGroupPage = async () => {
@@ -95,6 +99,57 @@ export default function GroupPage() {
         fetchGroupPage()
     }, [groupId, user?.access_token, autoLogin, logout])
 
+    useEffect(() => {
+        const fetchPendingMembers = async () => {
+            if (!isOwner || !user?.access_token) return
+
+            setPendingLoading(true)
+
+            try {
+                const response = await fetch(`${base_url}/group/${groupId}/members?status=pending`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user.access_token}`
+                    },
+                    credentials: 'include'
+                })
+
+                if (response.status === 401) {
+                    try {
+                        const refreshedUser = await autoLogin()
+                        if (refreshedUser?.access_token) {
+                            const retryResponse = await fetch(`${base_url}/group/${groupId}/members?status=pending`, {
+                                method: 'GET',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${refreshedUser.access_token}`
+                                },
+                                credentials: 'include'
+                            })
+                            
+                            if (retryResponse.ok) {
+                                const data = await retryResponse.json()
+                                setPendingMembers(data)
+                            }
+                        }
+                    } catch {
+                        // Fail silently for pending members
+                    }
+                } else if (response.ok) {
+                    const data = await response.json()
+                    setPendingMembers(data)
+                }
+            } catch (error) {
+                console.error('Error fetching pending members:', error)
+            } finally {
+                setPendingLoading(false)
+            }
+        }
+
+        fetchPendingMembers()
+    }, [isOwner, groupId, user?.access_token, autoLogin])
+
     const handleDeleteGroup = async () => {
         if (!isOwner) {
             alert('Vain ryhmän omistaja voi poistaa ryhmää')
@@ -157,6 +212,118 @@ export default function GroupPage() {
         }
     }
 
+    const handleApproveMember = async (accountId) => {
+        if (!isOwner) return
+
+        setApprovingId(accountId)
+
+        // Optimistically remove from pending list
+        const originalPending = [...pendingMembers]
+        setPendingMembers(pendingMembers.filter(m => m.id_account !== accountId))
+
+        try {
+            const response = await fetch(`${base_url}/group/${groupId}/members/${accountId}/approve`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.access_token}`
+                },
+                credentials: 'include'
+            })
+
+            if (response.status === 401) {
+                try {
+                    const refreshedUser = await autoLogin()
+                    if (refreshedUser?.access_token) {
+                        const retryResponse = await fetch(`${base_url}/group/${groupId}/members/${accountId}/approve`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${refreshedUser.access_token}`
+                            },
+                            credentials: 'include'
+                        })
+
+                        if (!retryResponse.ok) {
+                            throw new Error('Hyväksyminen epäonnistui')
+                        }
+                    }
+                } catch {
+                    // Revert on error
+                    setPendingMembers(originalPending)
+                    alert('Jäsenen hyväksyminen epäonnistui')
+                }
+            } else if (!response.ok) {
+                // Revert on error
+                setPendingMembers(originalPending)
+                const err = await response.json().catch(() => ({ error: 'Hyväksyminen epäonnistui' }))
+                alert(err.error?.message || err.error || 'Hyväksyminen epäonnistui')
+            }
+        } catch (error) {
+            console.error('Error approving member:', error)
+            setPendingMembers(originalPending)
+            alert('Jäsenen hyväksyminen epäonnistui')
+        } finally {
+            setApprovingId(null)
+        }
+    }
+
+    const handleRejectMember = async (accountId) => {
+        if (!isOwner) return
+
+        setRejectingId(accountId)
+
+        // Optimistically remove from pending list
+        const originalPending = [...pendingMembers]
+        setPendingMembers(pendingMembers.filter(m => m.id_account !== accountId))
+
+        try {
+            const response = await fetch(`${base_url}/group/${groupId}/members/${accountId}/reject`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.access_token}`
+                },
+                credentials: 'include'
+            })
+
+            if (response.status === 401) {
+                try {
+                    const refreshedUser = await autoLogin()
+                    if (refreshedUser?.access_token) {
+                        const retryResponse = await fetch(`${base_url}/group/${groupId}/members/${accountId}/reject`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${refreshedUser.access_token}`
+                            },
+                            credentials: 'include'
+                        })
+
+                        if (!retryResponse.ok) {
+                            throw new Error('Hylkääminen epäonnistui')
+                        }
+                    }
+                } catch {
+                    // Revert on error
+                    setPendingMembers(originalPending)
+                    alert('Jäsenen hylkääminen epäonnistui')
+                }
+            } else if (!response.ok) {
+                // Revert on error
+                setPendingMembers(originalPending)
+                const err = await response.json().catch(() => ({ error: 'Hylkääminen epäonnistui' }))
+                alert(err.error?.message || err.error || 'Hylkääminen epäonnistui')
+            }
+        } catch (error) {
+            console.error('Error rejecting member:', error)
+            setPendingMembers(originalPending)
+            alert('Jäsenen hylkääminen epäonnistui')
+        } finally {
+            setRejectingId(null)
+        }
+    }
+
     if (loading) {
         return <div className="group-loading">Ladataan ryhmäsivua...</div>
     }
@@ -193,6 +360,45 @@ export default function GroupPage() {
                     <p className="group-description">{group.description || group.group_desc || group.desc}</p>
                 )}
                 <p><strong>Ryhmän ylläpitäjän sähköposti:</strong> {user.email}</p>
+                
+                {isOwner && pendingMembers.length > 0 && (
+                    <div className="pending-members-section">
+                        <h3>Jäsenpyynnöt</h3>
+                        {pendingLoading ? (
+                            <p>Ladataan...</p>
+                        ) : (
+                            <ul className="pending-members-list">
+                                {pendingMembers.map((member) => (
+                                    <li key={member.id_account} className="pending-member-item">
+                                        <div className="pending-member-info">
+                                            <strong>{member.email}</strong>
+                                            <span className="pending-member-date">
+                                                {new Date(member.joined_at).toLocaleDateString('fi-FI')}
+                                            </span>
+                                        </div>
+                                        <div className="pending-member-actions">
+                                            <button
+                                                className="approve-button"
+                                                onClick={() => handleApproveMember(member.id_account)}
+                                                disabled={approvingId === member.id_account || rejectingId === member.id_account}
+                                            >
+                                                {approvingId === member.id_account ? 'Hyväksytään...' : 'Hyväksy'}
+                                            </button>
+                                            <button
+                                                className="reject-button"
+                                                onClick={() => handleRejectMember(member.id_account)}
+                                                disabled={approvingId === member.id_account || rejectingId === member.id_account}
+                                            >
+                                                {rejectingId === member.id_account ? 'Hylätään...' : 'Hylkää'}
+                                            </button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                )}
+                
                 {isOwner && (
                     <button
                         className="delete-group-button"

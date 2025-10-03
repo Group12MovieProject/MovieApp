@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useUser } from '../hooks/useUser'
 
 const base_url = import.meta.env.VITE_API_URL
 
@@ -7,7 +8,9 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
   const [groups, setGroups] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [joiningGroup, setJoiningGroup] = useState(null)
   const navigate = useNavigate()
+  const { user } = useUser()
 
   useEffect(() => {
     let isCancelled = false
@@ -45,6 +48,41 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
     }
   }, [refreshTrigger])
 
+  const handleJoinGroup = async (event, groupId) => {
+    event.stopPropagation()
+    
+    if (!user?.access_token) {
+      alert('Kirjaudu sisään liittyäksesi ryhmään')
+      navigate('/login')
+      return
+    }
+
+    setJoiningGroup(groupId)
+
+    try {
+      const response = await fetch(`${base_url}/group/${groupId}/join`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.access_token}`
+        },
+        credentials: 'include'
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error?.message || 'Liittymispyyntö epäonnistui')
+      }
+
+      alert('Liittymispyyntö lähetetty! Odota ryhmän omistajan hyväksyntää.')
+    } catch (error) {
+      console.error('Error joining group:', error)
+      alert(error.message || 'Liittymispyyntö epäonnistui')
+    } finally {
+      setJoiningGroup(null)
+    }
+  }
+
   if (loading) return <div className="groups-loading">Ladataan ryhmiä...</div>
   if (error) return <div className="groups-error">Virhe: {error}</div>
 
@@ -69,6 +107,16 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
             <h3>{g.group_name || g.name}</h3>
             {(g.description || g.group_desc || g.desc) && (
               <p>{g.description || g.group_desc || g.desc}</p>
+            )}
+            
+            {user && (
+              <button
+                className="join-group-button"
+                onClick={(e) => handleJoinGroup(e, g.id_group ?? g.id)}
+                disabled={joiningGroup === (g.id_group ?? g.id)}
+              >
+                {joiningGroup === (g.id_group ?? g.id) ? 'Lähetetään...' : 'Liity ryhmään'}
+              </button>
             )}
           </div>
         ))
