@@ -1,1 +1,46 @@
+/* Global styles and variables */
+:root {
+	/* Main UI font: system font */
+	--ui-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--ui-font-weight-regular: 400;
+	--ui-font-weight-medium: 500;
+}
+
+/* Ensure padding/border stay within declared widths across the app */
+*, *::before, *::after {
+	box-sizing: border-box;
+}
+
+/* Apply the font globally */
+html, body, #root {
+	height: 100%;
+}
+
+html {
+	font-family: var(--ui-font);
+	font-size: 16px; /* sensible default */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	margin: 0;
+	overflow-y: scroll; /* keep scrollbar visible so elements do not clip while changing pages */
+	font-weight: var(--ui-font-weight-regular);
+	color: #111827; 
+	background: #fff;
+}
+
+/* Provide a reusable utility class */
+.font-ui {
+	font-family: var(--ui-font) !important;
+}
+
+/* Headings default to medium weight */
+h1, h2, h3, h4, h5, h6 {
+	font-weight: var(--ui-font-weight-medium);
+	margin: 0;
+}
+
+/* End of global styles */
 
