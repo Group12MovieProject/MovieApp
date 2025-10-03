@@ -9,18 +9,38 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [joiningGroup, setJoiningGroup] = useState(null)
-  const [membershipStatus, setMembershipStatus] = useState(() => {
-    // Load from localStorage on mount
-    const saved = localStorage.getItem('groupMembershipStatus')
-    return saved ? JSON.parse(saved) : {}
-  })
+  const [membershipStatus, setMembershipStatus] = useState({})
   const navigate = useNavigate()
   const { user } = useUser()
 
   // Save to localStorage whenever membershipStatus changes
   useEffect(() => {
-    localStorage.setItem('groupMembershipStatus', JSON.stringify(membershipStatus))
-  }, [membershipStatus])
+    if (user?.id_account) {
+      localStorage.setItem(`groupMembershipStatus_${user.id_account}`, JSON.stringify(membershipStatus))
+    }
+  }, [membershipStatus, user?.id_account])
+
+  // Clear membership status when user logs out or changes
+  useEffect(() => {
+    if (!user?.id_account) {
+      setMembershipStatus({})
+      localStorage.removeItem('groupMembershipStatus')
+      // Also remove all user-specific keys
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('groupMembershipStatus_')) {
+          localStorage.removeItem(key)
+        }
+      })
+    } else {
+      // Load statuses for current user
+      const saved = localStorage.getItem(`groupMembershipStatus_${user.id_account}`)
+      if (saved) {
+        setMembershipStatus(JSON.parse(saved))
+      } else {
+        setMembershipStatus({})
+      }
+    }
+  }, [user?.id_account])
 
   useEffect(() => {
     let isCancelled = false

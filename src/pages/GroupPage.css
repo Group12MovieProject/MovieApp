@@ -91,6 +91,28 @@
   margin-bottom: 1.5rem;
 }
 
+.leave-group-button {
+  background: #ff9800;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.leave-group-button:hover:not(:disabled) {
+  background: #e68900;
+}
+
+.leave-group-button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .delete-group-button {
   background: #d9534f;
   color: #fff;
@@ -98,6 +120,13 @@
   padding: 0.6rem 1rem;
   border-radius: 4px;
   cursor: pointer;
+  width: 100%;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.delete-group-button:hover:not(:disabled) {
+  background: #c9302c;
 }
 
 .delete-group-button[disabled] {
@@ -214,9 +243,17 @@
   border: 1px solid #e0e0e0;
   border-radius: 6px;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.member-info {
+  display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
+  flex: 1;
 }
 
 .group-members-list strong {
@@ -238,4 +275,21 @@
   font-size: 0.9rem;
   color: #666;
   flex: 0 0 100%;
+}
+
+.remove-member-button {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.remove-member-button:hover {
+  background: #c82333;
 }

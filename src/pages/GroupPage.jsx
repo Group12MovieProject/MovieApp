@@ -377,6 +377,123 @@ export default function GroupPage() {
         }
     }
 
+    const handleLeaveGroup = async () => {
+        if (isOwner) {
+            alert('Omistaja ei voi poistua ryhmästä. Poista ryhmä sen sijaan.')
+            return
+        }
+
+        const confirmLeave = window.confirm(
+            'Haluatko varmasti poistua ryhmästä?'
+        )
+
+        if (!confirmLeave) return
+
+        setLoading(true)
+
+        try {
+            const response = await fetch(`${base_url}/group/${groupId}/leave`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.access_token}`
+                },
+                credentials: 'include'
+            })
+
+            if (response.status === 401) {
+                try {
+                    const refreshedUser = await autoLogin()
+                    if (refreshedUser?.access_token) {
+                        return handleLeaveGroup()
+                    }
+                } catch {
+                    await logout()
+                    setError('Istunto vanhentunut, kirjaudu sisään uudelleen')
+                    return
+                }
+            }
+
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({ error: 'Poistuminen epäonnistui' }))
+                throw new Error(err.error?.message || err.error || 'Poistuminen epäonnistui')
+            }
+
+            alert('Poistuit ryhmästä onnistuneesti!')
+            navigate('/groups')
+        } catch (error) {
+            console.error('Error leaving group:', error)
+            alert('Ryhmästä poistuminen epäonnistui: ' + (error.message || error))
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleRemoveMember = async (accountId, memberEmail) => {
+        if (!isOwner) return
+
+        if (accountId === group.owner_id) {
+            alert('Et voi poistaa omistajaa ryhmästä')
+            return
+        }
+
+        const confirmRemove = window.confirm(
+            `Haluatko varmasti poistaa käyttäjän ${memberEmail} ryhmästä?`
+        )
+
+        if (!confirmRemove) return
+
+        // Optimistically remove from approved list
+        const originalApproved = [...approvedMembers]
+        setApprovedMembers(approvedMembers.filter(m => m.id_account !== accountId))
+
+        try {
+            const response = await fetch(`${base_url}/group/${groupId}/members/${accountId}/reject`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.access_token}`
+                },
+                credentials: 'include'
+            })
+
+            if (response.status === 401) {
+                try {
+                    const refreshedUser = await autoLogin()
+                    if (refreshedUser?.access_token) {
+                        const retryResponse = await fetch(`${base_url}/group/${groupId}/members/${accountId}/reject`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${refreshedUser.access_token}`
+                            },
+                            credentials: 'include'
+                        })
+
+                        if (!retryResponse.ok) {
+                            throw new Error('Poistaminen epäonnistui')
+                        }
+                    }
+                } catch {
+                    // Revert on error
+                    setApprovedMembers(originalApproved)
+                    alert('Jäsenen poistaminen epäonnistui')
+                }
+            } else if (!response.ok) {
+                // Revert on error
+                setApprovedMembers(originalApproved)
+                const err = await response.json().catch(() => ({ error: 'Poistaminen epäonnistui' }))
+                alert(err.error?.message || err.error || 'Poistaminen epäonnistui')
+            } else {
+                alert(`Käyttäjä ${memberEmail} poistettu ryhmästä`)
+            }
+        } catch (error) {
+            console.error('Error removing member:', error)
+            setApprovedMembers(originalApproved)
+            alert('Jäsenen poistaminen epäonnistui')
+        }
+    }
+
     if (loading) {
         return <div className="group-loading">Ladataan ryhmäsivua...</div>
     }
@@ -414,13 +531,23 @@ export default function GroupPage() {
                         <ul className="group-members-list">
                             {approvedMembers.map(member => (
                                 <li key={member.id_account}>
-                                    <strong>{member.email}</strong>
-                                    {member.id_account === group.owner_id && (
-                                        <span className="owner-badge">Omistaja</span>
+                                    <div className="member-info">
+                                        <strong>{member.email}</strong>
+                                        {member.id_account === group.owner_id && (
+                                            <span className="owner-badge">Omistaja</span>
+                                        )}
+                                        <span className="join-date">
+                                            Liittyi {new Date(member.joined_at).toLocaleDateString('fi-FI')}
+                                        </span>
+                                    </div>
+                                    {isOwner && member.id_account !== group.owner_id && (
+                                        <button
+                                            className="remove-member-button"
+                                            onClick={() => handleRemoveMember(member.id_account, member.email)}
+                                        >
+                                            Poista
+                                        </button>
                                     )}
-                                    <span className="join-date">
-                                        Liittyi {new Date(member.joined_at).toLocaleDateString('fi-FI')}
-                                    </span>
                                 </li>
                             ))}
                         </ul>
@@ -435,7 +562,6 @@ export default function GroupPage() {
                 {(group.description || group.group_desc || group.desc) && (
                     <p className="group-description">{group.description || group.group_desc || group.desc}</p>
                 )}
-                <p><strong>Ryhmän ylläpitäjän sähköposti:</strong> {user.email}</p>
                 
                 {isOwner && pendingMembers.length > 0 && (
                     <div className="pending-members-section">
@@ -473,6 +599,16 @@ export default function GroupPage() {
                             </ul>
                         )}
                     </div>
+                )}
+                
+                {!isOwner && (
+                    <button
+                        className="leave-group-button"
+                        onClick={handleLeaveGroup}
+                        disabled={loading}
+                    >
+                        {loading ? 'Poistutaan...' : 'Poistu ryhmästä'}
+                    </button>
                 )}
                 
                 {isOwner && (
