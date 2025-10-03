@@ -81,6 +81,36 @@ const getMemberships = async (req, res, next) => {
     }
 }
 
+const getMyMembership = async (req, res, next) => {
+    try {
+        const { id_group } = req.params
+
+        if (!req.user?.email) {
+            return next(new ApiError('Unauthorized', 401))
+        }
+
+        const userResult = await selectUserByEmail(req.user.email)
+        if (userResult.rows.length === 0) {
+            return next(new ApiError('User not found', 404))
+        }
+
+        const user = userResult.rows[0]
+        const membership = await selectMembership(id_group, user.id_account)
+        
+        if (membership.rows.length === 0) {
+            return res.status(200).json({ status: 'none' })
+        }
+
+        const memberData = membership.rows[0]
+        return res.status(200).json({
+            status: memberData.is_approved ? 'approved' : 'pending',
+            membership: memberData
+        })
+    } catch (error) {
+        return next(new ApiError('Internal server error while fetching membership', 500))
+    }
+}
+
 const approveMembership = async (req, res, next) => {
     try {
         const { id_group, id_account } = req.params
@@ -199,4 +229,4 @@ const leaveMembership = async (req, res, next) => {
     }
 }
 
-export { requestMembership, getMemberships, approveMembership, rejectMembership, leaveMembership }
+export { requestMembership, getMemberships, getMyMembership, approveMembership, rejectMembership, leaveMembership }

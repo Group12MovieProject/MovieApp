@@ -9,8 +9,18 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [joiningGroup, setJoiningGroup] = useState(null)
+  const [membershipStatus, setMembershipStatus] = useState(() => {
+    // Load from localStorage on mount
+    const saved = localStorage.getItem('groupMembershipStatus')
+    return saved ? JSON.parse(saved) : {}
+  })
   const navigate = useNavigate()
   const { user } = useUser()
+
+  // Save to localStorage whenever membershipStatus changes
+  useEffect(() => {
+    localStorage.setItem('groupMembershipStatus', JSON.stringify(membershipStatus))
+  }, [membershipStatus])
 
   useEffect(() => {
     let isCancelled = false
@@ -48,6 +58,45 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
     }
   }, [refreshTrigger])
 
+  useEffect(() => {
+    const fetchMembershipStatuses = async () => {
+      if (!user?.access_token || !groups.length) return
+
+      const statuses = { ...membershipStatus }
+      
+      await Promise.all(
+        groups.map(async (group) => {
+          try {
+            const response = await fetch(`${base_url}/group/${group.id_group}/my-membership`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.access_token}`
+              },
+              credentials: 'include'
+            })
+
+            if (response.ok) {
+              const data = await response.json()
+              
+              if (data.status === 'none') {
+                delete statuses[group.id_group]
+              } else {
+                statuses[group.id_group] = data.status
+              }
+            }
+          } catch (err) {
+            console.error(`Error fetching membership for group ${group.id_group}:`, err)
+          }
+        })
+      )
+
+      setMembershipStatus(statuses)
+    }
+
+    fetchMembershipStatuses()
+  }, [groups, user?.access_token, refreshTrigger])
+
   const handleJoinGroup = async (event, groupId) => {
     event.stopPropagation()
     
@@ -74,13 +123,43 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
         throw new Error(errorData.error?.message || 'Liittymispyyntö epäonnistui')
       }
 
-      alert('Liittymispyyntö lähetetty! Odota ryhmän omistajan hyväksyntää.')
+      setMembershipStatus(prev => ({ ...prev, [groupId]: 'pending' }))
     } catch (error) {
       console.error('Error joining group:', error)
       alert(error.message || 'Liittymispyyntö epäonnistui')
     } finally {
       setJoiningGroup(null)
     }
+  }
+
+  const getMembershipButton = (groupId) => {
+    const status = membershipStatus[groupId]
+    
+    if (status === 'approved') {
+      return (
+        <button className="join-group-button member" disabled>
+          ✓ Ryhmän jäsen
+        </button>
+      )
+    }
+    
+    if (status === 'pending') {
+      return (
+        <button className="join-group-button pending" disabled>
+          ⏳ Odottaa hyväksyntää
+        </button>
+      )
+    }
+    
+    return (
+      <button
+        className="join-group-button"
+        onClick={(e) => handleJoinGroup(e, groupId)}
+        disabled={joiningGroup === groupId}
+      >
+        {joiningGroup === groupId ? 'Lähetetään...' : 'Liity ryhmään'}
+      </button>
+    )
   }
 
   if (loading) return <div className="groups-loading">Ladataan ryhmiä...</div>
@@ -109,15 +188,7 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
               <p>{g.description || g.group_desc || g.desc}</p>
             )}
             
-            {user && (
-              <button
-                className="join-group-button"
-                onClick={(e) => handleJoinGroup(e, g.id_group ?? g.id)}
-                disabled={joiningGroup === (g.id_group ?? g.id)}
-              >
-                {joiningGroup === (g.id_group ?? g.id) ? 'Lähetetään...' : 'Liity ryhmään'}
-              </button>
-            )}
+            {user && getMembershipButton(g.id_group ?? g.id)}
           </div>
         ))
       ) : (

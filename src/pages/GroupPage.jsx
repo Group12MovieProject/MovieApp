@@ -18,6 +18,8 @@ export default function GroupPage() {
     const [pendingLoading, setPendingLoading] = useState(false)
     const [approvingId, setApprovingId] = useState(null)
     const [rejectingId, setRejectingId] = useState(null)
+    const [approvedMembers, setApprovedMembers] = useState([])
+    const [membersLoading, setMembersLoading] = useState(false)
 
     useEffect(() => {
         const fetchGroupPage = async () => {
@@ -149,6 +151,57 @@ export default function GroupPage() {
 
         fetchPendingMembers()
     }, [isOwner, groupId, user?.access_token, autoLogin])
+
+    useEffect(() => {
+        const fetchApprovedMembers = async () => {
+            if (!user?.access_token) return
+
+            setMembersLoading(true)
+
+            try {
+                const response = await fetch(`${base_url}/group/${groupId}/members?status=approved`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user.access_token}`
+                    },
+                    credentials: 'include'
+                })
+
+                if (response.status === 401) {
+                    try {
+                        const refreshedUser = await autoLogin()
+                        if (refreshedUser?.access_token) {
+                            const retryResponse = await fetch(`${base_url}/group/${groupId}/members?status=approved`, {
+                                method: 'GET',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${refreshedUser.access_token}`
+                                },
+                                credentials: 'include'
+                            })
+                            
+                            if (retryResponse.ok) {
+                                const data = await retryResponse.json()
+                                setApprovedMembers(data)
+                            }
+                        }
+                    } catch {
+                        // Fail silently for members
+                    }
+                } else if (response.ok) {
+                    const data = await response.json()
+                    setApprovedMembers(data)
+                }
+            } catch (error) {
+                console.error('Error fetching approved members:', error)
+            } finally {
+                setMembersLoading(false)
+            }
+        }
+
+        fetchApprovedMembers()
+    }, [groupId, user?.access_token, autoLogin, approvingId])
 
     const handleDeleteGroup = async () => {
         if (!isOwner) {
@@ -351,6 +404,29 @@ export default function GroupPage() {
                 <h1>{group.group_name || group.name}</h1>
 
                 {/* Lisätään tähän ryhmään jaettu sisältö */}
+                <section className="group-members-section">
+                    <h2>Jäsenet ({approvedMembers.length})</h2>
+                    {membersLoading ? (
+                        <p>Ladataan jäseniä...</p>
+                    ) : approvedMembers.length === 0 ? (
+                        <p>Ei jäseniä vielä</p>
+                    ) : (
+                        <ul className="group-members-list">
+                            {approvedMembers.map(member => (
+                                <li key={member.id_account}>
+                                    <strong>{member.email}</strong>
+                                    {member.id_account === group.owner_id && (
+                                        <span className="owner-badge">Omistaja</span>
+                                    )}
+                                    <span className="join-date">
+                                        Liittyi {new Date(member.joined_at).toLocaleDateString('fi-FI')}
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </section>
+                
             </div>
 
             <aside className="group-aside">
