@@ -108,7 +108,7 @@ export default function ProfilePage() {
     }
     try {
       await addFavorite(
-        { title: movie.title, id: movie.id },
+        { title: movie.title, id: movie.id, poster_path: movie.poster_path},
         user.access_token,
         user.id_account
       )
@@ -138,31 +138,50 @@ export default function ProfilePage() {
       {error && <p className="error-message">{error}</p>}
 
       <h2>Omat suosikit</h2>
+      <button
+        onClick={() => {
+          const shareLink = `${window.location.origin}/share/${user.id_account}`
+          navigator.clipboard.writeText(shareLink)
+          alert("Jako-linkki kopioitu leikepöydälle: " + shareLink)
+        }}
+      >
+        Jaa suosikit
+      </button>
       {loading && <p>Ladataan...</p>}
       {favorites.length === 0 && <p>Ei suosikkeja vielä</p>}
       <table className="favorites-table">
-        <thead>
-          <tr>
-            <th>Elokuva</th>
-            <th>Toiminnot</th>
-          </tr>
-        </thead>
-        <tbody>
-          {favorites.map(fav => (
-            <tr key={fav.tmdb_id}>
-              <td>{fav.movie_title}</td>
-              <td>
-                <button
-                  className="remove-btn"
-                  onClick={() => handleRemoveFavorite(fav.id_favorite)}
-                >
-                  Poista
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+  <thead>
+    <tr>
+      <th>Juliste</th>
+      <th>Elokuva</th>
+      <th>Toiminnot</th>
+    </tr>
+  </thead>
+  <tbody>
+    {favorites.map(fav => (
+      <tr key={fav.tmdb_id}>
+        <td>
+          {fav.poster_path ? (
+            <img 
+              src={`https://image.tmdb.org/t/p/w185${fav.poster_path}`} 
+              alt={fav.movie_title} 
+              style={{ width: "100px" }} 
+            />
+          ) : "Ei kuvaa"}
+        </td>
+        <td>{fav.movie_title}</td>
+        <td>
+          <button
+            className="remove-btn"
+            onClick={() => handleRemoveFavorite(fav.id_favorite)}
+          >
+            Poista
+          </button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
 
       <div className="search-section">
         <h3>Etsi elokuvia ja lisää suosikkeihin</h3>
