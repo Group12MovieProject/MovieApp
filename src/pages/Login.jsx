@@ -38,7 +38,7 @@ export default function Login() {
             <label>Sähköposti:</label>
             <input
               type="email"
-              value={user.email}
+              value={user.email || ""}
               onChange={e => setUser({ ...user, email: e.target.value })}
               required
               style={{ width: "100%", padding: "0.5em" }}
@@ -48,7 +48,7 @@ export default function Login() {
             <label>Salasana:</label>
             <input
               type="password"
-              value={user.password}
+              value={user.password || ""}
               onChange={e => setUser({ ...user, password: e.target.value })}
               required
               style={{ width: "100%", padding: "0.5em" }}

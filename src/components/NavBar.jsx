@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {useUser} from '../hooks/useUser'
 import './NavBar.css'
@@ -11,11 +11,14 @@ export default function NavBar() {
 
   const isLoggedIn = user && user.access_token
 
+  const searchInputRef = useRef(null)
+
   const handleSearchSubmit = (e) => {
     e.preventDefault()
     if (navQuery.trim()) {
       navigate(`/searchpage?query=${encodeURIComponent(navQuery)}`)
       setNavQuery('')
+      searchInputRef.current?.blur()
     }
   }
 
@@ -37,7 +40,6 @@ export default function NavBar() {
         </div>
         <div className={`custom-navbar-links${menuOpen ? ' open' : ''}`}>
           <Link className="custom-navbar-link" to="/" onClick={()=>setMenuOpen(false)}>Koti</Link>
-          <Link className="custom-navbar-link" to="/favorites" onClick={()=>setMenuOpen(false)}>Suosikkilista</Link>
           <Link className="custom-navbar-link" to="/reviews" onClick={()=>setMenuOpen(false)}>Arvostelut</Link>
           <Link className="custom-navbar-link" to="/groups" onClick={()=>setMenuOpen(false)}>Ryhmät</Link>
           <Link className="custom-navbar-link" to="/showtimes" onClick={()=>setMenuOpen(false)}>Näytösajat</Link>
@@ -50,6 +52,7 @@ export default function NavBar() {
               aria-label="Search"
               value={navQuery}
               onChange={e => setNavQuery(e.target.value)}
+              ref={searchInputRef}
             />
             <span className="search-icon">🔍</span>
           </form>
