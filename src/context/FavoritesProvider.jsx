@@ -8,22 +8,38 @@ export default function FavoritesProvider({ children }) {
     const [favorites, setFavorites] = useState([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
-    const {user} = useContext(UserContext)
+    const { user, autoLogin, logout } = useContext(UserContext)
 
     useEffect(() => {
         if (user?.access_token && user?.id_account) {
-            fetchFavorites(user.access_token)
+            fetchFavorites()
         } else {
             setFavorites([])
             setError(null)
         }
-    }, [user?.access_token, user?.id_account])
+    }, [user?.access_token, user?.id_account, autoLogin, logout])
 
-    const fetchFavorites = async (token) => {
-        if (!token) {
-            setError('No authentication token')
-            return
+    const fetchFavorites = async ({ isRetry = false, currentUser = user } = {}) => {
+        // Ensure we have a user/token; if not, try autologin once
+        if (!currentUser?.access_token || !currentUser?.id_account) {
+            if (isRetry) {
+                setFavorites([])
+                setError(null)
+                await logout?.()
+                return
+            }
+
+            try {
+                const refreshed = await autoLogin?.()
+                return await fetchFavorites({ isRetry: true, currentUser: refreshed })
+            } catch (err) {
+                setFavorites([])
+                setError(null)
+                await logout?.()
+                return
+            }
         }
+
         setLoading(true)
         setError(null)
 
@@ -32,10 +48,29 @@ export default function FavoritesProvider({ children }) {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${currentUser.access_token}`
                 },
                 credentials: 'include'
             })
+
+            if (response.status === 401) {
+                if (isRetry) {
+                    setFavorites([])
+                    setError(null)
+                    await logout?.()
+                    return
+                }
+
+                try {
+                    const refreshed = await autoLogin()
+                    return await fetchFavorites({ isRetry: true, currentUser: refreshed })
+                } catch (err) {
+                    setFavorites([])
+                    setError(null)
+                    await logout?.()
+                    return
+                }
+            }
 
             if (!response.ok) {
                 throw new Error('Request failed')
@@ -58,10 +93,22 @@ export default function FavoritesProvider({ children }) {
         setError(null)
     }
 
-    const addFavorite = async (movie, token, id_account) => {
-        if (!token) {
-            setError('No authentication token')
-            throw new Error('No authentication token')
+    const addFavorite = async (movie, token, id_account, { isRetry = false, currentUser = user } = {}) => {
+        if (!currentUser?.access_token || !id_account) {
+            if (isRetry) {
+                await logout?.()
+                setError('No authentication token')
+                throw new Error('No authentication token')
+            }
+
+            try {
+                const refreshed = await autoLogin?.()
+                return await addFavorite(movie, token, id_account, { isRetry: true, currentUser: refreshed })
+            } catch (err) {
+                await logout?.()
+                setError('No authentication token')
+                throw new Error('No authentication token')
+            }
         }
 
         try {
@@ -69,7 +116,7 @@ export default function FavoritesProvider({ children }) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${currentUser.access_token}`
                 },
                 credentials: 'include',
                 body: JSON.stringify({
@@ -78,6 +125,23 @@ export default function FavoritesProvider({ children }) {
                     tmdb_id: movie.id
                 })
             })
+
+            if (response.status === 401) {
+                if (isRetry) {
+                    await logout?.()
+                    setError('Istunto vanhentunut')
+                    throw new Error('Istunto vanhentunut')
+                }
+
+                try {
+                    const refreshed = await autoLogin()
+                    return await addFavorite(movie, token, id_account, { isRetry: true, currentUser: refreshed })
+                } catch (err) {
+                    await logout?.()
+                    setError('Istunto vanhentunut')
+                    throw new Error('Istunto vanhentunut')
+                }
+            }
 
             if (response.status === 409) {
                 const data = await response.json()
@@ -101,10 +165,22 @@ export default function FavoritesProvider({ children }) {
         }
     }
 
-    const deleteFavorite = async (id_favorite, token) => {
-        if (!token) {
-            setError('No authentication token')
-            throw new Error('No authentication token')
+    const deleteFavorite = async (id_favorite, token, { isRetry = false, currentUser = user } = {}) => {
+        if (!currentUser?.access_token) {
+            if (isRetry) {
+                await logout?.()
+                setError('No authentication token')
+                throw new Error('No authentication token')
+            }
+
+            try {
+                const refreshed = await autoLogin?.()
+                return await deleteFavorite(id_favorite, token, { isRetry: true, currentUser: refreshed })
+            } catch (err) {
+                await logout?.()
+                setError('No authentication token')
+                throw new Error('No authentication token')
+            }
         }
 
         try {
@@ -112,10 +188,27 @@ export default function FavoritesProvider({ children }) {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${currentUser.access_token}`
                 },
                 credentials: 'include',
             })
+
+            if (response.status === 401) {
+                if (isRetry) {
+                    await logout?.()
+                    setError('Istunto vanhentunut')
+                    throw new Error('Istunto vanhentunut')
+                }
+
+                try {
+                    const refreshed = await autoLogin()
+                    return await deleteFavorite(id_favorite, token, { isRetry: true, currentUser: refreshed })
+                } catch (err) {
+                    await logout?.()
+                    setError('Istunto vanhentunut')
+                    throw new Error('Istunto vanhentunut')
+                }
+            }
 
             if (!response.ok) {
                 throw new Error('Request failed')

@@ -11,7 +11,7 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
   const [joiningGroup, setJoiningGroup] = useState(null)
   const [membershipStatus, setMembershipStatus] = useState({})
   const navigate = useNavigate()
-  const { user } = useUser()
+  const { user, autoLogin, logout } = useUser()
 
   // Save to localStorage whenever membershipStatus changes
   useEffect(() => {
@@ -80,34 +80,72 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
 
   useEffect(() => {
     const fetchMembershipStatuses = async () => {
-      if (!user?.access_token || !groups.length) return
+      if (!groups.length) return
 
       const statuses = { ...membershipStatus }
-      
+
       await Promise.all(
         groups.map(async (group) => {
-          try {
-            const response = await fetch(`${base_url}/group/${group.id_group}/my-membership`, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.access_token}`
-              },
-              credentials: 'include'
-            })
+          const fetchForGroup = async ({ isRetry = false, currentUser = user } = {}) => {
+            // If we don't have token data, try autologin once
+            if (!currentUser?.id_account || !currentUser?.access_token) {
+              if (isRetry) {
+                await logout?.()
+                return
+              }
 
-            if (response.ok) {
-              const data = await response.json()
-              
-              if (data.status === 'none') {
-                delete statuses[group.id_group]
-              } else {
-                statuses[group.id_group] = data.status
+              try {
+                const refreshedUser = await autoLogin?.()
+                return await fetchForGroup({ isRetry: true, currentUser: refreshedUser })
+              } catch (error) {
+                console.warn('Autologin failed before fetching membership:', error)
+                await logout?.()
+                return
               }
             }
-          } catch (err) {
-            console.error(`Error fetching membership for group ${group.id_group}:`, err)
+
+            try {
+              const response = await fetch(`${base_url}/group/${group.id_group}/my-membership`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${currentUser.access_token}`
+                },
+                credentials: 'include'
+              })
+
+              if (response.status === 401) {
+                if (isRetry) {
+                  await logout?.()
+                  return
+                }
+
+                // Try autologin once and retry
+                try {
+                  const refreshedUser = await autoLogin()
+                  if (!refreshedUser?.access_token) throw new Error('Token refresh failed')
+                  return await fetchForGroup({ isRetry: true, currentUser: refreshedUser })
+                } catch (error) {
+                  console.warn('Autologin failed while fetching membership:', error)
+                  await logout?.()
+                  return
+                }
+              }
+
+              if (response.ok) {
+                const data = await response.json()
+                if (data.status === 'none') {
+                  delete statuses[group.id_group]
+                } else {
+                  statuses[group.id_group] = data.status
+                }
+              }
+            } catch (err) {
+              console.error(`Error fetching membership for group ${group.id_group}:`, err)
+            }
           }
+
+          await fetchForGroup()
         })
       )
 
@@ -115,7 +153,7 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
     }
 
     fetchMembershipStatuses()
-  }, [groups, user?.access_token, refreshTrigger])
+  }, [groups, user?.access_token, refreshTrigger, autoLogin, logout, membershipStatus, user])
 
   const handleJoinGroup = async (event, groupId) => {
     event.stopPropagation()
