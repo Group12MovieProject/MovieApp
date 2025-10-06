@@ -1,7 +1,6 @@
 import { Routes, Route} from 'react-router-dom'
 import './App.css'
 import NavBar from  './components/NavBar'
-import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import Groups from './pages/Groups'
@@ -23,7 +22,7 @@ function App() {
     <UserProvider>
     <FavoritesProvider>
     <NavBar />
-    <Header /> 
+  
     <div id="elements">
       <Routes>
         <Route path="/" exact element={<Home />} />

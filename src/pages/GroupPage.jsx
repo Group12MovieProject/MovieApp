@@ -255,7 +255,6 @@ export default function GroupPage() {
                 throw new Error(err.error?.message || err.error || 'Poisto epäonnistui')
             }
 
-            alert('Ryhmä poistettu onnistuneesti!')
             navigate('/groups')
         } catch (error) {
             console.error('Error deleting group:', error)
@@ -419,7 +418,6 @@ export default function GroupPage() {
                 throw new Error(err.error?.message || err.error || 'Poistuminen epäonnistui')
             }
 
-            alert('Poistuit ryhmästä onnistuneesti!')
             navigate('/groups')
         } catch (error) {
             console.error('Error leaving group:', error)
@@ -484,8 +482,6 @@ export default function GroupPage() {
                 setApprovedMembers(originalApproved)
                 const err = await response.json().catch(() => ({ error: 'Poistaminen epäonnistui' }))
                 alert(err.error?.message || err.error || 'Poistaminen epäonnistui')
-            } else {
-                alert(`Käyttäjä ${memberEmail} poistettu ryhmästä`)
             }
         } catch (error) {
             console.error('Error removing member:', error)

@@ -7,17 +7,6 @@ function Showtimes() {
   const [showtimes, setShowtimes] = useState([])
   const [selectedAreaId, setSelectedAreaId] = useState("");
 
-  // useEffect(() => {
-  //   const headers = {headers: {Authorization: 'Bearer' + user.access_token}}
-  //   axios.get('http://localhost:3001/secured',headers)
-  //   .then(response =>{
-  //     setMessage(response.data.message)
-  //   })
-  //   .catch (error =>{
-  //     if (error.status === 401) navigate ("/login")
-  //   })
-  // }, [])
-
   function handleAreaChange(e) {
     setSelectedAreaId(e.target.value)
   }
@@ -79,6 +68,7 @@ function Showtimes() {
 
   return (
     <div id="showtimes-container">
+      <h1>Näytösajat Finnkinon teattereissa</h1>
 
       <div className="showtimes-controls">
         <select value={selectedAreaId} onChange={handleAreaChange}>
