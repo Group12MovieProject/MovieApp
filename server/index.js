@@ -3,6 +3,7 @@ import cors from 'cors'
 import userRouter from './routers/userRouter.js'
 import favoritesRouter from './routers/favoritesRouter.js'
 import reviewRouter from './routers/reviewRouter.js'
+import groupRouter from './routers/groupRouter.js'
 import cookieParser from 'cookie-parser'
 import { auth } from './helper/auth.js'
 import dotenv from 'dotenv'
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use('/user',userRouter)
 app.use('/favorites', favoritesRouter)
 app.use('/review', reviewRouter)
+app.use('/group', groupRouter)
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`)

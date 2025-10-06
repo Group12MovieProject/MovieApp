@@ -80,16 +80,20 @@ function Showtimes() {
   return (
     <div id="showtimes-container">
 
-      <select value={selectedAreaId} onChange={handleAreaChange}>
-        {areas.map(area => (
-          <option key={area.ID} value={area.ID}>{area.Name}</option>
-        ))}
-      </select>
+      <div className="showtimes-controls">
+        <select value={selectedAreaId} onChange={handleAreaChange}>
+          <option value="">Valitse alue</option>
+          {areas.map(area => (
+            <option key={area.ID} value={area.ID}>{area.Name}</option>
+          ))}
+        </select>
+      </div>
       {selectedAreaId && showtimes.length === 0 && (
         <p>No movies available</p>
       )}
       {showtimes.length > 0 && (
-        <table>
+        <div className="showtimes-wrapper">
+          <table className="showtimes">
           <thead>
             <tr>
               <th>Elokuva</th>
@@ -108,7 +112,8 @@ function Showtimes() {
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
       )}
     </div>
   )

@@ -25,7 +25,7 @@ const postReview = async (req, res, next) => {
         if (error.code === '23505') {
             return next(new ApiError('Review already exists for this movie', 409))
         }
-        return next(new ApiError('Internal server error while posting review', 500)) // tämäkin syytä testata
+        return next(new ApiError('Internal server error while posting review', 500)) 
     }
 }
 
