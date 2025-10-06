@@ -153,7 +153,7 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
     }
 
     fetchMembershipStatuses()
-  }, [groups, user?.access_token, refreshTrigger, autoLogin, logout, membershipStatus, user])
+  }, [groups, user?.access_token, refreshTrigger, autoLogin, logout])
 
   const handleJoinGroup = async (event, groupId) => {
     event.stopPropagation()
