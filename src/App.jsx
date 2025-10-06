@@ -15,6 +15,7 @@ import ProfilePage from './pages/ProfilePage'
 import PrivateRoute from './components/PrivateRoute'
 import UserProvider from './context/UserProvider'
 import FavoritesProvider from './context/FavoritesProvider'
+import SharedFavoritesPage from './pages/SharedFavoritesPage'
 
 function App() {
 
@@ -33,9 +34,11 @@ function App() {
         <Route path="/searchpage" exact element={<Search />} />
         <Route path="/login" exact element={<Login />} />
         <Route path="/register" exact element={<Register />} />
+        <Route path="/share/:id_account" element={<SharedFavoritesPage />} />
         <Route path="/*" exact element={<NotFound />} />
         <Route element={<PrivateRoute />} >
         <Route path="/profilepage" exact element={<ProfilePage />} />
+        
         </Route>
       </Routes>
     </div>

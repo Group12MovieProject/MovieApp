@@ -122,7 +122,8 @@ export default function FavoritesProvider({ children }) {
                 body: JSON.stringify({
                     id_account: id_account,
                     movie_title: movie.title,
-                    tmdb_id: movie.id
+                    tmdb_id: movie.id,
+                    poster_path: movie.poster_path
                 })
             })
 
