@@ -15,8 +15,9 @@ CREATE TABLE account (
 CREATE TABLE favorites (
     id_favorite SERIAL PRIMARY KEY,
     id_account INTEGER NOT NULL,
-    movie_title VARCHAR(45),
+    movie_title VARCHAR(255),
     tmdb_id INT,
+    poster_path VARCHAR(255),
     CONSTRAINT user_favorites_unique UNIQUE(id_account, tmdb_id),
     FOREIGN KEY (id_account) REFERENCES account(id_account) ON DELETE CASCADE
 );

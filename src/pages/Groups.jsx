@@ -14,7 +14,7 @@ export default function Groups() {
 
   return (
     <div className="groups-container">
-      <h1>Ryhmäsivu</h1>
+      <h1>Ryhmäsivut</h1>
     <ShowGroups refreshTrigger={refreshTrigger} />
     {user ? (
       <CreateGroup

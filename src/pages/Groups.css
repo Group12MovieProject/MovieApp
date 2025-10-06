@@ -99,6 +99,47 @@
   cursor: not-allowed;
 }
 
+/* Join group button */
+.join-group-button {
+  margin-top: auto;
+  padding: 0.6rem 1rem;
+  background: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.join-group-button:hover:not(:disabled) {
+  background: #1557b0;
+}
+
+.join-group-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Pending state - yellow/orange */
+.join-group-button.pending {
+  background: #ff9800;
+  color: white;
+}
+
+/* Member state - green */
+.join-group-button.member {
+  background: #28a745;
+  color: white;
+}
+
+.group-item {
+  position: relative;
+  padding: 1.25rem;
+}
+
 .group-form .cancel-btn {
   background: #6c757d;
 }
