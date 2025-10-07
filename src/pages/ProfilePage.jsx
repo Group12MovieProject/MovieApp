@@ -26,42 +26,28 @@ export default function ProfilePage() {
   }
 
   const handleDeleteAccount = async () => {
-    const confirmDelete = window.confirm(
-      'Haluatko varmasti poistaa tilisi? Tätä toimintoa ei voi peruuttaa.'
-    )
-
-    if (!confirmDelete) return
-
-    const password = window.prompt(
-      'Vahvista tilin poisto syöttämällä salasanasi:'
-    )
-
-    if (!password) {
-      alert('Tilin poisto peruutettu.')
-      return
-    }
-
-    setDeleteLoading(true)
-
+    if (!window.confirm("Haluatko varmasti poistaa tilisi?")) return;
     try {
-      await verifyPassword(password)
-
-      await deleteMe()
-
-      alert('Tili poistettu onnistuneesti!')
-      navigate('/register')
-    } catch (error) {
-      console.error('Delete account error:', error)
-
-      if (error.response?.status === 401) {
-        alert('Väärä salasana. Tilin poisto peruutettu.')
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/user/delete`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.access_token}`
+        },
+        credentials: 'include'
+      });
+      if (res.ok) {
+        // Optionally log out and redirect
+        logout();
+        navigate('/login');
       } else {
-        alert('Tilin poistaminen epäonnistui: ' + (error.response?.data?.error || error.message))
+        const data = await res.json();
+        alert(data.error || "Virhe tilin poistossa");
       }
-    } finally {
-      setDeleteLoading(false)
+    } catch (err) {
+      alert("Virhe tilin poistossa");
     }
-  }
+  };
 
   if (!user.access_token) {
     return (
