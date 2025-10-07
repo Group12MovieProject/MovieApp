@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useUser } from '../hooks/useUser'
 import { useNavigate } from 'react-router-dom'
+import './Register.css'
 
 export default function Register() {
   const { signUp } = useUser()
@@ -49,11 +50,11 @@ export default function Register() {
   }
 
   return (
-    <div style={{ maxWidth: "400px", margin: "2em auto" }}>
+    <div className="register-container">
       <h2>Rekisteröinti</h2>
-      {errorMessage && <div style={{ color: 'red', marginBottom: '1em' }}>{errorMessage}</div>}
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "1em" }}>
+      {errorMessage && <div className="register-error">{errorMessage}</div>}
+      <form className="register-form" onSubmit={handleSubmit}>
+        <div className="register-form-group">
           <label>Sähköposti:</label>
           <input
             type="email"
@@ -63,10 +64,9 @@ export default function Register() {
               setErrorMessage("")
             }}
             required
-            style={{ width: "100%", padding: "0.5em" }}
           />
         </div>
-        <div style={{ marginBottom: "1em" }}>
+        <div className="register-form-group">
           <label>Salasana:</label>
           <input
             type="password"
@@ -76,14 +76,13 @@ export default function Register() {
               setErrorMessage("")
             }}
             required
-            style={{ width: "100%", padding: "0.5em" }}
           />
         </div>
-        <button type="submit" style={{ padding: "0.5em 1em" }}>
+        <button type="submit" className="register-submit-btn">
           Rekisteröidy
         </button>
       </form>
-      <p style={{ marginTop: "1em" }}>
+      <p className="register-login-link">
         Onko sinulla jo tili? <Link to="/login">Kirjaudu tästä</Link>
       </p>
     </div>

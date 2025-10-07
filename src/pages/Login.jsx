@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useUser } from '../hooks/useUser'
 import { useNavigate } from 'react-router-dom'
-//import './Login.css'
+import './Login.css'
 
 export default function Login() {
   const { user, setUser, signIn, isInitialized } = useUser()
@@ -47,11 +47,11 @@ export default function Login() {
   }
 
   return (
-    <div style={{ maxWidth: "400px", margin: "2em auto" }}>
+    <div className="login-container">
       <h2>Kirjaudu</h2>
-      {errorMessage && <div style={{ color: 'red', marginBottom: '1em' }}>{errorMessage}</div>}
-      <form onSubmit={login}>
-        <div style={{ marginBottom: "1em" }}>
+      {errorMessage && <div className="login-error">{errorMessage}</div>}
+      <form className="login-form" onSubmit={login}>
+        <div className="login-form-group">
           <label>Sähköposti:</label>
           <input
             type="email"
@@ -61,10 +61,9 @@ export default function Login() {
               setErrorMessage("")
             }}
             required
-            style={{ width: "100%", padding: "0.5em" }}
           />
         </div>
-        <div style={{ marginBottom: "1em" }}>
+        <div className="login-form-group">
           <label>Salasana:</label>
           <input
             type="password"
@@ -74,14 +73,13 @@ export default function Login() {
               setErrorMessage("")
             }}
             required
-            style={{ width: "100%", padding: "0.5em" }}
           />
         </div>
-        <button type="submit" style={{ padding: "0.5em 1em" }}>
+        <button type="submit" className="login-submit-btn">
           Kirjaudu
         </button>
       </form>
-      <p style={{ marginTop: "1em" }}>
+      <p className="login-register-link">
         Ei vielä tiliä? <Link to="/register">Rekisteröidy tästä</Link>
       </p>
     </div>
