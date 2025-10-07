@@ -65,7 +65,7 @@
 
 .home-movie-score {
   font-weight: normal;
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.85em;
 }
 
@@ -73,16 +73,17 @@
   padding: 0.7em 1.2em;
   font-size: 1.2em;
   border-radius: 8px;
-  border: 1px solid #ddd;
-  background: #f8f9fa;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
   cursor: pointer;
   transition: all 0.3s ease;
   flex-shrink: 0;
 }
 
 .home-carousel button:hover:not(:disabled) {
-  background: #e9ecef;
-  border-color: #adb5bd;
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .home-carousel button:disabled {

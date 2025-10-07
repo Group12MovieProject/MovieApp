@@ -104,10 +104,6 @@ const WriteReview = ({ user, autoLogin, logout, onReviewAdded }) => {
       stars: stars
     }
 
-    console.log('Lähetetään arvostelu:', reviewData)
-    console.log('User token:', currentUser.access_token ? 'Token löytyy' : 'Token puuttuu')
-    console.log('User object:', currentUser)
-
     try {
       const response = await fetch(base_url + '/review/add', {
         method: 'POST',

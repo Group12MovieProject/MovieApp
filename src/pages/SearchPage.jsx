@@ -116,7 +116,6 @@ export default function Search() {
                     <th></th>
                     <th>Nimi</th>
                     <th>Julkaisupäivä </th>
-                    <th>TMDB pisteet</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -144,7 +143,6 @@ export default function Search() {
                       </td>
                       <td>{item.title}</td>
                       <td>{item.release_date}</td>
-                      <td>{item.vote_average}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -160,7 +158,6 @@ export default function Search() {
                     <th></th>
                     <th>Nimi</th>
                     <th>Ensiesitys</th>
-                    <th>TMDB pisteet</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -175,7 +172,6 @@ export default function Search() {
                       </td>
                       <td>{item.name}</td>
                       <td>{item.first_air_date}</td>
-                      <td>{item.vote_average}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -251,7 +247,6 @@ export default function Search() {
               <th></th>
               <th>Nimi</th>
               <th>Julkaisupäivä</th>
-              <th>TMDB pisteet</th>
             </tr>
           </thead>
           <tbody>
@@ -279,7 +274,6 @@ export default function Search() {
                 </td>
                 <td>{item.title}</td>
                 <td>{item.release_date}</td>
-                <td>{item.vote_average}</td>
               </tr>
             ))}
           </tbody>
@@ -294,7 +288,6 @@ export default function Search() {
               <th></th>
               <th>Nimi</th>
               <th>Ensiesitys</th>
-              <th>TMDB pisteet</th>
             </tr>
           </thead>
           <tbody>
@@ -309,7 +302,6 @@ export default function Search() {
                 </td>
                 <td>{item.name}</td>
                 <td>{item.first_air_date}</td>
-                <td>{item.vote_average}</td>
               </tr>
             ))}
           </tbody>

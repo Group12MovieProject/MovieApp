@@ -9,16 +9,17 @@
 .reviews-container h1 {
   text-align: center;
   margin-bottom: 2rem;
+  color: var(--text);
 }
 
 .add-review-section {
   width: auto;
   box-sizing: border-box;
-  background: #f5f5f5;
+  background: var(--surface);
   padding: 1.75rem;
   border-radius: 10px;
   box-shadow: 0 10px 22px rgba(17, 24, 39, 0.06);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border);
   margin: 0 auto 2rem;
 }
 
@@ -39,10 +40,10 @@
 .reviews-empty {
   padding: 2rem;
   text-align: center;
-  background: #f9f9f9;
-  border: 1px solid #e0e0e0;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
   border-radius: 12px;
-  color: #555;
+  color: var(--text-muted);
 }
 
 .reviews-cards {
@@ -55,16 +56,16 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background: #ffffff;
+  background: var(--surface);
   border-radius: 16px;
   padding: 1.25rem 1.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border);
   box-shadow: 0 12px 30px rgba(17, 24, 39, 0.08);  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
 }
 
 .review-card:focus-visible {
-  outline: 3px solid rgba(26, 115, 232, 0.45);
+  outline: 3px solid var(--accent);
   outline-offset: 4px;
 }
 
@@ -92,6 +93,7 @@
 .review-card:focus-within {
   transform: translateY(-4px);
   box-shadow: 0 18px 36px rgba(17, 24, 39, 0.12);
+  border-color: var(--accent);
 }
 
 .review-card-title {
@@ -106,13 +108,13 @@
   margin: 0;
   font-size: 1.0rem;
   font-weight: 600;
-  color: #1c3d5a;
+  color: var(--text);
   line-height: 1.35;
 }
 
 .review-card-date {
   font-size: 0.8rem;
-  color: #9aa5b5;
+  color: var(--text-muted);
 }
 
 .review-card-stars {
@@ -121,7 +123,7 @@
 
 .review-card-text {
   margin: 0;
-  color: #333;
+  color: var(--text);
   line-height: 1.6;
   white-space: pre-wrap;
 }
@@ -131,30 +133,30 @@
   flex-direction: column;
   gap: 0.2rem;
   font-size: 0.95rem;
-  color: #4a4f59;
+  color: var(--text-muted);
 }
 
 .review-card-author-label {
   text-transform: uppercase;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
-  color: #ede5e5;
+  color: var(--text-muted);
 }
 
 .review-card-author {
   font-weight: 600;
-  color: #c9bebe;
+  color: var(--text);
 }
 .search-result {
   display: flex;
   align-items: center;
   padding: 10px;
   cursor: pointer;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
 }
 
 .search-result:hover {
-  background-color: #f0f0f0;
+  background-color: var(--surface-alt);
 }
 
 .movie-poster {
@@ -166,10 +168,10 @@
 
 /* Arvostelulomake */
 .review-form {
-  background: white;
+  background: var(--surface);
   padding: 1rem;
   border-radius: 4px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
 }
 
 .form-message {
@@ -180,15 +182,15 @@
 }
 
 .success-message {
-  background: #e8f5e9;
-  color: #1b5e20;
-  border: 1px solid #c8e6c9;
+  background: var(--success);
+  color: var(--text);
+  border: 1px solid var(--success);
 }
 
 .error-message {
-  background: #ffebee;
-  color: #c62828;
-  border: 1px solid #ffcdd2;
+  background: var(--danger);
+  color: var(--text);
+  border: 1px solid var(--danger);
 }
 
 .stars-input {
@@ -201,21 +203,23 @@
   background: none;
   border: none;
   font-size: 1.5rem;
-  color: #ddd;
+  color: var(--text-muted);
   cursor: pointer;
 }
 
 .star.filled {
-  color: #ffd700;
+  color: var(--warning);
 }
 
 .review-textarea {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
   border-radius: 4px;
   min-height: 80px;
   resize: vertical;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .form-actions {
@@ -225,36 +229,128 @@
 }
 
 .submit-btn {
-  background: #28a745;
-  color: white;
+  background: var(--success);
+  color: #1e1e2e;
   border: none;
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .submit-btn:disabled {
-  background: #6c757d;
+  background: var(--text-muted);
+  color: #1e1e2e;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .cancel-btn {
-  background: #6c757d;
-  color: white;
+  background: var(--text-muted);
+  color: #1e1e2e;
   border: none;
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: 600;
+}
+
+/* WriteReview hakukentät */
+.movie-search {
+  margin-bottom: 1.5rem;
+}
+
+.movie-search label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--bg);
+  color: var(--text);
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.star-rating label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.review-text label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.review-text small {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.rating-text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+.movie-info h4 {
+  margin: 0;
+  color: var(--text);
+}
+
+.movie-info p {
+  margin: 0.25rem 0 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
 }
 
 .stars {
-  color: #ffd700;
+  color: var(--warning);
 }
 
 .error {
-  color: red;
+  color: var(--danger);
   text-align: center;
   padding: 1rem;
-  background: #ffe6e6;
+  background: var(--danger);
   border-radius: 4px;
 }
 

@@ -3,6 +3,7 @@
   margin: 2rem auto;
   padding: 1rem;
   font-family: Arial, sans-serif;
+  color: var(--text);
 }
 
 /* Suosikkitaulukko */
@@ -15,18 +16,19 @@
 
 .favorites-table th,
 .favorites-table td {
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
   padding: 8px;
+  color: var(--text);
 }
 
 .favorites-table th {
-  background-color: #f2f2f2;
+  background-color: var(--surface-alt);
   text-align: left;
 }
 
 .delete-account-button {
-  background-color: #e74c3c;
-  color: white;
+  background-color: var(--danger);
+  color: var(--bg);
   border: none;
   padding: 5px 10px;
   cursor: pointer;
@@ -35,7 +37,7 @@
 }
 
 .delete-account-button:hover {
-  background-color: #c0392b;
+  opacity: 0.8;
 }
 
 /* Hakukenttä */
@@ -47,15 +49,17 @@
   padding: 8px;
   width: 60%;
   max-width: 400px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
   border-radius: 4px;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .search-section button {
   padding: 8px 12px;
   margin-left: 8px;
-  background-color: #3498db;
-  color: white;
+  background-color: var(--accent);
+  color: var(--bg);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -63,7 +67,7 @@
 }
 
 .search-section button:hover {
-  background-color: #2980b9;
+  background-color: var(--accent-hover);
 }
 
 /* Hakutulokset */
@@ -80,8 +84,8 @@
 .search-results button {
   margin-left: 1rem;
   padding: 4px 8px;
-  background-color: #2ecc71;
-  color: white;
+  background-color: var(--success);
+  color: var(--bg);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -89,7 +93,7 @@
 }
 
 .search-results button:hover {
-  background-color: #27ae60;
+  opacity: 0.8;
 }
 
 /* Toiminnot */
@@ -108,19 +112,19 @@
 }
 
 .logout-button {
-  background-color: #3498db;
-  color: white;
+  background-color: var(--accent);
+  color: var(--bg);
 }
 
 .logout-button:hover {
-  background-color: #2980b9;
+  background-color: var(--accent-hover);
 }
 
 .delete-account-button {
-  background-color: #e74c3c;
-  color: white;
+  background-color: var(--danger);
+  color: var(--bg);
 }
 
 .delete-account-button:hover {
-  background-color: #c0392b;
+  opacity: 0.8;
 }

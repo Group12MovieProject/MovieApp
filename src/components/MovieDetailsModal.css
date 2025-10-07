@@ -15,8 +15,8 @@
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  background: #121212;
-  color: #f5f5f5;
+  background: var(--surface);
+  color: var(--text);
   border-radius: 12px;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
   padding: 1.5rem 2rem;
@@ -24,7 +24,7 @@
 }
 
 .movie-modal:focus {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 3px var(--accent);
 }
 
 .movie-modal-loading,
@@ -36,7 +36,7 @@
 .movie-modal-error-message {
   margin-top: 0.5rem;
   font-size: 0.875rem;
-  color: #ff6b81;
+  color: var(--danger);
 }
 
 .movie-modal-content {
@@ -68,25 +68,25 @@
 }
 
 .movie-modal-basic-info {
-  background: black;
+  background: var(--bg);
   padding: 0.85rem 1rem;
   border-radius: 12px;
   backdrop-filter: blur(8px);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1px var(--border);
 }
 
 .movie-modal-basic-info h2 {
   margin: 0;
   font-size: 1.75rem;
-  background: black;
-  color: #fefcfb;
+  background: var(--bg);
+  color: var(--text);
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 .movie-modal-subtitle {
   margin: 0.35rem 0;
-  background: black;
-  color: #ffd166;
+  background: var(--bg);
+  color: var(--accent);
   font-weight: 600;
 }
 
@@ -94,7 +94,7 @@
   margin: 0.25rem 0 0;
   font-style: italic;
   
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-muted);
 }
 
 .movie-modal-section h3,
@@ -144,18 +144,18 @@
 }
 
 .movie-modal-primary {
-  background: #ffb400;
-  color: #1c1c1c;
+  background: var(--accent);
+  color: var(--bg);
 }
 
 .movie-modal-primary:hover,
 .movie-modal-primary:focus {
-  background: #ffc94d;
+  background: var(--accent-hover);
 }
 
 .movie-modal-primary:focus,
 .movie-modal-secondary:focus {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 0 3px var(--accent);
 }
 
 @media (max-width: 640px) {
