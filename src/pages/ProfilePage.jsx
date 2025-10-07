@@ -75,13 +75,6 @@ export default function ProfilePage() {
     )
   }
 
-  // // Haetaan suosikit kun käyttäjä kirjautunut ja vain kerran
-  // useEffect(() => {
-  //   if (user?.access_token) {
-  //     fetchFavorites(user.access_token)
-  //   }
-  // }, [user?.access_token])
-
   const handleSearch = async () => {
     if (!searchTerm.trim()) return
     try {
