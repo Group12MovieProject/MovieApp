@@ -26,6 +26,39 @@
   text-align: left;
 }
 
+/* Jaa suosikit -nappula */
+.share-favorites-btn {
+  background-color: var(--accent);
+  color: #1e1e2e;
+  border: none;
+  padding: 8px 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 1.5rem;
+}
+
+.share-favorites-btn:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Poista-nappula suosikkitaulukossa */
+.remove-btn {
+  background-color: var(--danger);
+  color: #1e1e2e;
+  border: none;
+  padding: 4px 8px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.remove-btn:hover {
+  opacity: 0.8;
+}
+
 .delete-account-button {
   background-color: var(--danger);
   color: var(--bg);

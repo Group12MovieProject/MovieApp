@@ -132,6 +132,7 @@ export default function ProfilePage() {
 
       <h2>Omat suosikit</h2>
       <button
+        className="share-favorites-btn"
         onClick={() => {
           const shareLink = `${window.location.origin}/share/${user.id_account}`
           navigator.clipboard.writeText(shareLink)
