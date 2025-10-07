@@ -70,8 +70,6 @@ const deleteFavorite = async (req, res, next) => {
     }
 }
 
-// FavoritesController.js
-
 const getSharedFavorites = async (req, res, next) => {
   try {
     const { id_account } = req.params
