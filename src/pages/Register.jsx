@@ -9,8 +9,26 @@ export default function Register() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const validatePassword = (pwd) => {
+    
+    if (!pwd || pwd.length < 8) {
+      alert('Salasanan täytyy sisältää vähintään kahdeksan merkkiä')
+      return false
+    }
+
+    if (!/[A-Z]/.test(pwd) || !/\d/.test(pwd)) {
+      alert('Salasanassa täytyy olla vähintään yksi iso kirjain ja yksi numero')
+      return false
+    }
+
+    return true
+  }
+
+    const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!validatePassword(password)) return
+    
     try {
       await signUp(email, password)
       navigate("/")
