@@ -133,18 +133,9 @@ export default function ProfilePage() {
       </aside>
 
       <main className="favorites-main">
-        <h2>Omat suosikit</h2>
+        <h1>Omat suosikit</h1>
         <div className="favorites-container">
-          <button
-            className="share-favorites-btn"
-            onClick={() => {
-              const shareLink = `${window.location.origin}/share/${user.id_account}`
-              navigator.clipboard.writeText(shareLink)
-              alert("Jako-linkki kopioitu leikepöydälle: " + shareLink)
-            }}
-          >
-            Jaa suosikit
-          </button>
+          
           {loading && <p>Ladataan...</p>}
           {favorites.length === 0 && <p>Ei suosikkeja vielä</p>}
           <table className="favorites-table">
@@ -180,6 +171,16 @@ export default function ProfilePage() {
               ))}
             </tbody>
           </table>
+          <button
+            className="share-favorites-btn"
+            onClick={() => {
+              const shareLink = `${window.location.origin}/share/${user.id_account}`
+              navigator.clipboard.writeText(shareLink)
+              alert("Jako-linkki kopioitu leikepöydälle: " + shareLink)
+            }}
+          >
+            Jaa suosikit
+          </button>
         </div>
 
         <div className="search-section">
