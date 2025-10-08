@@ -1,32 +1,154 @@
+/* Main layout: center content + right sidebar */
+.profile-layout {
+  display: flex;
+  flex-direction: row-reverse; /* aside on the right */
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: Arial, sans-serif;
+  color: var(--text);
+}
+
+/* Right sidebar for profile info and actions */
+.profile-aside {
+  flex: 0 0 320px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  height: fit-content;
+  position: sticky;
+  top: 1rem;
+}
+
+.profile-aside h1 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: var(--text);
+}
+
+.profile-aside h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.profile-info {
+  margin-bottom: 1.5rem;
+}
+
+.profile-info p {
+  margin: 0.5rem 0;
+  color: var(--text);
+}
+
+/* Main content area for favorites */
+.favorites-main {
+  flex: 1 1 0;
+  min-width: 0; /* prevents flex item overflow */
+}
+
+.favorites-main h2 {
+  margin-top: 0;
+  color: var(--text);
+}
+
+.favorites-container {
+  margin-bottom: 2rem;
+}
+
 .profile-container {
   max-width: 800px;
   margin: 2rem auto;
   padding: 1rem;
   font-family: Arial, sans-serif;
+  color: var(--text);
 }
 
 /* Suosikkitaulukko */
 .favorites-table {
   width: 100%;
-  min-width: 600px;
   border-collapse: collapse;
   margin-bottom: 1.5rem;
+  overflow-x: auto;
+  display: block;
+}
+
+.favorites-table thead,
+.favorites-table tbody,
+.favorites-table tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
 .favorites-table th,
 .favorites-table td {
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
   padding: 8px;
+  color: var(--text);
+  word-wrap: break-word;
 }
 
 .favorites-table th {
-  background-color: #f2f2f2;
+  background-color: var(--surface-alt);
   text-align: left;
 }
 
+/* Column widths */
+.favorites-table th:first-child,
+.favorites-table td:first-child {
+  width: 120px;
+}
+
+.favorites-table th:nth-child(2),
+.favorites-table td:nth-child(2) {
+  width: auto;
+}
+
+.favorites-table th:last-child,
+.favorites-table td:last-child {
+  width: 100px;
+  text-align: center;
+}
+
+/* Jaa suosikit -nappula */
+.share-favorites-btn {
+  background-color: var(--accent);
+  color: #1e1e2e;
+  border: none;
+  padding: 8px 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 1.5rem;
+}
+
+.share-favorites-btn:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Poista-nappula suosikkitaulukossa */
+.remove-btn {
+  background-color: var(--danger);
+  color: #1e1e2e;
+  border: none;
+  padding: 4px 8px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.remove-btn:hover {
+  opacity: 0.8;
+}
+
 .delete-account-button {
-  background-color: #e74c3c;
-  color: white;
+  background-color: var(--danger);
+  color: var(--bg);
   border: none;
   padding: 5px 10px;
   cursor: pointer;
@@ -35,7 +157,7 @@
 }
 
 .delete-account-button:hover {
-  background-color: #c0392b;
+  opacity: 0.8;
 }
 
 /* Hakukenttä */
@@ -47,15 +169,17 @@
   padding: 8px;
   width: 60%;
   max-width: 400px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
   border-radius: 4px;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .search-section button {
   padding: 8px 12px;
   margin-left: 8px;
-  background-color: #3498db;
-  color: white;
+  background-color: var(--accent);
+  color: var(--bg);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -63,7 +187,7 @@
 }
 
 .search-section button:hover {
-  background-color: #2980b9;
+  background-color: var(--accent-hover);
 }
 
 /* Hakutulokset */
@@ -80,8 +204,8 @@
 .search-results button {
   margin-left: 1rem;
   padding: 4px 8px;
-  background-color: #2ecc71;
-  color: white;
+  background-color: var(--success);
+  color: var(--bg);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -89,38 +213,161 @@
 }
 
 .search-results button:hover {
-  background-color: #27ae60;
+  opacity: 0.8;
 }
 
 /* Toiminnot */
 .profile-actions {
   margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .logout-button,
 .delete-account-button {
-  padding: 8px 12px;
-  margin-right: 10px;
+  padding: 10px 16px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.2s;
+  font-weight: 500;
+  width: 100%;
 }
 
 .logout-button {
-  background-color: #3498db;
-  color: white;
+  background-color: var(--accent);
+  color: var(--bg);
 }
 
 .logout-button:hover {
-  background-color: #2980b9;
+  background-color: var(--accent-hover);
 }
 
 .delete-account-button {
-  background-color: #e74c3c;
-  color: white;
+  background-color: var(--danger);
+  color: var(--bg);
 }
 
 .delete-account-button:hover {
-  background-color: #c0392b;
+  opacity: 0.8;
+}
+
+.delete-account-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Media Queries */
+
+/* Tablet and smaller - stack layout */
+@media (max-width: 968px) {
+  .profile-layout {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .profile-aside {
+    flex: 1 1 auto;
+    position: static;
+    order: 2; /* Move aside below main content */
+  }
+
+  .favorites-main {
+    order: 1; /* Main content first */
+  }
+
+  .favorites-table {
+    min-width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+}
+
+/* Mobile - reduce padding and font sizes */
+@media (max-width: 768px) {
+  .profile-layout {
+    padding: 0.5rem;
+    margin: 1rem auto;
+  }
+
+  .profile-aside {
+    padding: 1rem;
+  }
+
+  .favorites-main {
+    padding: 0;
+  }
+
+  .favorites-container {
+    overflow-x: auto;
+  }
+
+  .favorites-table {
+    font-size: 0.85rem;
+    min-width: 500px;
+  }
+
+  .favorites-table th,
+  .favorites-table td {
+    padding: 6px 4px;
+  }
+
+  .favorites-table th:first-child,
+  .favorites-table td:first-child {
+    width: 80px;
+  }
+
+  .favorites-table img {
+    width: 60px !important;
+    height: auto;
+  }
+
+  .favorites-table th:last-child,
+  .favorites-table td:last-child {
+    width: 80px;
+  }
+
+  .remove-btn {
+    padding: 4px 6px;
+    font-size: 0.8rem;
+  }
+
+  .search-section input {
+    width: 100%;
+    max-width: none;
+    margin-bottom: 0.5rem;
+  }
+
+  .search-section button {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .favorites-table {
+    font-size: 0.8rem;
+    min-width: 100%;
+  }
+
+  .favorites-table th:first-child,
+  .favorites-table td:first-child {
+    width: 60px;
+  }
+
+  .favorites-table img {
+    width: 50px !important;
+  }
+
+  .favorites-table th:last-child,
+  .favorites-table td:last-child {
+    width: 70px;
+  }
+
+  .remove-btn {
+    padding: 3px 5px;
+    font-size: 0.75rem;
+  }
 }

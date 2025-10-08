@@ -11,7 +11,7 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
   const [joiningGroup, setJoiningGroup] = useState(null)
   const [membershipStatus, setMembershipStatus] = useState({})
   const navigate = useNavigate()
-  const { user, autoLogin, logout } = useUser()
+  const { user, autoLogin, logout, isInitialized } = useUser()
 
   // Save to localStorage whenever membershipStatus changes
   useEffect(() => {
@@ -80,28 +80,21 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
 
   useEffect(() => {
     const fetchMembershipStatuses = async () => {
-      if (!groups.length) return
+      // Wait for user initialization before checking memberships
+      if (!isInitialized || !groups.length) return
 
       const statuses = { ...membershipStatus }
 
       await Promise.all(
         groups.map(async (group) => {
           const fetchForGroup = async ({ isRetry = false, currentUser = user } = {}) => {
-            // If we don't have token data, try autologin once
+            // If we don't have token data, skip this group (user not logged in)
             if (!currentUser?.id_account || !currentUser?.access_token) {
               if (isRetry) {
                 await logout?.()
                 return
               }
-
-              try {
-                const refreshedUser = await autoLogin?.()
-                return await fetchForGroup({ isRetry: true, currentUser: refreshedUser })
-              } catch (error) {
-                console.warn('Autologin failed before fetching membership:', error)
-                await logout?.()
-                return
-              }
+              return
             }
 
             try {
@@ -153,7 +146,7 @@ const ShowGroups = ({ refreshTrigger = 0 }) => {
     }
 
     fetchMembershipStatuses()
-  }, [groups, user?.access_token, refreshTrigger, autoLogin, logout])
+  }, [groups, user?.access_token, refreshTrigger, autoLogin, logout, isInitialized])
 
   const handleJoinGroup = async (event, groupId) => {
     event.stopPropagation()

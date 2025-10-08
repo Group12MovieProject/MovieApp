@@ -1,7 +1,8 @@
 footer {
     width: 100%;
-    background: #333;
-    color: #fff;
+    background: var(--surface-alt);
+    color: var(--text);
+    border-top: 1px solid var(--border);
     text-align: center;
     padding: 1.5em 2em;
     font-size: 1.1rem;
@@ -16,7 +17,7 @@ footer {
 }
 
 footer .text-muted {
-    color: #fff!important;
+    color: var(--text-muted) !important;
 }
 
 @media (max-width: 1200px) {

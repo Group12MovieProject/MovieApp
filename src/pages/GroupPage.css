@@ -9,6 +9,7 @@
 .group-page-container h1 {
   text-align: center;
   margin-bottom: 2rem;
+  color: var(--text);
 }
 
 /* Layout: main content + aside on the right */
@@ -19,8 +20,8 @@
 .group-aside {
   width: 300px;
   margin-left: 2rem;
-  background: #fafafa;
-  border: 1px solid #eee;
+  background: var(--surface);
+  border: 1px solid var(--border);
   padding: 1rem;
   border-radius: 6px;
   height: fit-content;
@@ -37,9 +38,9 @@
   margin: 4rem auto;
   padding: 1.75rem 2rem;
   border-radius: 12px;
-  border: 1px solid #f5c6cb;
-  background: linear-gradient(135deg, rgba(255, 235, 236, 0.95), rgba(255, 245, 245, 0.9));
-  color: #721c24;
+  border: 1px solid var(--danger);
+  background: var(--surface);
+  color: var(--danger);
   display: flex;
   gap: 1.25rem;
   box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.25);
@@ -48,16 +49,18 @@
 .group-error__content h2 {
   margin: 0 0 0.5rem;
   font-size: 1.5rem;
+  color: var(--danger);
 }
 
 .group-error__content p {
   margin: 0 0 1rem;
   line-height: 1.5;
+  color: var(--text);
 }
 
 .group-error__actions button {
-  background: #d9534f;
-  color: #fff;
+  background: var(--danger);
+  color: var(--bg);
   border: none;
   border-radius: 6px;
   padding: 0.6rem 1.1rem;
@@ -89,11 +92,12 @@
 .group-description {
   line-height: 1.6;
   margin-bottom: 1.5rem;
+  color: var(--text);
 }
 
 .leave-group-button {
-  background: #ff9800;
-  color: #fff;
+  background: var(--warning);
+  color: var(--bg);
   border: none;
   padding: 0.6rem 1rem;
   border-radius: 4px;
@@ -105,7 +109,7 @@
 }
 
 .leave-group-button:hover:not(:disabled) {
-  background: #e68900;
+  opacity: 0.9;
 }
 
 .leave-group-button[disabled] {
@@ -114,8 +118,8 @@
 }
 
 .delete-group-button {
-  background: #d9534f;
-  color: #fff;
+  background: var(--danger);
+  color: var(--bg);
   border: none;
   padding: 0.6rem 1rem;
   border-radius: 4px;
@@ -126,7 +130,7 @@
 }
 
 .delete-group-button:hover:not(:disabled) {
-  background: #c9302c;
+  opacity: 0.9;
 }
 
 .delete-group-button[disabled] {
@@ -138,13 +142,13 @@
 .pending-members-section {
   margin-top: 1.5rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--border);
 }
 
 .pending-members-section h3 {
   margin: 0 0 1rem;
   font-size: 1.1rem;
-  color: #333;
+  color: var(--text);
 }
 
 .pending-members-list {
@@ -156,8 +160,8 @@
 .pending-member-item {
   padding: 0.75rem;
   margin-bottom: 0.75rem;
-  background: #fff;
-  border: 1px solid #e0e0e0;
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: 6px;
 }
 
@@ -170,12 +174,12 @@
 
 .pending-member-info strong {
   font-size: 0.95rem;
-  color: #333;
+  color: var(--text);
 }
 
 .pending-member-date {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .pending-member-actions {
@@ -195,21 +199,21 @@
 }
 
 .approve-button {
-  background: #28a745;
-  color: #fff;
+  background: var(--success);
+  color: var(--bg);
 }
 
 .approve-button:hover:not(:disabled) {
-  background: #218838;
+  opacity: 0.9;
 }
 
 .reject-button {
-  background: #dc3545;
-  color: #fff;
+  background: var(--danger);
+  color: var(--bg);
 }
 
 .reject-button:hover:not(:disabled) {
-  background: #c82333;
+  opacity: 0.9;
 }
 
 .approve-button:disabled,
@@ -226,7 +230,7 @@
 .group-members-section h2 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  color: #333;
+  color: var(--text);
 }
 
 .group-members-list {
@@ -239,8 +243,8 @@
 
 .group-members-list li {
   padding: 1rem;
-  background: #f9f9f9;
-  border: 1px solid #e0e0e0;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -258,13 +262,13 @@
 
 .group-members-list strong {
   font-size: 1rem;
-  color: #333;
+  color: var(--text);
   flex: 1 1 auto;
 }
 
 .owner-badge {
-  background: #1a73e8;
-  color: #fff;
+  background: var(--accent);
+  color: var(--bg);
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-size: 0.85rem;
@@ -273,13 +277,13 @@
 
 .join-date {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-muted);
   flex: 0 0 100%;
 }
 
 .remove-member-button {
-  background: #dc3545;
-  color: #fff;
+  background: var(--danger);
+  color: var(--bg);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -291,5 +295,5 @@
 }
 
 .remove-member-button:hover {
-  background: #c82333;
+  opacity: 0.9;
 }

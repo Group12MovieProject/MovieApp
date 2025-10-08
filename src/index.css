@@ -1,9 +1,23 @@
 /* Global styles and variables */
+
 :root {
 	/* Main UI font: system font */
 	--ui-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 	--ui-font-weight-regular: 400;
 	--ui-font-weight-medium: 500;
+
+	/* Dark theme colors */
+	--bg: #1e1e2e;
+	--text: #cdd6f4;
+	--text-muted: #a6adc8;
+	--surface: #181825;
+	--surface-alt: #313244;
+	--border: #45475a;
+	--accent: #f5c2e7;
+	--accent-hover: #f2b3df;
+	--danger: #f38ba8;
+	--success: #a6e3a1;
+	--warning: #fab387;
 }
 
 /* Ensure padding/border stay within declared widths across the app */
@@ -27,8 +41,9 @@ body {
 	margin: 0;
 	overflow-y: scroll; /* keep scrollbar visible so elements do not clip while changing pages */
 	font-weight: var(--ui-font-weight-regular);
-	color: #111827; 
-	background: #fff;
+	color: var(--text);
+	background: var(--bg);
+	transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Provide a reusable utility class */

@@ -1,5 +1,7 @@
 header {
-    background-color: aliceblue;
+    background-color: var(--surface);
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
     text-align: center;
     width: 100%;
     margin: 0 auto; 
@@ -8,6 +10,15 @@ header {
     font-size: 2rem;
     font-weight: bold;
     letter-spacing: 0.03em;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 @media (max-width: 1200px) {

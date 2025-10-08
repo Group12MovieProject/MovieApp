@@ -7,14 +7,15 @@
 #showtimes-container h1 {
   text-align: center;
   margin-bottom: 2rem;
+  color: var(--text);
 }
 
 .showtimes-wrapper {
-  background: #ffffff;
+  background: var(--surface);
   border-radius: 12px;
   padding: 0.75rem;
   box-shadow: 0 12px 30px rgba(17, 24, 39, 0.06);
-  border: 1px solid rgba(0,0,0,0.04);
+  border: 1px solid var(--border);
   overflow-x: auto;
 }
 
@@ -28,8 +29,10 @@
 .showtimes-controls select,
 .showtimes-controls input[type="search"] {
   padding: 8px 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
   border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
 }
 
 
@@ -43,11 +46,11 @@ table.showtimes thead th {
   text-align: left;
   padding: 12px 14px;
   font-weight: 700;
-  color: #1c3d5a;
+  color: var(--text);
 }
 
 table.showtimes tbody tr {
-  background: #fff;
+  background: var(--bg);
   border-radius: 10px;
   box-shadow: 0 8px 18px rgba(17,24,39,0.04);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -57,7 +60,7 @@ table.showtimes td {
   padding: 12px 14px;
   vertical-align: middle;
   border: none;
-  color: #333;
+  color: var(--text);
 }
 
 table.showtimes tbody tr:hover,
