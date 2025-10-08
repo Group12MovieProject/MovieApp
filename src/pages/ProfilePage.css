@@ -1,3 +1,63 @@
+/* Main layout: center content + right sidebar */
+.profile-layout {
+  display: flex;
+  flex-direction: row-reverse; /* aside on the right */
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: Arial, sans-serif;
+  color: var(--text);
+}
+
+/* Right sidebar for profile info and actions */
+.profile-aside {
+  flex: 0 0 320px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  height: fit-content;
+  position: sticky;
+  top: 1rem;
+}
+
+.profile-aside h1 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: var(--text);
+}
+
+.profile-aside h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.profile-info {
+  margin-bottom: 1.5rem;
+}
+
+.profile-info p {
+  margin: 0.5rem 0;
+  color: var(--text);
+}
+
+/* Main content area for favorites */
+.favorites-main {
+  flex: 1 1 0;
+  min-width: 0; /* prevents flex item overflow */
+}
+
+.favorites-main h2 {
+  margin-top: 0;
+  color: var(--text);
+}
+
+.favorites-container {
+  margin-bottom: 2rem;
+}
+
 .profile-container {
   max-width: 800px;
   margin: 2rem auto;
@@ -132,16 +192,20 @@
 /* Toiminnot */
 .profile-actions {
   margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .logout-button,
 .delete-account-button {
-  padding: 8px 12px;
-  margin-right: 10px;
+  padding: 10px 16px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.2s;
+  font-weight: 500;
+  width: 100%;
 }
 
 .logout-button {
@@ -160,4 +224,9 @@
 
 .delete-account-button:hover {
   opacity: 0.8;
+}
+
+.delete-account-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

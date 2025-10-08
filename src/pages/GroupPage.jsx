@@ -8,7 +8,7 @@ const base_url = import.meta.env.VITE_API_URL
 export default function GroupPage() {
     const { groupId } = useParams()
     const navigate = useNavigate()
-    const { user, autoLogin, logout } = useUser()
+    const { user, autoLogin, logout, isInitialized } = useUser()
 
     const [group, setGroup] = useState({})
     const [loading, setLoading] = useState(true)
@@ -23,6 +23,10 @@ export default function GroupPage() {
 
     useEffect(() => {
         const fetchGroupPage = async () => {
+            if (!isInitialized) {
+                return
+            }
+
             if (!user?.access_token) {
                 setGroup({})
                 setIsOwner(false)
@@ -99,11 +103,11 @@ export default function GroupPage() {
         }
 
         fetchGroupPage()
-    }, [groupId, user?.access_token, autoLogin, logout])
+    }, [groupId, user?.access_token, autoLogin, logout, isInitialized])
 
     useEffect(() => {
         const fetchPendingMembers = async () => {
-            if (!isOwner || !user?.access_token) return
+            if (!isInitialized || !isOwner || !user?.access_token) return
 
             setPendingLoading(true)
 
@@ -136,7 +140,6 @@ export default function GroupPage() {
                             }
                         }
                     } catch {
-                        // Fail silently for pending members
                     }
                 } else if (response.ok) {
                     const data = await response.json()
@@ -150,11 +153,11 @@ export default function GroupPage() {
         }
 
         fetchPendingMembers()
-    }, [isOwner, groupId, user?.access_token, autoLogin])
+    }, [isOwner, groupId, user?.access_token, autoLogin, isInitialized])
 
     useEffect(() => {
         const fetchApprovedMembers = async () => {
-            if (!user?.access_token) return
+            if (!isInitialized || !user?.access_token) return
 
             setMembersLoading(true)
 
@@ -187,7 +190,6 @@ export default function GroupPage() {
                             }
                         }
                     } catch {
-                        // Fail silently for members
                     }
                 } else if (response.ok) {
                     const data = await response.json()
@@ -201,7 +203,7 @@ export default function GroupPage() {
         }
 
         fetchApprovedMembers()
-    }, [groupId, user?.access_token, autoLogin, approvingId])
+    }, [groupId, user?.access_token, autoLogin, approvingId, isInitialized])
 
     const handleDeleteGroup = async () => {
         if (!isOwner) {
@@ -269,7 +271,6 @@ export default function GroupPage() {
 
         setApprovingId(accountId)
 
-        // Optimistically remove from pending list
         const originalPending = [...pendingMembers]
         setPendingMembers(pendingMembers.filter(m => m.id_account !== accountId))
 
@@ -301,12 +302,10 @@ export default function GroupPage() {
                         }
                     }
                 } catch {
-                    // Revert on error
                     setPendingMembers(originalPending)
                     alert('Jäsenen hyväksyminen epäonnistui')
                 }
             } else if (!response.ok) {
-                // Revert on error
                 setPendingMembers(originalPending)
                 const err = await response.json().catch(() => ({ error: 'Hyväksyminen epäonnistui' }))
                 alert(err.error?.message || err.error || 'Hyväksyminen epäonnistui')
@@ -325,7 +324,6 @@ export default function GroupPage() {
 
         setRejectingId(accountId)
 
-        // Optimistically remove from pending list
         const originalPending = [...pendingMembers]
         setPendingMembers(pendingMembers.filter(m => m.id_account !== accountId))
 
@@ -357,12 +355,10 @@ export default function GroupPage() {
                         }
                     }
                 } catch {
-                    // Revert on error
                     setPendingMembers(originalPending)
                     alert('Jäsenen hylkääminen epäonnistui')
                 }
             } else if (!response.ok) {
-                // Revert on error
                 setPendingMembers(originalPending)
                 const err = await response.json().catch(() => ({ error: 'Hylkääminen epäonnistui' }))
                 alert(err.error?.message || err.error || 'Hylkääminen epäonnistui')
@@ -441,7 +437,6 @@ export default function GroupPage() {
 
         if (!confirmRemove) return
 
-        // Optimistically remove from approved list
         const originalApproved = [...approvedMembers]
         setApprovedMembers(approvedMembers.filter(m => m.id_account !== accountId))
 
@@ -473,12 +468,10 @@ export default function GroupPage() {
                         }
                     }
                 } catch {
-                    // Revert on error
                     setApprovedMembers(originalApproved)
                     alert('Jäsenen poistaminen epäonnistui')
                 }
             } else if (!response.ok) {
-                // Revert on error
                 setApprovedMembers(originalApproved)
                 const err = await response.json().catch(() => ({ error: 'Poistaminen epäonnistui' }))
                 alert(err.error?.message || err.error || 'Poistaminen epäonnistui')

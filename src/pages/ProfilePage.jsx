@@ -107,99 +107,103 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="profile-container">
-      <h1>Käyttäjäprofiili</h1>
-      <div className="profile-info">
-        <h2>Tiedot</h2>
-        <p><strong>Sähköposti:</strong> {user.email}</p>
-      </div>
-
-      {error && <p className="error-message">{error}</p>}
-
-      <h2>Omat suosikit</h2>
-      <button
-        className="share-favorites-btn"
-        onClick={() => {
-          const shareLink = `${window.location.origin}/share/${user.id_account}`
-          navigator.clipboard.writeText(shareLink)
-          alert("Jako-linkki kopioitu leikepöydälle: " + shareLink)
-        }}
-      >
-        Jaa suosikit
-      </button>
-      {loading && <p>Ladataan...</p>}
-      {favorites.length === 0 && <p>Ei suosikkeja vielä</p>}
-      <table className="favorites-table">
-  <thead>
-    <tr>
-      <th>Juliste</th>
-      <th>Elokuva</th>
-      <th>Toiminnot</th>
-    </tr>
-  </thead>
-  <tbody>
-    {favorites.map(fav => (
-      <tr key={fav.tmdb_id}>
-        <td>
-          {fav.poster_path ? (
-            <img 
-              src={`https://image.tmdb.org/t/p/w185${fav.poster_path}`} 
-              alt={fav.movie_title} 
-              style={{ width: "100px" }} 
-            />
-          ) : "Ei kuvaa"}
-        </td>
-        <td>{fav.movie_title}</td>
-        <td>
+    <div className="profile-layout">
+      <aside className="profile-aside">
+        <h1>Käyttäjäprofiili</h1>
+        <div className="profile-info">
+          <h2>Tiedot</h2>
+          <p><strong>Sähköposti:</strong> {user.email}</p>
+        </div>
+        {error && <p className="error-message">{error}</p>}
+        <div className="profile-actions">
           <button
-            className="remove-btn"
-            onClick={() => handleRemoveFavorite(fav.id_favorite)}
+            className="logout-button"
+            onClick={handleLogout}
           >
-            Poista
+            Kirjaudu ulos
           </button>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+          <button
+            className="delete-account-button"
+            onClick={handleDeleteAccount}
+            disabled={deleteLoading}
+          >
+            {deleteLoading ? 'Poistetaan tilii...' : 'Poista tili'}
+          </button>
+        </div>
+      </aside>
 
-      <div className="search-section">
-        <h3>Etsi elokuvia ja lisää suosikkeihin</h3>
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Etsi elokuvia..."
-        />
-        <button onClick={handleSearch}>Hae</button>
-      </div>
+      <main className="favorites-main">
+        <h2>Omat suosikit</h2>
+        <div className="favorites-container">
+          <button
+            className="share-favorites-btn"
+            onClick={() => {
+              const shareLink = `${window.location.origin}/share/${user.id_account}`
+              navigator.clipboard.writeText(shareLink)
+              alert("Jako-linkki kopioitu leikepöydälle: " + shareLink)
+            }}
+          >
+            Jaa suosikit
+          </button>
+          {loading && <p>Ladataan...</p>}
+          {favorites.length === 0 && <p>Ei suosikkeja vielä</p>}
+          <table className="favorites-table">
+            <thead>
+              <tr>
+                <th>Juliste</th>
+                <th>Elokuva</th>
+                <th>Toiminnot</th>
+              </tr>
+            </thead>
+            <tbody>
+              {favorites.map(fav => (
+                <tr key={fav.tmdb_id}>
+                  <td>
+                    {fav.poster_path ? (
+                      <img 
+                        src={`https://image.tmdb.org/t/p/w185${fav.poster_path}`} 
+                        alt={fav.movie_title} 
+                        style={{ width: "100px" }} 
+                      />
+                    ) : "Ei kuvaa"}
+                  </td>
+                  <td>{fav.movie_title}</td>
+                  <td>
+                    <button
+                      className="remove-btn"
+                      onClick={() => handleRemoveFavorite(fav.id_favorite)}
+                    >
+                      Poista
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      {searchResults.length > 0 && (
-        <ul className="search-results">
-          {searchResults.slice(0, 5).map(movie => (
-            <li key={movie.id}>
-              {movie.title} ({movie.release_date?.slice(0, 4)})
-              <button onClick={() => handleAddFavorite(movie)}>Lisää</button>
-            </li>
-          ))}
-        </ul>
-      )}
+        <div className="search-section">
+          <h3>Etsi elokuvia ja lisää suosikkeihin</h3>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Etsi elokuvia..."
+          />
+          <button onClick={handleSearch}>Hae</button>
+        </div>
 
-      <div className="profile-actions">
-        <button
-          className="logout-button"
-          onClick={handleLogout}
-        >
-          Kirjaudu ulos
-        </button>
-        <button
-          className="delete-account-button"
-          onClick={handleDeleteAccount}
-          disabled={deleteLoading}
-        >
-          {deleteLoading ? 'Poistetaan tilii...' : 'Poista tili'}
-        </button>
-      </div>
+        {searchResults.length > 0 && (
+          <ul className="search-results">
+            {searchResults.slice(0, 5).map(movie => (
+              <li key={movie.id}>
+                {movie.title} ({movie.release_date?.slice(0, 4)})
+                <button onClick={() => handleAddFavorite(movie)}>Lisää</button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </main>
     </div>
   )
 }
