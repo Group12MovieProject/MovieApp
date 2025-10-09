@@ -65,7 +65,7 @@ describe('Testing Groups', () => {
   })
 
   it('gets group by id (200)', async () => {
-    const res = await fetch(`http://localhost:3001/group/${createdGroupId}`, { method: 'get', headers: { 'Content-Type': 'application/json' } })
+    const res = await fetch(`http://localhost:3001/group/${createdGroupId}`, { method: 'get', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } })
     const data = await res.json()
     expect(res.status).to.equal(200)
     expect(data.id_group).to.equal(createdGroupId)
