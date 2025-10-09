@@ -29,16 +29,38 @@ export default function SharedFavoritesPage() {
   if (error) return <p>{error}</p>
 
   return (
-    <div>
+    <div style={{ padding: '2rem', textAlign: 'center' }}>
       <h1>Käyttäjän suosikit</h1>
+
       {favorites.length === 0 ? (
         <p>Ei suosikkeja</p>
       ) : (
-        <ul>
-          {favorites.map(fav => (
-            <li key={fav.id_favorite}>{fav.movie_title}</li>
-          ))}
-        </ul>
+        <table style={{ margin: '2rem auto', borderCollapse: 'collapse', width: '80%' }}>
+          <thead>
+            <tr style={{ backgroundColor: '#f0f0f0' }}>
+              <th style={{ padding: '10px' }}>Elokuvan kansi</th>
+              <th style={{ padding: '10px' }}>Nimi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {favorites.map(fav => (
+              <tr key={fav.id_favorite} style={{ borderBottom: '1px solid #ccc' }}>
+                <td style={{ padding: '10px' }}>
+                  {fav.poster_path ? (
+                    <img
+                      src={`https://image.tmdb.org/t/p/w185${fav.poster_path}`}
+                      alt={fav.movie_title}
+                      style={{ width: '100px', borderRadius: '8px' }}
+                    />
+                  ) : (
+                    'Ei kuvaa'
+                  )}
+                </td>
+                <td style={{ padding: '10px', fontSize: '1.1rem' }}>{fav.movie_title}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   )
