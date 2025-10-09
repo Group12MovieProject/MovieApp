@@ -1,0 +1,134 @@
+.shared-favorites-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem 1.5rem;
+  font-family: Arial, sans-serif;
+  color: var(--text);
+}
+
+.shared-favorites-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--text);
+}
+
+.shared-loading,
+.shared-error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.shared-error {
+  color: var(--danger);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.shared-empty {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+/* Suosikkitaulukko */
+.shared-favorites-table {
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  border-collapse: collapse;
+  background: var(--surface);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.shared-favorites-table thead {
+  background-color: var(--surface-alt);
+}
+
+.shared-favorites-table th {
+  padding: 12px;
+  text-align: left;
+  color: var(--text);
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+}
+
+.shared-favorites-table td {
+  padding: 12px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.shared-favorites-table tr:last-child td {
+  border-bottom: none;
+}
+
+.shared-favorites-table tr:hover {
+  background-color: var(--surface-alt);
+}
+
+.shared-movie-poster {
+  width: 100px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+.shared-movie-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .shared-favorites-container {
+    padding: 1rem;
+  }
+
+  .shared-favorites-table {
+    font-size: 0.9rem;
+  }
+
+  .shared-favorites-table th,
+  .shared-favorites-table td {
+    padding: 8px;
+  }
+
+  .shared-movie-poster {
+    width: 70px;
+  }
+
+  .shared-movie-title {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .shared-favorites-table {
+    font-size: 0.85rem;
+  }
+
+  .shared-favorites-table th,
+  .shared-favorites-table td {
+    padding: 6px;
+  }
+
+  .shared-movie-poster {
+    width: 60px;
+  }
+
+  .shared-movie-title {
+    font-size: 0.95rem;
+  }
+}
