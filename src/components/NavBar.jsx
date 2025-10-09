@@ -1,13 +1,14 @@
 import React, { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import {useUser} from '../hooks/useUser'
+import { useUser } from '../hooks/useUser'
 import './NavBar.css'
+import logo from '../assets/logo.png';
 
 export default function NavBar() {
   const [navQuery, setNavQuery] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
-  const {user} = useUser()
+  const { user } = useUser()
 
   const isLoggedIn = user && user.access_token
 
@@ -26,7 +27,7 @@ export default function NavBar() {
     <nav className="custom-navbar">
       <div className="custom-navbar-inner custom-navbar-inner-justify">
         <div className="custom-navbar-left-group">
-          <span className="custom-navbar-brand">Katve</span>
+          <img src={logo} alt="Katve Logo" className="custom-navbar-logo" />
           <button
             className="custom-navbar-burger"
             aria-label="Avaa valikko"
@@ -39,10 +40,10 @@ export default function NavBar() {
           </button>
         </div>
         <div className={`custom-navbar-links${menuOpen ? ' open' : ''}`}>
-          <Link className="custom-navbar-link" to="/" onClick={()=>setMenuOpen(false)}>Koti</Link>
-          <Link className="custom-navbar-link" to="/reviews" onClick={()=>setMenuOpen(false)}>Arvostelut</Link>
-          <Link className="custom-navbar-link" to="/groups" onClick={()=>setMenuOpen(false)}>Ryhmät</Link>
-          <Link className="custom-navbar-link" to="/showtimes" onClick={()=>setMenuOpen(false)}>Näytösajat</Link>
+          <Link className="custom-navbar-link" to="/" onClick={() => setMenuOpen(false)}>Koti</Link>
+          <Link className="custom-navbar-link" to="/reviews" onClick={() => setMenuOpen(false)}>Arvostelut</Link>
+          <Link className="custom-navbar-link" to="/groups" onClick={() => setMenuOpen(false)}>Ryhmät</Link>
+          <Link className="custom-navbar-link" to="/showtimes" onClick={() => setMenuOpen(false)}>Näytösajat</Link>
         </div>
         <div className="custom-navbar-right-group">
           <form className="custom-navbar-search" onSubmit={handleSearchSubmit}>
@@ -57,11 +58,11 @@ export default function NavBar() {
             <span className="search-icon">🔍</span>
           </form>
           {isLoggedIn ? (
-            <Link className="custom-navbar-profile" to="/profilepage" onClick={()=>setMenuOpen(false)}>
+            <Link className="custom-navbar-profile" to="/profilepage" onClick={() => setMenuOpen(false)}>
               Profiili
             </Link>
           ) : (
-            <Link className="custom-navbar-login" to="/login" onClick={()=>setMenuOpen(false)}>
+            <Link className="custom-navbar-login" to="/login" onClick={() => setMenuOpen(false)}>
               Kirjaudu
             </Link>
           )}
