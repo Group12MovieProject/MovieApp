@@ -90,3 +90,28 @@ table.showtimes tbody tr:focus-within {
     padding: 8px 10px;
   }
 }
+
+.poster {
+  width: 70px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  border: 2px solid rgba(255,255,255,0.05);
+  background-color: #000;
+}
+
+.poster:hover {
+  transform: scale(1.12);
+  box-shadow: 0 8px 24px rgba(255,215,160,0.4);
+  filter: brightness(1.15) saturate(1.2);
+  border-color: rgba(255,215,160,0.5);
+}
+
+@media (max-width: 768px) {
+  .poster {
+    width: 55px;
+    margin-right: 10px;
+    border-radius: 8px;
+  }
+}

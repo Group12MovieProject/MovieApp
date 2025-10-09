@@ -2,10 +2,9 @@ import { useState, useEffect, useCallback } from 'react'
 import './Showtimes.css'
 
 function Showtimes() {
-
   const [areas, setAreas] = useState([])
   const [showtimes, setShowtimes] = useState([])
-  const [selectedAreaId, setSelectedAreaId] = useState("");
+  const [selectedAreaId, setSelectedAreaId] = useState("")
 
   function handleAreaChange(e) {
     setSelectedAreaId(e.target.value)
@@ -13,15 +12,14 @@ function Showtimes() {
 
   const xmlToJson = useCallback((node) => {
     const json = {}
-
     let children = [...node.children]
 
     if (!children.length) return node.innerHTML
 
     for (let child of children) {
-      const hasSibilings = children.filter(c => c.nodeName === child.nodeName).length > 1
+      const hasSiblings = children.filter(c => c.nodeName === child.nodeName).length > 1
 
-      if (hasSibilings) {
+      if (hasSiblings) {
         if (json[child.nodeName] === undefined) {
           json[child.nodeName] = [xmlToJson(child)]
         } else {
@@ -40,6 +38,7 @@ function Showtimes() {
     return xmlToJson(xmlDoc)
   }, [xmlToJson])
 
+
   useEffect(() => {
     fetch('https://www.finnkino.fi/xml/TheatreAreas/')
       .then(response => response.text())
@@ -47,9 +46,7 @@ function Showtimes() {
         const json = parseXML(xml)
         setAreas(json.TheatreAreas.TheatreArea)
       })
-      .catch(error => {
-        console.log(error)
-      })
+      .catch(console.error)
   }, [parseXML])
 
   useEffect(() => {
@@ -59,11 +56,10 @@ function Showtimes() {
       .then(response => response.text())
       .then(xml => {
         const json = parseXML(xml)
-        setShowtimes(json.Schedule.Shows.Show || []);
+        const shows = json?.Schedule?.Shows?.Show || []
+        setShowtimes(Array.isArray(shows) ? shows : [shows])
       })
-      .catch(error => {
-        console.log(error)
-      })
+      .catch(console.error)
   }, [selectedAreaId, parseXML])
 
   return (
@@ -78,30 +74,40 @@ function Showtimes() {
           ))}
         </select>
       </div>
+
       {selectedAreaId && showtimes.length === 0 && (
-        <p>No movies available</p>
+        <p>Ei näytöksiä tällä alueella.</p>
       )}
+
       {showtimes.length > 0 && (
         <div className="showtimes-wrapper">
           <table className="showtimes">
-          <thead>
-            <tr>
-              <th>Elokuva</th>
-              <th>Aika</th>
-              <th>Teatteri</th>
-              <th>Sali</th>
-            </tr>
-          </thead>
-          <tbody>
-            {showtimes.map((show, idx) => (
-              <tr key={idx}>
-                <td>{show.Title}</td>
-                <td>{new Date(show.dttmShowStart).toLocaleString('fi-FI')}</td>
-                <td>{show.Theatre}</td>
-                <td>{show.TheatreAuditorium}</td>
+            <thead>
+              <tr>
+                <th>Juliste</th>
+                <th>Elokuva</th>
+                <th>Aika</th>
+                <th>Teatteri</th>
+                <th>Sali</th>
               </tr>
-            ))}
-          </tbody>
+            </thead>
+            <tbody>
+              {showtimes.map((show, idx) => (
+                <tr key={idx}>
+                  <td>
+                    <img
+                      src={show.Images?.EventSmallImagePortrait}
+                      alt={show.Title}
+                      className="poster"
+                    />
+                  </td>
+                  <td>{show.Title}</td>
+                  <td>{new Date(show.dttmShowStart).toLocaleString('fi-FI')}</td>
+                  <td>{show.Theatre}</td>
+                  <td>{show.TheatreAuditorium}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       )}
