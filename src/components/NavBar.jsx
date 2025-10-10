@@ -23,6 +23,10 @@ export default function NavBar() {
     }
   }
 
+  const handleSearchIconClick = () => {
+    navigate('/searchpage')
+  }
+
   return (
     <nav className="custom-navbar">
       <div className="custom-navbar-inner custom-navbar-inner-justify">
@@ -46,7 +50,7 @@ export default function NavBar() {
           <Link className="custom-navbar-link" to="/showtimes" onClick={() => setMenuOpen(false)}>Näytösajat</Link>
         </div>
         <div className="custom-navbar-right-group">
-          <form className="custom-navbar-search" onSubmit={handleSearchSubmit}>
+          <form className="custom-navbar-search custom-navbar-search-full" onSubmit={handleSearchSubmit}>
             <input
               type="search"
               placeholder="Etsi elokuvia, henkilöitä..."
@@ -57,6 +61,14 @@ export default function NavBar() {
             />
             <span className="search-icon">🔍</span>
           </form>
+          <button 
+            className="custom-navbar-search-icon-btn"
+            onClick={handleSearchIconClick}
+            aria-label="Hae"
+            type="button"
+          >
+            🔍
+          </button>
           {isLoggedIn ? (
             <Link className="custom-navbar-profile" to="/profilepage" onClick={() => setMenuOpen(false)}>
               Profiili
