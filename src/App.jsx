@@ -26,19 +26,19 @@ function App() {
   
     <div id="elements">
       <Routes>
-        <Route path="/" exact element={<Home />} />
-        <Route path="/reviews" exact element={<Reviews />} />
-        <Route path="/groups" exact element={<Groups />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/reviews" element={<Reviews />} />
+        <Route path="/groups" element={<Groups />} />
         <Route path="/groups/:groupId" element={<GroupPage />} />
-        <Route path="/showtimes" exact element={<Showtimes />} />
-        <Route path="/searchpage" exact element={<Search />} />
-        <Route path="/login" exact element={<Login />} />
-        <Route path="/register" exact element={<Register />} />
+        <Route path="/showtimes" element={<Showtimes />} />
+        <Route path="/searchpage" element={<Search />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/share/:id_account" element={<SharedFavoritesPage />} />
         <Route element={<PrivateRoute />} >
-          <Route path="/profilepage" exact element={<ProfilePage />} />
+          <Route path="/profilepage" element={<ProfilePage />} />
         </Route>
-        <Route path="/*" exact element={<NotFound />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
     <Footer />
