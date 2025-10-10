@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1em 2em;
+  padding: 0.4em 2em;
   gap: 1em;
   max-width: 1200px;
   margin: 0 auto;
@@ -26,9 +26,11 @@
 }
 
 .custom-navbar-logo {
-  height: 40px;
+  height: 44px;
   width: auto;
   display: block;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 /* Burger menu button */
@@ -148,21 +150,47 @@
   color: var(--text);
 }
 
-/* Responsive adjustments */
 @media (max-width: 1200px) {
   .custom-navbar-inner {
-    padding: 1em 1.5em;
-    gap: 0.8em;
+    padding: 0.4em 1em;
+    gap: 0.5em;
+  }
+  
+  .custom-navbar-links {
+    gap: 0.5em;
+  }
+  
+  .custom-navbar-link {
+    padding: 0.4em 0.5em;
+    font-size: 0.9em;
   }
   
   .custom-navbar-search input[type="search"] {
-    width: 150px;
+    width: 120px;
+  }
+  
+  .custom-navbar-logo {
+    height: 44px;
   }
 }
 
 @media (max-width: 768px) {
+  .custom-navbar-inner {
+    justify-content: flex-start; /* Kaikki vasemmalta alkamaan */
+  }
+  
+  .custom-navbar-left-group {
+    flex-grow: 0; /* Logo ei kasva */
+  }
+  
   .custom-navbar-burger {
     display: flex;
+    order: -1; /* Burgeri ensin vasemmalle */
+    margin-right: 0.5em;
+  }
+  
+  .custom-navbar-right-group {
+    margin-left: auto; /* Login/Profile oikealle */
   }
 
   .custom-navbar-links {
