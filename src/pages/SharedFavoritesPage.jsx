@@ -13,11 +13,25 @@ export default function SharedFavoritesPage() {
   useEffect(() => {
     const fetchShared = async () => {
       try {
-        const res = await fetch(`${base_url}/favorites/share/${id_account}`)
-        if (!res.ok) throw new Error('Virhe haettaessa suosikkeja')
+        console.log('Fetching shared favorites for id_account:', id_account)
+        console.log('API URL:', base_url)
+        const url = `${base_url}/favorites/share/${id_account}`
+        console.log('Full URL:', url)
+        
+        const res = await fetch(url)
+        console.log('Response status:', res.status)
+        
+        if (!res.ok) {
+          const errorText = await res.text()
+          console.error('Error response:', errorText)
+          throw new Error(`Virhe haettaessa suosikkeja: ${res.status}`)
+        }
+        
         const data = await res.json()
+        console.log('Received data:', data)
         setFavorites(data.favorites || [])
       } catch (err) {
+        console.error('Fetch error:', err)
         setError(err.message)
       } finally {
         setLoading(false)
