@@ -11,10 +11,17 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const port = process.env.PORT || 3001
-const url = process.env.VITE_DEV_SERVER
 
 const app = express()
-app.use(cors({credentials: true, origin: url }))
+
+// CORS configuration
+const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173'
+const allowedOrigins = frontendUrl.split(',').map(url => url.trim())
+
+app.use(cors({
+  credentials: true,
+  origin: allowedOrigins
+}))
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
