@@ -73,22 +73,24 @@ const deleteFavorite = async (req, res, next) => {
 const getSharedFavorites = async (req, res, next) => {
   try {
     const { id_account } = req.params
+    
+    console.log('getSharedFavorites called with id_account:', id_account, typeof id_account)
 
     if (!id_account) {
       return next(new ApiError('Account ID is required', 400))
     }
 
     const result = await retrieveFavorites(id_account)
+    
+    console.log('retrieveFavorites result:', result.rows, 'rowCount:', result.rowCount)
 
-    if (!result.rows || result.rows.length === 0) {
-      return next(new ApiError('No favorites found for this user', 404))
-    }
-
+    // Return empty array if no favorites found instead of 404
     return res.status(200).json({
       message: 'Shared favorites retrieved successfully',
-      favorites: result.rows
+      favorites: result.rows || []
     })
   } catch (error) {
+    console.error('Error in getSharedFavorites:', error)
     return next(new ApiError('Internal server error while retrieving shared favorites', 500))
   }
 }
