@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1em 2em;
+  padding: 0.4em 2em;
   gap: 1em;
   max-width: 1200px;
   margin: 0 auto;
@@ -25,10 +25,12 @@
   gap: 1em;
 }
 
-.custom-navbar-brand {
-  font-size: 1.5em;
-  font-weight: bold;
-  color: var(--text);
+.custom-navbar-logo {
+  height: 44px;
+  width: auto;
+  display: block;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 /* Burger menu button */
@@ -148,57 +150,49 @@
   color: var(--text);
 }
 
-/* Under 1200px - medium screens */
 @media (max-width: 1200px) {
   .custom-navbar-inner {
-    padding: 1em 1.5em;
-    gap: 0.8em;
+    padding: 0.4em 1em;
+    gap: 0.5em;
   }
   
-  .custom-navbar-brand {
-    font-size: 1.3em;
+  .custom-navbar-links {
+    gap: 0.5em;
+  }
+  
+  .custom-navbar-link {
+    padding: 0.4em 0.5em;
+    font-size: 0.9em;
   }
   
   .custom-navbar-search input[type="search"] {
-    width: 150px;
-    font-size: 0.95em;
-    padding: 0.45em 2.2em 0.45em 0.8em;
+    width: 120px;
   }
   
-  .custom-navbar-login {
-    font-size: 0.95em;
-    padding: 0.45em 0.8em;
-  }
-
-  .custom-navbar-profile {
-    font-size: 0.95em;
-    padding: 0.45em 0.8em;
+  .custom-navbar-logo {
+    height: 44px;
   }
 }
 
-/* Under 768px - show burger menu, hide nav links */
 @media (max-width: 768px) {
-  .custom-navbar {
-    max-width: 100vw;
-  }
-  
   .custom-navbar-inner {
-    padding: 1em 0.5em;
-    gap: 0.5em;
+    justify-content: flex-start; /* Kaikki vasemmalta alkamaan */
   }
   
   .custom-navbar-left-group {
-    gap: 0.5em;
-  }
-  
-  .custom-navbar-brand {
-    font-size: 1.2em;
+    flex-grow: 0; /* Logo ei kasva */
   }
   
   .custom-navbar-burger {
     display: flex;
+    order: -1; /* Burgeri ensin vasemmalle */
+    margin-right: 0.5em;
   }
   
+  .custom-navbar-right-group {
+    margin-left: auto; /* Login/Profile oikealle */
+  }
+
   .custom-navbar-links {
     display: none;
     position: absolute;
@@ -212,32 +206,8 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     z-index: 1000;
   }
-  
+
   .custom-navbar-links.open {
     display: flex;
   }
-  
-  .custom-navbar-right-group {
-    gap: 0.5em;
-    flex-shrink: 0;
-  }
-  
-  .custom-navbar-search input[type="search"] {
-    width: 120px;
-    font-size: 0.9em;
-    padding: 0.4em 2em 0.4em 0.6em;
-  }
-  
-  .custom-navbar-login {
-    padding: 0.4em 0.6em;
-    font-size: 0.9em;
-    flex-shrink: 0;
-  }
-
-  .custom-navbar-profile {
-    padding: 0.4em 0.6em;
-    font-size: 0.9em;
-    flex-shrink: 0;
-  }
 }
-
