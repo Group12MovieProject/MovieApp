@@ -35,11 +35,10 @@ function App() {
         <Route path="/login" exact element={<Login />} />
         <Route path="/register" exact element={<Register />} />
         <Route path="/share/:id_account" element={<SharedFavoritesPage />} />
-        <Route path="/*" exact element={<NotFound />} />
         <Route element={<PrivateRoute />} >
-        <Route path="/profilepage" exact element={<ProfilePage />} />
-        
+          <Route path="/profilepage" exact element={<ProfilePage />} />
         </Route>
+        <Route path="/*" exact element={<NotFound />} />
       </Routes>
     </div>
     <Footer />
