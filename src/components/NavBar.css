@@ -92,6 +92,27 @@
   position: relative;
 }
 
+.custom-navbar-search-full {
+  display: flex;
+}
+
+.custom-navbar-search-icon-btn {
+  display: none;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.5em 0.8em;
+  cursor: pointer;
+  font-size: 1.2em;
+  color: var(--text);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.custom-navbar-search-icon-btn:hover {
+  background-color: var(--surface-alt);
+  border-color: var(--accent);
+}
+
 .custom-navbar-search input[type="search"] {
   padding: 0.5em 2.5em 0.5em 0.8em;
   border: 1px solid var(--border);
@@ -209,5 +230,26 @@
 
   .custom-navbar-links.open {
     display: flex;
+  }
+}
+
+/* Pienemmillä näytöillä (< 430px) vaihda hakukenttä kuvakkeeksi */
+@media (max-width: 430px) {
+  .custom-navbar-search-full {
+    display: none;
+  }
+  
+  .custom-navbar-search-icon-btn {
+    display: block;
+  }
+  
+  .custom-navbar-right-group {
+    gap: 0.5em;
+  }
+  
+  .custom-navbar-login,
+  .custom-navbar-profile {
+    padding: 0.5em 0.8em;
+    font-size: 0.9em;
   }
 }
