@@ -164,7 +164,7 @@ const autoLogin = async (req, res, next) => {
         const access_token = sign(
             { email: dbUser.email },
             process.env.JWT_SECRET,
-            { expiresIn: '15m' }
+            { expiresIn: '1m' }
         )
 
         return res
