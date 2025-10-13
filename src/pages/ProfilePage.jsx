@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import './ProfilePage.css'
 
 export default function ProfilePage() {
-  const { user, logout, deleteMe, verifyPassword } = useUser()
+  const { user, logout, deleteMe, verifyPassword, autoLogin } = useUser()
   const [deleteLoading, setDeleteLoading] = useState(false)
   const { favorites, addFavorite, deleteFavorite, loading, error } = useFavorites()
   const [searchTerm, setSearchTerm] = useState('')
@@ -25,29 +25,83 @@ export default function ProfilePage() {
     }
   }
 
-  const handleDeleteAccount = async () => {
-    if (!window.confirm("Haluatko varmasti poistaa tilisi?")) return;
+  const handleDeleteAccount = async ({ isRetry = false, currentUser = user } = {}) => {
+    if (!window.confirm("Haluatko varmasti poistaa tilisi?")) return
+
+    if (!currentUser?.id_account || !currentUser?.access_token) {
+      if (isRetry) {
+        await logout()
+        alert('Kirjaudu uudelleen sisään')
+        return
+      }
+
+      try {
+        const refreshedUser = await autoLogin()
+
+        if (!refreshedUser?.id_account || !refreshedUser?.access_token) {
+          throw new Error('Token refresh failed')
+        }
+
+        return await handleDeleteAccount({ isRetry: true, currentUser: refreshedUser })
+      } catch (error) {
+        console.warn('Autologin failed before account deletion:', error)
+        await logout()
+        alert('Kirjaudu uudelleen sisään')
+        return
+      }
+    }
+
+    setDeleteLoading(true)
+
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/user/delete`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.access_token}`
+          'Authorization': `Bearer ${currentUser.access_token}`
         },
         credentials: 'include'
-      });
+      })
+
+      if (res.status === 401) {
+        if (isRetry) {
+          await logout()
+          alert('Istunto vanhentunut. Kirjaudu uudelleen sisään.')
+          navigate('/login')
+          return
+        }
+
+        try {
+          const refreshedUser = await autoLogin()
+
+          if (!refreshedUser?.access_token) {
+            throw new Error('Token refresh failed')
+          }
+
+          return await handleDeleteAccount({ isRetry: true, currentUser: refreshedUser })
+        } catch (error) {
+          console.warn('Autologin failed on 401:', error)
+          await logout()
+          alert('Istunto vanhentunut. Kirjaudu uudelleen sisään.')
+          navigate('/login')
+          return
+        }
+      }
+
       if (res.ok) {
-        // Optionally log out and redirect
-        logout();
-        navigate('/login');
+        await logout()
+        navigate('/login')
       } else {
-        const data = await res.json();
-        alert(data.error || "Virhe tilin poistossa");
+        const data = await res.json()
+        alert(data.error || "Virhe tilin poistossa")
       }
     } catch (err) {
-      alert("Virhe tilin poistossa");
+      console.error('Delete account error:', err)
+      alert("Virhe tilin poistossa")
+    } finally {
+      setDeleteLoading(false)
     }
-  };
+  }
 
   if (!user.access_token) {
     return (
@@ -79,30 +133,123 @@ export default function ProfilePage() {
     }
   }
 
-  const handleAddFavorite = async (movie) => {
+  const handleAddFavorite = async (movie, { isRetry = false, currentUser = user } = {}) => {
     // estetään duplikaatti jo frontendissä
     if (favorites.some(fav => fav.tmdb_id === movie.id)) {
       alert("Tämä elokuva on jo suosikeissa!")
       return
     }
+
+    if (!currentUser?.id_account || !currentUser?.access_token) {
+      if (isRetry) {
+        await logout()
+        alert('Kirjaudu uudelleen sisään')
+        return
+      }
+
+      try {
+        const refreshedUser = await autoLogin()
+
+        if (!refreshedUser?.id_account || !refreshedUser?.access_token) {
+          throw new Error('Token refresh failed')
+        }
+
+        return await handleAddFavorite(movie, { isRetry: true, currentUser: refreshedUser })
+      } catch (error) {
+        console.warn('Autologin failed before adding favorite:', error)
+        await logout()
+        alert('Kirjaudu uudelleen sisään')
+        return
+      }
+    }
+
     try {
       await addFavorite(
         { title: movie.title, id: movie.id, poster_path: movie.poster_path},
-        user.access_token,
-        user.id_account
+        currentUser.access_token,
+        currentUser.id_account
       )
       setSearchTerm('')
       setSearchResults([])
     } catch (err) {
       console.error('Add favorite error:', err)
+      
+      // Jos 401, yritä autologinia
+      if (err.message?.includes('401') || err.message?.includes('Istunto')) {
+        if (isRetry) {
+          await logout()
+          alert('Istunto vanhentunut. Kirjaudu uudelleen sisään.')
+          return
+        }
+
+        try {
+          const refreshedUser = await autoLogin()
+
+          if (!refreshedUser?.access_token) {
+            throw new Error('Token refresh failed')
+          }
+
+          return await handleAddFavorite(movie, { isRetry: true, currentUser: refreshedUser })
+        } catch (error) {
+          console.warn('Autologin failed on error:', error)
+          await logout()
+          alert('Istunto vanhentunut. Kirjaudu uudelleen sisään.')
+        }
+      }
     }
   }
 
-  const handleRemoveFavorite = async (id_favorite) => {
+  const handleRemoveFavorite = async (id_favorite, { isRetry = false, currentUser = user } = {}) => {
+    if (!currentUser?.id_account || !currentUser?.access_token) {
+      if (isRetry) {
+        await logout()
+        alert('Kirjaudu uudelleen sisään')
+        return
+      }
+
+      try {
+        const refreshedUser = await autoLogin()
+
+        if (!refreshedUser?.id_account || !refreshedUser?.access_token) {
+          throw new Error('Token refresh failed')
+        }
+
+        return await handleRemoveFavorite(id_favorite, { isRetry: true, currentUser: refreshedUser })
+      } catch (error) {
+        console.warn('Autologin failed before removing favorite:', error)
+        await logout()
+        alert('Kirjaudu uudelleen sisään')
+        return
+      }
+    }
+
     try {
-      await deleteFavorite(id_favorite, user.access_token)
+      await deleteFavorite(id_favorite, currentUser.access_token)
     } catch (err) {
       console.error('Remove favorite error:', err)
+      
+      // Jos 401, yritä autologinia
+      if (err.message?.includes('401') || err.message?.includes('Istunto')) {
+        if (isRetry) {
+          await logout()
+          alert('Istunto vanhentunut. Kirjaudu uudelleen sisään.')
+          return
+        }
+
+        try {
+          const refreshedUser = await autoLogin()
+
+          if (!refreshedUser?.access_token) {
+            throw new Error('Token refresh failed')
+          }
+
+          return await handleRemoveFavorite(id_favorite, { isRetry: true, currentUser: refreshedUser })
+        } catch (error) {
+          console.warn('Autologin failed on error:', error)
+          await logout()
+          alert('Istunto vanhentunut. Kirjaudu uudelleen sisään.')
+        }
+      }
     }
   }
 
