@@ -66,13 +66,13 @@ const signIn = async (req, res, next) => {
         )
 
         // Set refresh token as httpOnly cookie
+        const isProduction = process.env.NODE_ENV === 'production'
         res.cookie('refreshToken', refresh_token, {
-            // httpOnly: false,
-            // path:"/",
-            // domain: "localhost",
-            // secure: false,
-            // sameSite: 'lax',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+            httpOnly: true,
+            secure: isProduction, // true in production (HTTPS), false in dev
+            sameSite: isProduction ? 'none' : 'lax', // 'none' required for cross-site in production
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            path: '/'
         })
 
         return res
@@ -98,7 +98,13 @@ const deleteMe = async (req, res, next) => {
             return next(new ApiError('User not found', 404))
         }
 
-        res.clearCookie('refreshToken')
+        const isProduction = process.env.NODE_ENV === 'production'
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? 'none' : 'lax',
+            path: '/'
+        })
 
         return res.status(200).json({ message: 'Account deleted successfully' })
     } catch (error) {
@@ -178,7 +184,13 @@ const autoLogin = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
     try {
-        res.clearCookie('refreshToken')
+        const isProduction = process.env.NODE_ENV === 'production'
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? 'none' : 'lax',
+            path: '/'
+        })
         return res.status(200).json({ message: 'Logged out successfully' })
     } catch (error) {
         return next(new ApiError('Internal server error while logging out', 500))
