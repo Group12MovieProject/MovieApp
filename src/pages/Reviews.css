@@ -189,7 +189,7 @@
 
 .error-message {
   background: var(--danger);
-  color: var(--text);
+  color: var(--surface);
   border: 1px solid var(--danger);
 }
 
