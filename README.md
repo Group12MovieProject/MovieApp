@@ -1,16 +1,71 @@
-# React + Vite
+# Katve MovieApp project 🎬
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ A student project for fullstack movie enthuasist app, built with React and NodeJS using a PostgreSQL database.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🔐 **Full Authentication System**
+  - User registration and login with JWT tokens
+  - Refresh token rotation for security
+  - Password validation (8+ chars, 1 uppercase or number)
+  - Protected routes
 
-## Expanding the ESLint configuration
+- 🎬 **Movie Discovery**
+  - Browse popular and top-rated movies with carousels
+  - Search with real-time results
+  - Browse movie shotimes from different Finnkino theatres.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 📚 **Movie Reviews**
+    - Search for movies and write reviews. 
+    - Only authenticated users can write a review but everyone can browse them
 
-## Project styling notes
+- ⭐ **Favorites**
+  - Add movies to your favorites and share the list with anyone.
 
-This project uses the system font stack for UI text for fast load times and consistent native rendering. The active font stack is defined in `src/index.css` using the `--ui-font` CSS variable. To change the font, edit that variable. If you want to use a web font, add the provider link (or @font-face) and update `--ui-font` accordingly.
+- ⭐ **Group functionality**
+    - Authenticated users can create a groups or join already created groups.
+    - Group owner can accept or decline members. 
+    - Group member can also remove members from the group or delete the whole group.
+
+
+## Tech Stack
+
+- **Framework**: React with NodeJS/Express
+- **Language**: JavaScript
+- **Styling**: Custom made CSS
+- **Database**: PostgreSQL
+- **Authentication**: JWT with refresh token rotation
+- **APIs**:
+  - The Movie Database (TMDB) for movie data
+- **Security**: bcrypt password hashing, httpOnly cookies
+
+
+## Project documentation
+
+### ER-diagram
+![ER-diagram](./documents/er-diagram_valmis.png)
+
+
+### UI Moqup (frontpage)
+- More can be found in repositorys /documents folder
+
+![Frontpage moqup](./documents/etusivu_moqup.png)
+
+### Automated testing
+- Automated backend tests were done with Mocha -library.
+- Testing were done to: groups, users, reviews and favorites features.
+
+![Automated tests](./documents/test.png)
+
+
+### REST-documentation
+- API documentation were done using Postman and documentation can be found in:
+[REST-documentation](https://documenter.getpostman.com/view/40326651/2sB3QJQBUg)
+
+
+## Developed by
+- Ville-Pekka Alavuotunki
+- Kata Niva
+- Aapo Pähti
+- Emma Takkinen
+- Tuure Väänänen
