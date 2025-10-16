@@ -2,6 +2,11 @@
 
  A student project for fullstack movie enthuasist app, built with React and NodeJS using a PostgreSQL database.
 
+ The app is deployed on Render and will be available for about one month as of 10.10.2025:
+
+[Render LINK](https://movieapp-front-6ute.onrender.com)
+
+
 ## Features
 
 - 🔐 **Full Authentication System**
